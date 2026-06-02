@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Posyandu Melati Sehat – Layanan Kesehatan Komunitas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --mint: #3ecf8e;
+      --mint-light: #d1fae5;
+      --teal: #0f9a7b;
+      --deep: #023430;
+      --cream: #f8fdf9;
+      --warm: #fffbf0;
+      --coral: #ff6b6b;
+      --gold: #f5c842;
+    }
+
+    * { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--cream);
+      color: var(--deep);
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Animated gradient mesh bg */
+    .hero-bg {
+      background: radial-gradient(ellipse at 20% 50%, rgba(62,207,142,0.18) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 20%, rgba(15,154,123,0.15) 0%, transparent 60%),
+                  radial-gradient(ellipse at 60% 80%, rgba(245,200,66,0.1) 0%, transparent 50%),
+                  linear-gradient(135deg, #f0fdf7 0%, #ecfdf5 50%, #f8fdf9 100%);
+    }
+
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+    .floating-slow {
+      animation: float 9s ease-in-out infinite;
+    }
+    .floating-rev {
+      animation: floatRev 7s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-18px); }
+    }
+    @keyframes floatRev {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(14px); }
+    }
+
+    .pulse-ring {
+      animation: pulseRing 2.5s ease-out infinite;
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(1.7); opacity: 0; }
+    }
+
+    /* Blob shapes */
+    .blob1 {
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    }
+    .blob2 {
+      border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+    }
+
+    .card-hover {
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 24px 60px rgba(15,154,123,0.18);
+    }
+
+    .nav-link {
+      position: relative;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--mint);
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+
+    /* Decorative cross/plus */
+    .health-cross {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .health-cross::before,
+    .health-cross::after {
+      content: '';
+      position: absolute;
+      background: currentColor;
+    }
+    .health-cross::before {
+      width: 60%;
+      height: 100%;
+    }
+    .health-cross::after {
+      width: 100%;
+      height: 60%;
+    }
+
+    /* Pattern dots */
+    .dot-pattern {
+      background-image: radial-gradient(circle, rgba(62,207,142,0.3) 1.5px, transparent 1.5px);
+      background-size: 22px 22px;
+    }
+
+    /* Wavy section divider */
+    .wave-top {
+      position: absolute;
+      top: -1px;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+    }
+
+    .stat-num {
+      font-family: 'Inter', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 1;
+      background: linear-gradient(135deg, var(--teal), var(--mint));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(62,207,142,0.12);
+      border: 1px solid rgba(62,207,142,0.3);
+      border-radius: 100px;
+      padding: 6px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--teal);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--mint) 100%);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(15,154,123,0.35);
+      letter-spacing: 0.02em;
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 36px rgba(15,154,123,0.45);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--teal);
+      border: 2px solid var(--teal);
+      padding: 12px 30px;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+    .btn-outline:hover {
+      background: var(--teal);
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    /* Staggered animations on load */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .anim-1 { animation: slideUp 0.7s ease forwards; animation-delay: 0.1s; opacity: 0; }
+    .anim-2 { animation: slideUp 0.7s ease forwards; animation-delay: 0.3s; opacity: 0; }
+    .anim-3 { animation: slideUp 0.7s ease forwards; animation-delay: 0.5s; opacity: 0; }
+    .anim-4 { animation: slideUp 0.7s ease forwards; animation-delay: 0.7s; opacity: 0; }
+    .anim-5 { animation: slideUp 0.7s ease forwards; animation-delay: 0.9s; opacity: 0; }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Testimonial card */
+    .testimonial-card {
+      background: white;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      border: 1px solid rgba(62,207,142,0.12);
+      position: relative;
+    }
+    .testimonial-card::before {
+      content: '"';
+      font-family: 'Inter', sans-serif;
+      font-size: 80px;
+      line-height: 1;
+      color: rgba(62,207,142,0.2);
+      position: absolute;
+      top: 12px;
+      left: 24px;
+    }
+
+    /* Schedule table */
+    .schedule-row:hover {
+      background: rgba(62,207,142,0.07);
+    }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, var(--deep) 0%, var(--teal) 60%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Icon circle */
+    .icon-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f0fdf7; }
+    ::-webkit-scrollbar-thumb { background: var(--mint); border-radius: 3px; }
+
+    /* Mobile menu */
+    #mobile-menu {
+      transition: all 0.3s ease;
+    }
+
+    /* Hero illustration */
+    .hero-illustration {
+      position: relative;
+    }
+
+    /* Green circle decoration */
+    .deco-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(62,207,142,0.15) 0%, transparent 70%);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===================== NAVBAR ===================== -->
+<nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/85 border-b border-mint-100" style="border-color: rgba(62,207,142,0.15);">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <div class="flex items-center gap-3">
+        <div class="relative w-9 h-9 flex items-center justify-center">
+          <div class="absolute inset-0 rounded-xl" style="background: linear-gradient(135deg, #0f9a7b, #3ecf8e);"></div>
+          <!-- Plus/cross icon -->
+          <svg class="relative z-10" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="8" y="2" width="4" height="16" rx="2" fill="white"/>
+            <rect x="2" y="8" width="16" height="4" rx="2" fill="white"/>
+          </svg>
+        </div>
+        <div>
+          <div class="font-bold text-base leading-tight" style="color: var(--deep); font-family: 'Inter', sans-serif;">Posyandu</div>
+          <div class="text-xs font-medium" style="color: var(--teal); letter-spacing: 0.05em;">MELATI SEHAT</div>
+        </div>
+      </div>
+
+      <!-- Desktop nav -->
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#layanan" class="nav-link text-sm font-medium" style="color: var(--deep);">Layanan</a>
+        <a href="#jadwal" class="nav-link text-sm font-medium" style="color: var(--deep);">Jadwal</a>
+        <a href="#tim" class="nav-link text-sm font-medium" style="color: var(--deep);">Tim Kami</a>
+        <a href="#kontak" class="nav-link text-sm font-medium" style="color: var(--deep);">Kontak</a>
+      </div>
+
+      <!-- CTA + hamburger -->
+      <div class="flex items-center gap-3">
+        <a href="#daftar" class="hidden sm:block btn-primary text-sm py-2 px-5">Daftar Sekarang</a>
+        <button id="menu-btn" class="md:hidden w-9 h-9 flex items-center justify-center rounded-lg" style="background: rgba(62,207,142,0.1);">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M2 4h14M2 9h14M2 14h14" style="stroke: var(--teal);"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden px-4 pb-4">
+    <div class="rounded-2xl p-4 space-y-1" style="background: var(--mint-light);">
+      <a href="#layanan" class="block px-4 py-2.5 text-sm font-medium rounded-xl hover:bg-white transition" style="color: var(--deep);">Layanan</a>
+      <a href="#jadwal" class="block px-4 py-2.5 text-sm font-medium rounded-xl hover:bg-white transition" style="color: var(--deep);">Jadwal</a>
+      <a href="#tim" class="block px-4 py-2.5 text-sm font-medium rounded-xl hover:bg-white transition" style="color: var(--deep);">Tim Kami</a>
+      <a href="#kontak" class="block px-4 py-2.5 text-sm font-medium rounded-xl hover:bg-white transition" style="color: var(--deep);">Kontak</a>
+      <div class="pt-2">
+        <a href="#daftar" class="block btn-primary text-center text-sm py-2.5">Daftar Sekarang</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ===================== HERO ===================== -->
+<section class="hero-bg relative min-h-screen flex items-center pt-20 overflow-hidden">
+
+  <!-- Decorative blobs background -->
+  <div class="absolute top-10 -left-20 w-96 h-96 blob1 floating-slow opacity-30" style="background: radial-gradient(circle, rgba(62,207,142,0.4) 0%, transparent 70%);"></div>
+  <div class="absolute bottom-10 -right-20 w-80 h-80 blob2 floating opacity-25" style="background: radial-gradient(circle, rgba(15,154,123,0.35) 0%, transparent 70%);"></div>
+  <div class="absolute top-1/2 left-1/3 w-64 h-64 rounded-full opacity-10" style="background: var(--gold);"></div>
+
+  <!-- Dot pattern overlay -->
+  <div class="absolute inset-0 dot-pattern opacity-40 pointer-events-none"></div>
+
+  <!-- Floating health icons -->
+  <div class="absolute top-28 right-16 floating hidden lg:flex w-12 h-12 rounded-2xl items-center justify-center shadow-lg" style="background: white; box-shadow: 0 8px 24px rgba(0,0,0,0.08);">
+    <span class="text-2xl">💊</span>
+  </div>
+  <div class="absolute top-44 right-36 floating-rev hidden lg:flex w-10 h-10 rounded-xl items-center justify-center shadow-lg" style="background: white; animation-delay: 1s; box-shadow: 0 8px 24px rgba(0,0,0,0.08);">
+    <span class="text-xl">❤️</span>
+  </div>
+  <div class="absolute bottom-44 left-16 floating-slow hidden lg:flex w-12 h-12 rounded-2xl items-center justify-center shadow-lg" style="background: white; box-shadow: 0 8px 24px rgba(0,0,0,0.08);">
+    <span class="text-2xl">🩺</span>
+  </div>
+  <div class="absolute bottom-32 right-24 floating hidden lg:flex w-10 h-10 rounded-xl items-center justify-center shadow-lg" style="background: white; animation-delay: 2s; box-shadow: 0 8px 24px rgba(0,0,0,0.08);">
+    <span class="text-xl">🌿</span>
+  </div>
+  <div class="absolute top-36 left-1/2 floating-rev hidden lg:flex w-10 h-10 rounded-xl items-center justify-center shadow-lg" style="background: white; animation-delay: 0.5s; box-shadow: 0 8px 24px rgba(0,0,0,0.08);">
+    <span class="text-xl">⚕️</span>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid lg:grid-cols-2 gap-12 items-center relative z-10">
+
+    <!-- Left: Text -->
+    <div>
+      <div class="section-badge anim-1">
+        <span>🏥</span>
+        <span>Kesehatan Keluarga Indonesia</span>
+      </div>
+
+      <h1 class="anim-2 text-5xl sm:text-6xl lg:text-7xl font-black leading-none mb-6" style="color: var(--deep);">
+        Sehat Bersama,<br/>
+        <span class="gradient-text">Tumbuh</span><br/>
+        Bersama.
+      </h1>
+
+      <p class="anim-3 text-lg sm:text-xl leading-relaxed mb-8 max-w-md" style="color: rgba(2,52,48,0.7); font-weight: 400;">
+        Posyandu Melati Sehat hadir untuk memberikan layanan kesehatan ibu, bayi, dan balita secara menyeluruh, terpadu, dan penuh kasih sayang.
+      </p>
+
+      <div class="anim-4 flex flex-wrap gap-3 mb-10">
+        <a href="#daftar" class="btn-primary">Daftar Pemeriksaan</a>
+        <a href="#layanan" class="btn-outline">Lihat Layanan →</a>
+      </div>
+
+      <!-- Mini stats row -->
+      <div class="anim-5 flex flex-wrap gap-6">
+        <div>
+          <div class="stat-num">2.4k+</div>
+          <div class="text-sm font-medium mt-0.5" style="color: rgba(2,52,48,0.6);">Pasien Terdaftar</div>
+        </div>
+        <div class="w-px" style="background: rgba(62,207,142,0.3);"></div>
+        <div>
+          <div class="stat-num">98%</div>
+          <div class="text-sm font-medium mt-0.5" style="color: rgba(2,52,48,0.6);">Tingkat Kepuasan</div>
+        </div>
+        <div class="w-px" style="background: rgba(62,207,142,0.3);"></div>
+        <div>
+          <div class="stat-num">12+</div>
+          <div class="text-sm font-medium mt-0.5" style="color: rgba(2,52,48,0.6);">Tahun Melayani</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Illustration -->
+    <div class="hero-illustration flex justify-center lg:justify-end">
+      <div class="relative w-80 h-80 sm:w-96 sm:h-96 lg:w-[440px] lg:h-[440px]">
+
+        <!-- Pulse rings behind main circle -->
+        <div class="pulse-ring absolute inset-4 rounded-full" style="border: 3px solid rgba(62,207,142,0.3);"></div>
+        <div class="pulse-ring absolute inset-0 rounded-full" style="border: 2px solid rgba(62,207,142,0.15); animation-delay: 0.8s;"></div>
+
+        <!-- Main circle -->
+        <div class="absolute inset-8 rounded-full overflow-hidden shadow-2xl" style="background: linear-gradient(135deg, rgba(62,207,142,0.15), rgba(15,154,123,0.1)); border: 3px solid rgba(62,207,142,0.25);">
+          <!-- SVG illustration of family/health -->
+          <div class="w-full h-full flex items-center justify-center">
+            <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4/5 h-4/5">
+              <!-- Background circles -->
+              <circle cx="150" cy="150" r="130" fill="rgba(62,207,142,0.06)"/>
+              
+              <!-- Ground -->
+              <ellipse cx="150" cy="240" rx="100" ry="12" fill="rgba(62,207,142,0.15)"/>
+
+              <!-- Doctor figure (center) -->
+              <circle cx="150" cy="95" r="28" fill="#d1fae5"/>
+              <circle cx="150" cy="88" r="18" fill="#0f9a7b"/>
+              <!-- Face -->
+              <circle cx="144" cy="86" r="2.5" fill="white"/>
+              <circle cx="156" cy="86" r="2.5" fill="white"/>
+              <path d="M145 93 Q150 97 155 93" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <!-- Doctor cap -->
+              <rect x="136" y="74" width="28" height="8" rx="4" fill="#3ecf8e"/>
+              <rect x="146" y="68" width="8" height="6" rx="2" fill="#3ecf8e"/>
+              <!-- Stethoscope -->
+              <path d="M160 95 Q170 95 170 105 Q170 115 160 115" stroke="#0f9a7b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <circle cx="160" cy="117" r="4" fill="#0f9a7b"/>
+              <!-- Body -->
+              <rect x="130" y="115" width="40" height="55" rx="12" fill="#ecfdf5"/>
+              <!-- White coat line -->
+              <path d="M150 115 L150 170" stroke="#d1fae5" stroke-width="2"/>
+              <!-- Cross on coat -->
+              <rect x="142" y="130" width="3" height="12" rx="1.5" fill="#3ecf8e"/>
+              <rect x="139" y="135" width="9" height="3" rx="1.5" fill="#3ecf8e"/>
+              <!-- Arms -->
+              <rect x="112" y="118" width="18" height="8" rx="4" fill="#ecfdf5"/>
+              <rect x="170" y="118" width="18" height="8" rx="4" fill="#ecfdf5"/>
+              <!-- Legs -->
+              <rect x="133" y="168" width="14" height="30" rx="7" fill="#d1fae5"/>
+              <rect x="153" y="168" width="14" height="30" rx="7" fill="#d1fae5"/>
+              <!-- Shoes -->
+              <ellipse cx="140" cy="200" rx="9" ry="5" fill="#0f9a7b"/>
+              <ellipse cx="160" cy="200" rx="9" ry="5" fill="#0f9a7b"/>
+
+              <!-- Mother figure (left) -->
+              <circle cx="82" cy="108" r="18" fill="#fde68a"/>
+              <!-- Face -->
+              <circle cx="77" cy="106" r="2" fill="#92400e"/>
+              <circle cx="87" cy="106" r="2" fill="#92400e"/>
+              <path d="M78 112 Q82 115 86 112" stroke="#92400e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <!-- Hair -->
+              <path d="M67 104 Q64 90 82 86 Q100 86 97 104" fill="#f59e0b"/>
+              <!-- Body -->
+              <ellipse cx="82" cy="155" rx="22" ry="30" fill="#fef3c7"/>
+              <!-- Baby in arms -->
+              <circle cx="106" cy="150" r="10" fill="#fde68a"/>
+              <circle cx="106" cy="147" r="7" fill="#fbbf24"/>
+              <!-- Baby face -->
+              <circle cx="103.5" cy="146" r="1.5" fill="#92400e"/>
+              <circle cx="108.5" cy="146" r="1.5" fill="#92400e"/>
+              <!-- Arm holding baby -->
+              <path d="M100 142 Q108 138 112 148" stroke="#fef3c7" stroke-width="6" fill="none" stroke-linecap="round"/>
+              <!-- Legs -->
+              <rect x="73" y="182" width="10" height="22" rx="5" fill="#fde68a"/>
+              <rect x="85" y="182" width="10" height="22" rx="5" fill="#fde68a"/>
+
+              <!-- Child figure (right) -->
+              <circle cx="218" cy="118" r="16" fill="#fde68a"/>
+              <!-- Face -->
+              <circle cx="213" cy="116" r="2" fill="#92400e"/>
+              <circle cx="223" cy="116" r="2" fill="#92400e"/>
+              <path d="M214 122 Q218 125 222 122" stroke="#92400e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <!-- Body -->
+              <rect x="206" y="133" width="24" height="38" rx="8" fill="#bfdbfe"/>
+              <!-- T-shirt detail -->
+              <path d="M206 142 L230 142" stroke="#93c5fd" stroke-width="1"/>
+              <!-- Arms up (waving) -->
+              <path d="M206 138 Q195 125 190 118" stroke="#fde68a" stroke-width="7" fill="none" stroke-linecap="round"/>
+              <path d="M230 138 Q241 125 246 118" stroke="#fde68a" stroke-width="7" fill="none" stroke-linecap="round"/>
+              <!-- Hands -->
+              <circle cx="190" cy="118" r="5" fill="#fde68a"/>
+              <circle cx="246" cy="118" r="5" fill="#fde68a"/>
+              <!-- Legs -->
+              <rect x="209" y="170" width="10" height="25" rx="5" fill="#fde68a"/>
+              <rect x="221" y="170" width="10" height="25" rx="5" fill="#fde68a"/>
+
+              <!-- Decorative elements -->
+              <!-- Heart -->
+              <path d="M40 50 C40 43 30 38 30 47 C30 52 40 60 40 60 C40 60 50 52 50 47 C50 38 40 43 40 50Z" fill="#ff6b6b" opacity="0.8"/>
+              <!-- Star/sparkle -->
+              <g transform="translate(240,45)" opacity="0.7">
+                <path d="M8 0 L10 6 L16 6 L11 10 L13 16 L8 12 L3 16 L5 10 L0 6 L6 6Z" fill="#f5c842"/>
+              </g>
+              <!-- Leaf -->
+              <path d="M55 210 C55 195 68 185 80 190 C68 190 60 200 55 210Z" fill="#3ecf8e" opacity="0.6"/>
+              <path d="M245 210 C245 195 232 185 220 190 C232 190 240 200 245 210Z" fill="#3ecf8e" opacity="0.6"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Floating badge cards -->
+        <div class="absolute -bottom-4 -left-8 bg-white rounded-2xl px-4 py-3 shadow-xl floating" style="box-shadow: 0 12px 36px rgba(0,0,0,0.1);">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-base" style="background: rgba(62,207,142,0.15);">✅</div>
+            <div>
+              <div class="text-xs font-semibold" style="color: var(--deep);">Imunisasi Lengkap</div>
+              <div class="text-xs" style="color: rgba(2,52,48,0.5);">Terjadwal & Terpantau</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="absolute -top-4 -right-4 bg-white rounded-2xl px-4 py-3 shadow-xl floating-rev" style="box-shadow: 0 12px 36px rgba(0,0,0,0.1);">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-base" style="background: rgba(255,107,107,0.15);">❤️</div>
+            <div>
+              <div class="text-xs font-semibold" style="color: var(--deep);">1,240 Kunjungan</div>
+              <div class="text-xs" style="color: rgba(2,52,48,0.5);">Tahun ini</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wave divider -->
+  <div class="wave-top" style="bottom: -1px; top: auto;">
+    <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="display: block;">
+      <path d="M0 60 L0 30 Q360 0 720 30 Q1080 60 1440 30 L1440 60 Z" fill="#ffffff"/>
+    </svg>
+  </div>
+</section>
+
+
+<!-- ===================== LAYANAN ===================== -->
+<section id="layanan" class="py-24 bg-white relative overflow-hidden">
+  <!-- Decorative background -->
+  <div class="absolute top-0 right-0 w-64 h-64 rounded-full opacity-5 floating-slow" style="background: var(--teal); transform: translate(30%, -30%);"></div>
+  <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-5 floating-rev" style="background: var(--mint); transform: translate(-30%, 30%);"></div>
+  <div class="absolute top-1/2 left-4 w-12 h-12 rounded-full border-4 opacity-10 floating" style="border-color: var(--teal);"></div>
+  <div class="absolute bottom-1/4 right-8 w-8 h-8 rounded-full opacity-10 floating-slow" style="background: var(--gold);"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16 reveal">
+      <div class="section-badge">⚕️ Layanan Kami</div>
+      <h2 class="text-4xl sm:text-5xl font-black mb-4" style="color: var(--deep);">
+        Layanan <span class="gradient-text">Kesehatan Terpadu</span>
+      </h2>
+      <p class="text-lg max-w-xl mx-auto" style="color: rgba(2,52,48,0.6);">
+        Kami menyediakan berbagai layanan kesehatan komprehensif untuk seluruh anggota keluarga Anda.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Service cards -->
+      <div class="card-hover reveal rounded-3xl p-8 border" style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-color: rgba(62,207,142,0.2);">
+        <div class="icon-circle mb-6" style="background: white; box-shadow: 0 4px 16px rgba(62,207,142,0.2);">
+          <span>👶</span>
+        </div>
+        <h3 class="text-xl font-bold mb-3" style="color: var(--deep);">Kesehatan Bayi & Balita</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color: rgba(2,52,48,0.65);">
+          Pemantauan tumbuh kembang, penimbangan rutin, dan deteksi dini gangguan pertumbuhan anak.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: var(--teal);">Penimbangan</span>
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: var(--teal);">Postur Gigi</span>
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: var(--teal);">Gizi</span>
+        </div>
+      </div>
+
+      <div class="card-hover reveal rounded-3xl p-8 border" style="background: linear-gradient(135deg, #fff7ed, #fde68a33); border-color: rgba(245,200,66,0.25);">
+        <div class="icon-circle mb-6" style="background: white; box-shadow: 0 4px 16px rgba(245,200,66,0.2);">
+          <span>💉</span>
+        </div>
+        <h3 class="text-xl font-bold mb-3" style="color: var(--deep);">Imunisasi Lengkap</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color: rgba(2,52,48,0.65);">
+          Program imunisasi dasar dan lanjutan sesuai jadwal Kementerian Kesehatan RI, gratis untuk warga.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #d97706;">BCG</span>
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #d97706;">Polio</span>
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #d97706;">DPT-HB</span>
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #d97706;">Campak</span>
+        </div>
+      </div>
+
+      <div class="card-hover reveal rounded-3xl p-8 border" style="background: linear-gradient(135deg, #fdf2f8, #fce7f3); border-color: rgba(244,114,182,0.2);">
+        <div class="icon-circle mb-6" style="background: white; box-shadow: 0 4px 16px rgba(244,114,182,0.2);">
+          <span>🤱</span>
+        </div>
+        <h3 class="text-xl font-bold mb-3" style="color: var(--deep);">Kesehatan Ibu Hamil</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color: rgba(2,52,48,0.65);">
+          Pemeriksaan kehamilan (ANC), konseling gizi ibu hamil, persiapan persalinan, dan kelas ibu hamil.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #db2777;">ANC</span>
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #db2777;">Kelas Ibu</span>
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #db2777;">Gizi Hamil</span>
+        </div>
+      </div>
+
+      <div class="card-hover reveal rounded-3xl p-8 border" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: rgba(59,130,246,0.2);">
+        <div class="icon-circle mb-6" style="background: white; box-shadow: 0 4px 16px rgba(59,130,246,0.2);">
+          <span>🩺</span>
+        </div>
+        <h3 class="text-xl font-bold mb-3" style="color: var(--deep);">Pemeriksaan Lansia</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color: rgba(2,52,48,0.65);">
+          Skrining kesehatan warga lanjut usia: tekanan darah, gula darah, kolesterol, dan konsultasi kesehatan.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #2563eb;">Tensi</span>
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #2563eb;">Gula Darah</span>
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #2563eb;">Kolesterol</span>
+        </div>
+      </div>
+
+      <div class="card-hover reveal rounded-3xl p-8 border" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: rgba(34,197,94,0.2);">
+        <div class="icon-circle mb-6" style="background: white; box-shadow: 0 4px 16px rgba(34,197,94,0.2);">
+          <span>🥗</span>
+        </div>
+        <h3 class="text-xl font-bold mb-3" style="color: var(--deep);">Konseling Gizi</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color: rgba(2,52,48,0.65);">
+          Edukasi dan konseling nutrisi untuk balita stunting, ibu menyusui, dan warga dengan penyakit kronis.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #16a34a;">Stunting</span>
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #16a34a;">PMT</span>
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #16a34a;">ASI Eksklusif</span>
+        </div>
+      </div>
+
+      <div class="card-hover reveal rounded-3xl p-8 border" style="background: linear-gradient(135deg, #faf5ff, #ede9fe); border-color: rgba(139,92,246,0.2);">
+        <div class="icon-circle mb-6" style="background: white; box-shadow: 0 4px 16px rgba(139,92,246,0.2);">
+          <span>🧠</span>
+        </div>
+        <h3 class="text-xl font-bold mb-3" style="color: var(--deep);">Edukasi & Promkes</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color: rgba(2,52,48,0.65);">
+          Program Promosi Kesehatan: penyuluhan PHBS, sanitasi, pencegahan penyakit menular dan tidak menular.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #7c3aed;">PHBS</span>
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #7c3aed;">Sanitasi</span>
+          <span class="text-xs px-3 py-1 rounded-full font-medium" style="background: white; color: #7c3aed;">Penyuluhan</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== STATS BANNER ===================== -->
+<section class="py-16 relative overflow-hidden" style="background: linear-gradient(135deg, var(--deep) 0%, var(--teal) 100%);">
+  <!-- Decorations -->
+  <div class="absolute inset-0 dot-pattern opacity-10"></div>
+  <div class="absolute top-0 left-1/4 w-64 h-64 rounded-full opacity-10 floating-slow" style="background: var(--mint); filter: blur(40px);"></div>
+  <div class="absolute bottom-0 right-1/4 w-48 h-48 rounded-full opacity-10 floating-rev" style="background: var(--gold); filter: blur(30px);"></div>
+  <div class="absolute top-4 right-10 text-white opacity-10 text-4xl floating">✦</div>
+  <div class="absolute bottom-4 left-10 text-white opacity-10 text-5xl floating-slow">✦</div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center text-white">
+      <div class="reveal">
+        <div class="text-5xl font-black mb-2" style="font-family: 'Inter', sans-serif; color: var(--gold);">2,400+</div>
+        <div class="text-sm font-medium opacity-80">Pasien Terdaftar</div>
+      </div>
+      <div class="reveal">
+        <div class="text-5xl font-black mb-2" style="font-family: 'Inter', sans-serif; color: #86efac;">850+</div>
+        <div class="text-sm font-medium opacity-80">Balita Dipantau</div>
+      </div>
+      <div class="reveal">
+        <div class="text-5xl font-black mb-2" style="font-family: 'Inter', sans-serif; color: #fda4af;">320+</div>
+        <div class="text-sm font-medium opacity-80">Ibu Hamil Terdampingi</div>
+      </div>
+      <div class="reveal">
+        <div class="text-5xl font-black mb-2" style="font-family: 'Inter', sans-serif; color: #93c5fd;">12</div>
+        <div class="text-sm font-medium opacity-80">Tahun Berpengalaman</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== JADWAL ===================== -->
+<section id="jadwal" class="py-24 relative overflow-hidden" style="background: var(--cream);">
+  <div class="absolute inset-0 dot-pattern opacity-30 pointer-events-none"></div>
+  <!-- Floating elements -->
+  <div class="absolute top-20 right-10 w-24 h-24 blob2 opacity-5 floating" style="background: var(--teal);"></div>
+  <div class="absolute bottom-20 left-5 w-32 h-32 blob1 opacity-5 floating-slow" style="background: var(--mint);"></div>
+  
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+    <div class="grid lg:grid-cols-2 gap-16 items-start">
+      <!-- Left -->
+      <div class="reveal">
+        <div class="section-badge">📅 Jadwal Pelayanan</div>
+        <h2 class="text-4xl sm:text-5xl font-black mb-4" style="color: var(--deep);">
+          Kapan Kami<br/><span class="gradient-text">Siap Melayani</span>
+        </h2>
+        <p class="text-lg mb-8" style="color: rgba(2,52,48,0.65);">
+          Posyandu kami melayani masyarakat setiap bulan dengan jadwal yang teratur dan terstruktur.
+        </p>
+
+        <!-- Schedule table -->
+        <div class="rounded-3xl overflow-hidden border shadow-lg" style="border-color: rgba(62,207,142,0.2); background: white;">
+          <div class="px-6 py-4" style="background: linear-gradient(135deg, var(--teal), var(--mint));">
+            <div class="grid grid-cols-3 text-sm font-bold text-white">
+              <div>Hari / Tanggal</div>
+              <div>Jam</div>
+              <div>Kegiatan</div>
+            </div>
+          </div>
+          <div class="divide-y" style="border-color: rgba(62,207,142,0.1);">
+            <div class="grid grid-cols-3 px-6 py-4 text-sm schedule-row transition-colors">
+              <div class="font-semibold" style="color: var(--deep);">Senin, Minggu ke-1</div>
+              <div style="color: var(--teal);">07:30–11:00</div>
+              <div style="color: rgba(2,52,48,0.7);">Bayi & Balita</div>
+            </div>
+            <div class="grid grid-cols-3 px-6 py-4 text-sm schedule-row transition-colors">
+              <div class="font-semibold" style="color: var(--deep);">Rabu, Minggu ke-1</div>
+              <div style="color: var(--teal);">08:00–11:30</div>
+              <div style="color: rgba(2,52,48,0.7);">Ibu Hamil</div>
+            </div>
+            <div class="grid grid-cols-3 px-6 py-4 text-sm schedule-row transition-colors">
+              <div class="font-semibold" style="color: var(--deep);">Jumat, Minggu ke-2</div>
+              <div style="color: var(--teal);">08:00–12:00</div>
+              <div style="color: rgba(2,52,48,0.7);">Imunisasi</div>
+            </div>
+            <div class="grid grid-cols-3 px-6 py-4 text-sm schedule-row transition-colors">
+              <div class="font-semibold" style="color: var(--deep);">Senin, Minggu ke-3</div>
+              <div style="color: var(--teal);">08:00–11:00</div>
+              <div style="color: rgba(2,52,48,0.7);">Lansia</div>
+            </div>
+            <div class="grid grid-cols-3 px-6 py-4 text-sm schedule-row transition-colors">
+              <div class="font-semibold" style="color: var(--deep);">Kamis, Minggu ke-4</div>
+              <div style="color: var(--teal);">09:00–12:00</div>
+              <div style="color: rgba(2,52,48,0.7);">Penyuluhan & Gizi</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 rounded-2xl p-4 flex items-start gap-3" style="background: rgba(62,207,142,0.1); border: 1px solid rgba(62,207,142,0.2);">
+          <span class="text-xl mt-0.5">📌</span>
+          <p class="text-sm" style="color: rgba(2,52,48,0.75);">
+            <strong>Catatan:</strong> Jadwal sewaktu-waktu dapat berubah. Ikuti pengumuman di papan RW atau hubungi kader setempat untuk konfirmasi jadwal terbaru.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: Info cards -->
+      <div class="space-y-5 reveal">
+        <div class="rounded-3xl p-6 border card-hover" style="background: white; border-color: rgba(62,207,142,0.2);">
+          <div class="flex items-start gap-4">
+            <div class="icon-circle text-2xl" style="background: rgba(62,207,142,0.12);">📍</div>
+            <div>
+              <h3 class="font-bold text-lg mb-1" style="color: var(--deep);">Lokasi Posyandu</h3>
+              <p class="text-sm" style="color: rgba(2,52,48,0.65);">
+                Balai RW 05, Jl. Melati No. 12, Kelurahan Purbalingga Lor, Kecamatan Purbalingga, Jawa Tengah 53316
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-3xl p-6 border card-hover" style="background: white; border-color: rgba(62,207,142,0.2);">
+          <div class="flex items-start gap-4">
+            <div class="icon-circle text-2xl" style="background: rgba(245,200,66,0.12);">📋</div>
+            <div>
+              <h3 class="font-bold text-lg mb-2" style="color: var(--deep);">Yang Perlu Dibawa</h3>
+              <ul class="text-sm space-y-1.5" style="color: rgba(2,52,48,0.65);">
+                <li class="flex items-center gap-2"><span style="color: var(--teal);">✓</span> KTP / KK orang tua</li>
+                <li class="flex items-center gap-2"><span style="color: var(--teal);">✓</span> Buku KIA / KMS anak</li>
+                <li class="flex items-center gap-2"><span style="color: var(--teal);">✓</span> Kartu imunisasi (bila ada)</li>
+                <li class="flex items-center gap-2"><span style="color: var(--teal);">✓</span> Buku kesehatan lansia</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-3xl p-6 border card-hover" style="background: white; border-color: rgba(62,207,142,0.2);">
+          <div class="flex items-start gap-4">
+            <div class="icon-circle text-2xl" style="background: rgba(59,130,246,0.1);">📞</div>
+            <div>
+              <h3 class="font-bold text-lg mb-1" style="color: var(--deep);">Hubungi Kader</h3>
+              <p class="text-sm mb-3" style="color: rgba(2,52,48,0.65);">Untuk informasi jadwal atau pendaftaran awal:</p>
+              <div class="flex flex-col gap-1.5">
+                <a href="tel:+6285123456789" class="text-sm font-semibold flex items-center gap-2" style="color: var(--teal);">
+                  📱 +62 851-2345-6789 (Bu Siti)
+                </a>
+                <a href="tel:+6285987654321" class="text-sm font-semibold flex items-center gap-2" style="color: var(--teal);">
+                  📱 +62 859-8765-4321 (Bu Rina)
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini health tip card -->
+        <div class="rounded-3xl p-6 relative overflow-hidden" style="background: linear-gradient(135deg, var(--teal), var(--mint));">
+          <div class="absolute -right-4 -bottom-4 text-8xl opacity-20">🌿</div>
+          <h3 class="font-bold text-lg text-white mb-2">Tips Kesehatan</h3>
+          <p class="text-sm text-white opacity-85 leading-relaxed">
+            Pastikan balita Anda datang ke posyandu setiap bulan untuk pemantauan pertumbuhan yang optimal dan deteksi dini masalah kesehatan.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== TIM ===================== -->
+<section id="tim" class="py-24 bg-white relative overflow-hidden">
+  <div class="absolute top-0 right-0 w-72 h-72 opacity-5 blob1 floating-slow" style="background: var(--teal); transform: translate(20%, -20%);"></div>
+  <div class="absolute bottom-10 left-10 w-40 h-40 opacity-5 blob2 floating-rev" style="background: var(--gold);"></div>
+  <div class="absolute top-1/2 left-5 text-4xl opacity-10 floating" style="color: var(--teal);">♥️</div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16 reveal">
+      <div class="section-badge">👩‍⚕️ Tim Kami</div>
+      <h2 class="text-4xl sm:text-5xl font-black mb-4" style="color: var(--deep);">
+        Orang-Orang di Balik<br/><span class="gradient-text">Posyandu Melati Sehat</span>
+      </h2>
+      <p class="text-lg max-w-lg mx-auto" style="color: rgba(2,52,48,0.6);">
+        Tim kader dan tenaga kesehatan kami yang berdedikasi, berpengalaman, dan penuh kasih.
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <!-- Team member cards -->
+      <div class="reveal card-hover rounded-3xl overflow-hidden border text-center" style="border-color: rgba(62,207,142,0.15); background: var(--cream);">
+        <div class="h-36 relative" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0);">
+          <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-lg" style="background: white; border: 4px solid white;">👩‍⚕️</div>
+        </div>
+        <div class="pt-12 pb-6 px-4">
+          <h3 class="font-bold text-base mb-0.5" style="color: var(--deep);">dr. Sari Dewi</h3>
+          <p class="text-sm mb-3" style="color: var(--teal);">Dokter Koordinator</p>
+          <p class="text-xs leading-relaxed" style="color: rgba(2,52,48,0.6);">15 tahun pengalaman di bidang kesehatan ibu dan anak. Lulusan FK UGM.</p>
+        </div>
+      </div>
+
+      <div class="reveal card-hover rounded-3xl overflow-hidden border text-center" style="border-color: rgba(62,207,142,0.15); background: var(--cream);">
+        <div class="h-36 relative" style="background: linear-gradient(135deg, #fce7f3, #fbcfe8);">
+          <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-lg" style="background: white; border: 4px solid white;">👩‍🍼</div>
+        </div>
+        <div class="pt-12 pb-6 px-4">
+          <h3 class="font-bold text-base mb-0.5" style="color: var(--deep);">Bd. Rina Wulandari</h3>
+          <p class="text-sm mb-3" style="color: #db2777;">Bidan Desa</p>
+          <p class="text-xs leading-relaxed" style="color: rgba(2,52,48,0.6);">Spesialis KIA dengan 10 tahun pengalaman mendampingi ibu hamil dan menyusui.</p>
+        </div>
+      </div>
+
+      <div class="reveal card-hover rounded-3xl overflow-hidden border text-center" style="border-color: rgba(62,207,142,0.15); background: var(--cream);">
+        <div class="h-36 relative" style="background: linear-gradient(135deg, #fef3c7, #fde68a);">
+          <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-lg" style="background: white; border: 4px solid white;">🧑‍⚕️</div>
+        </div>
+        <div class="pt-12 pb-6 px-4">
+          <h3 class="font-bold text-base mb-0.5" style="color: var(--deep);">Ns. Agus Santoso</h3>
+          <p class="text-sm mb-3" style="color: #d97706;">Perawat Komunitas</p>
+          <p class="text-xs leading-relaxed" style="color: rgba(2,52,48,0.6);">Ahli kesehatan lansia dan pengelolaan penyakit tidak menular di komunitas.</p>
+        </div>
+      </div>
+
+      <div class="reveal card-hover rounded-3xl overflow-hidden border text-center" style="border-color: rgba(62,207,142,0.15); background: var(--cream);">
+        <div class="h-36 relative" style="background: linear-gradient(135deg, #ede9fe, #ddd6fe);">
+          <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-lg" style="background: white; border: 4px solid white;">👩‍💼</div>
+        </div>
+        <div class="pt-12 pb-6 px-4">
+          <h3 class="font-bold text-base mb-0.5" style="color: var(--deep);">Bu Siti Aminah</h3>
+          <p class="text-sm mb-3" style="color: #7c3aed;">Ketua Kader</p>
+          <p class="text-xs leading-relaxed" style="color: rgba(2,52,48,0.6);">Kader senior yang telah mengabdi sejak 2008. Motor penggerak posyandu.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== TESTIMONI ===================== -->
+<section class="py-24 relative overflow-hidden" style="background: var(--cream);">
+  <div class="absolute inset-0 dot-pattern opacity-20 pointer-events-none"></div>
+  <div class="absolute top-10 left-10 text-6xl opacity-[0.03] floating-rev" style="color: var(--teal);">❝</div>
+  <div class="absolute bottom-10 right-10 text-6xl opacity-[0.03] floating" style="color: var(--teal);">❞</div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="text-center mb-16 reveal">
+      <div class="section-badge">💬 Kata Mereka</div>
+      <h2 class="text-4xl sm:text-5xl font-black" style="color: var(--deep);">
+        Kepercayaan <span class="gradient-text">Masyarakat</span>
+      </h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <div class="testimonial-card reveal card-hover">
+        <div class="pt-6">
+          <p class="text-sm leading-relaxed mb-6" style="color: rgba(2,52,48,0.75);">
+            "Posyandu Melati Sehat benar-benar membantu saya memantau tumbuh kembang anak. Petugasnya ramah, sabar, dan profesional. Anak saya selalu ditimbang dan diperiksa dengan teliti."
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-xl" style="background: #d1fae5;">👩</div>
+            <div>
+              <div class="font-bold text-sm" style="color: var(--deep);">Ibu Fatimah</div>
+              <div class="text-xs" style="color: rgba(2,52,48,0.5);">Warga RT 03 • Ibu 2 anak</div>
+            </div>
+            <div class="ml-auto text-yellow-400 text-sm">★★★★★</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card reveal card-hover">
+        <div class="pt-6">
+          <p class="text-sm leading-relaxed mb-6" style="color: rgba(2,52,48,0.75);">
+            "Pemeriksaan kehamilan saya selalu dilakukan dengan baik di sini. Bidannya sangat berpengalaman dan memberikan banyak informasi yang berguna. Sangat direkomendasikan!"
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-xl" style="background: #fce7f3;">🤰</div>
+            <div>
+              <div class="font-bold text-sm" style="color: var(--deep);">Ibu Riani</div>
+              <div class="text-xs" style="color: rgba(2,52,48,0.5);">Warga RT 07 • Ibu hamil anak ke-3</div>
+            </div>
+            <div class="ml-auto text-yellow-400 text-sm">★★★★★</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card reveal card-hover">
+        <div class="pt-6">
+          <p class="text-sm leading-relaxed mb-6" style="color: rgba(2,52,48,0.75);">
+            "Sebagai lansia, saya rutin datang untuk cek tensi dan gula darah. Pelayanannya cepat, gratis, dan petugasnya selalu ceria. Terima kasih Posyandu Melati Sehat!"
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-xl" style="background: #dbeafe;">👴</div>
+            <div>
+              <div class="font-bold text-sm" style="color: var(--deep);">Pak Suroso</div>
+              <div class="text-xs" style="color: rgba(2,52,48,0.5);">Warga RT 01 • 68 tahun</div>
+            </div>
+            <div class="ml-auto text-yellow-400 text-sm">★★★★★</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== FORM DAFTAR ===================== -->
+<section id="daftar" class="py-24 relative overflow-hidden" style="background: var(--cream);">
+  <!-- Background decoration -->
+  <div class="absolute top-0 right-0 w-96 h-96 blob1 opacity-[0.03]" style="background: var(--teal); transform: translate(30%, -30%);"></div>
+  <div class="absolute bottom-0 left-0 w-80 h-80 blob2 opacity-[0.03]" style="background: var(--mint); transform: translate(-30%, 30%);"></div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="reveal rounded-[2.5rem] overflow-hidden shadow-2xl bg-white flex flex-col lg:flex-row border" style="border-color: rgba(62,207,142,0.2);">
+
+      <!-- Left Side: Info & Graphic -->
+      <div class="lg:w-5/12 p-10 sm:p-14 relative flex flex-col justify-center overflow-hidden" style="background: linear-gradient(135deg, #023430 0%, #0f9a7b 100%);">
+        <div class="absolute inset-0 dot-pattern opacity-10 pointer-events-none"></div>
+        <!-- Decorative glowing circles -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-[#3ecf8e] opacity-20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+
+        <div class="relative z-10 text-white">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold mb-6" style="background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9); letter-spacing: 0.08em; backdrop-filter: blur(10px);">
+            📋 PENDAFTARAN ONLINE
+          </div>
+          <h2 class="text-4xl sm:text-5xl font-black mb-4 leading-tight" style="font-family: 'Inter', sans-serif;">
+            Daftar <br/><span style="color: #86efac;">Kunjungan</span>
+          </h2>
+          <p class="text-sm leading-relaxed mb-8 opacity-80">
+            Hindari antrean panjang dengan mendaftar secara online. Isi formulir ini dan kader kami akan segera mengonfirmasi jadwal Anda.
+          </p>
+
+          <div class="space-y-5 mb-8">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);">⏱️</div>
+              <div>
+                <h4 class="font-bold text-sm">Lebih Cepat & Praktis</h4>
+                <p class="text-xs opacity-70 mt-0.5">Langsung dilayani sesuai jadwal kedatangan</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);">📱</div>
+              <div>
+                <h4 class="font-bold text-sm">Notifikasi WhatsApp</h4>
+                <p class="text-xs opacity-70 mt-0.5">Pengingat jadwal akan dikirimkan ke HP Anda</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);">🩺</div>
+              <div>
+                <h4 class="font-bold text-sm">Rekam Medis Terpantau</h4>
+                <p class="text-xs opacity-70 mt-0.5">Riwayat kesehatan tersimpan aman dan rapi</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side: Interactive Form -->
+      <div class="lg:w-7/12 p-8 sm:p-12 lg:p-14 relative bg-white">
+        
+        <form class="space-y-6" id="daftarForm" onsubmit="handleSubmitInteractive(event)">
+          <!-- Jenis Layanan (Interactive Radio Buttons) -->
+          <div>
+            <label class="block text-sm font-bold mb-3" style="color: var(--deep);">Layanan yang dibutuhkan *</label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <label class="relative cursor-pointer group">
+                <input type="radio" name="layanan" value="bayi" class="peer sr-only" required>
+                <div class="rounded-xl border-2 p-3 text-center transition-all peer-checked:border-[#3ecf8e] peer-checked:bg-[#3ecf8e]/10 hover:bg-gray-50" style="border-color: #f3f4f6;">
+                  <div class="text-2xl mb-1 transform group-hover:scale-110 transition-transform">👶</div>
+                  <div class="text-xs font-semibold" style="color: var(--deep);">Bayi & Balita</div>
+                </div>
+              </label>
+              <label class="relative cursor-pointer group">
+                <input type="radio" name="layanan" value="hamil" class="peer sr-only">
+                <div class="rounded-xl border-2 p-3 text-center transition-all peer-checked:border-[#3ecf8e] peer-checked:bg-[#3ecf8e]/10 hover:bg-gray-50" style="border-color: #f3f4f6;">
+                  <div class="text-2xl mb-1 transform group-hover:scale-110 transition-transform">🤰</div>
+                  <div class="text-xs font-semibold" style="color: var(--deep);">Ibu Hamil</div>
+                </div>
+              </label>
+              <label class="relative cursor-pointer group">
+                <input type="radio" name="layanan" value="imunisasi" class="peer sr-only">
+                <div class="rounded-xl border-2 p-3 text-center transition-all peer-checked:border-[#3ecf8e] peer-checked:bg-[#3ecf8e]/10 hover:bg-gray-50" style="border-color: #f3f4f6;">
+                  <div class="text-2xl mb-1 transform group-hover:scale-110 transition-transform">💉</div>
+                  <div class="text-xs font-semibold" style="color: var(--deep);">Imunisasi</div>
+                </div>
+              </label>
+              <label class="relative cursor-pointer group">
+                <input type="radio" name="layanan" value="lansia" class="peer sr-only">
+                <div class="rounded-xl border-2 p-3 text-center transition-all peer-checked:border-[#3ecf8e] peer-checked:bg-[#3ecf8e]/10 hover:bg-gray-50" style="border-color: #f3f4f6;">
+                  <div class="text-2xl mb-1 transform group-hover:scale-110 transition-transform">👴</div>
+                  <div class="text-xs font-semibold" style="color: var(--deep);">Lansia</div>
+                </div>
+              </label>
+              <label class="relative cursor-pointer group">
+                <input type="radio" name="layanan" value="gizi" class="peer sr-only">
+                <div class="rounded-xl border-2 p-3 text-center transition-all peer-checked:border-[#3ecf8e] peer-checked:bg-[#3ecf8e]/10 hover:bg-gray-50" style="border-color: #f3f4f6;">
+                  <div class="text-2xl mb-1 transform group-hover:scale-110 transition-transform">🥗</div>
+                  <div class="text-xs font-semibold" style="color: var(--deep);">Konsul Gizi</div>
+                </div>
+              </label>
+              <label class="relative cursor-pointer group">
+                <input type="radio" name="layanan" value="lainnya" class="peer sr-only">
+                <div class="rounded-xl border-2 p-3 text-center transition-all peer-checked:border-[#3ecf8e] peer-checked:bg-[#3ecf8e]/10 hover:bg-gray-50" style="border-color: #f3f4f6;">
+                  <div class="text-2xl mb-1 transform group-hover:scale-110 transition-transform">🏥</div>
+                  <div class="text-xs font-semibold" style="color: var(--deep);">Lainnya</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-5 pt-2">
+            <!-- Floating label input -->
+            <div class="relative">
+              <input type="text" id="nama" class="peer w-full px-4 py-3.5 rounded-xl border-2 outline-none transition-all placeholder-transparent focus:border-[#3ecf8e]" style="border-color: #e5e7eb; color: var(--deep); background: #fdfdfd;" placeholder="Nama Lengkap" required />
+              <label for="nama" class="absolute left-4 -top-2.5 bg-white px-1 text-xs font-bold text-gray-500 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-normal peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-[#0f9a7b] peer-focus:font-bold">Nama Lengkap *</label>
+            </div>
+            
+            <div class="relative">
+              <input type="tel" id="telp" class="peer w-full px-4 py-3.5 rounded-xl border-2 outline-none transition-all placeholder-transparent focus:border-[#3ecf8e]" style="border-color: #e5e7eb; color: var(--deep); background: #fdfdfd;" placeholder="Nomor WhatsApp" required />
+              <label for="telp" class="absolute left-4 -top-2.5 bg-white px-1 text-xs font-bold text-gray-500 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-normal peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-[#0f9a7b] peer-focus:font-bold">Nomor WhatsApp *</label>
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div class="relative">
+              <input type="text" id="alamat" class="peer w-full px-4 py-3.5 rounded-xl border-2 outline-none transition-all placeholder-transparent focus:border-[#3ecf8e]" style="border-color: #e5e7eb; color: var(--deep); background: #fdfdfd;" placeholder="Alamat / RT RW" required />
+              <label for="alamat" class="absolute left-4 -top-2.5 bg-white px-1 text-xs font-bold text-gray-500 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-normal peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-[#0f9a7b] peer-focus:font-bold">Alamat (RT/RW) *</label>
+            </div>
+            <div class="relative">
+              <!-- No placeholder trick for date since it behaves differently in browsers, using a simpler approach -->
+              <input type="date" id="tanggal" class="peer w-full px-4 py-3.5 rounded-xl border-2 outline-none transition-all focus:border-[#3ecf8e]" style="border-color: #e5e7eb; color: var(--deep); background: #fdfdfd;" required />
+              <label for="tanggal" class="absolute left-4 -top-2.5 bg-white px-1 text-xs font-bold text-[#0f9a7b]">Rencana Tanggal Hadir *</label>
+            </div>
+          </div>
+
+          <div class="relative">
+            <textarea id="catatan" rows="2" class="peer w-full px-4 py-3.5 rounded-xl border-2 outline-none transition-all placeholder-transparent focus:border-[#3ecf8e] resize-none" style="border-color: #e5e7eb; color: var(--deep); background: #fdfdfd;" placeholder="Keluhan / Catatan"></textarea>
+            <label for="catatan" class="absolute left-4 -top-2.5 bg-white px-1 text-xs font-bold text-gray-500 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-normal peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-[#0f9a7b] peer-focus:font-bold">Keluhan / Catatan (Opsional)</label>
+          </div>
+
+          <button type="submit" class="group relative w-full py-4 rounded-xl font-bold text-white text-sm transition-all overflow-hidden shadow-lg mt-2" style="background: linear-gradient(135deg, var(--teal), var(--mint)); box-shadow: 0 10px 25px rgba(62,207,142,0.3);">
+            <div class="absolute inset-0 w-full h-full bg-white opacity-0 group-hover:opacity-20 transition-opacity"></div>
+            <span class="relative flex items-center justify-center gap-2">
+              Kirim Pendaftaran
+              <svg class="w-5 h-5 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </span>
+          </button>
+        </form>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="hidden absolute inset-0 bg-white/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center lg:rounded-r-[2.5rem]">
+          <div class="w-12 h-12 border-4 border-gray-200 rounded-full animate-spin mb-4" style="border-top-color: var(--mint);"></div>
+          <p class="font-bold" style="color: var(--deep);">Memproses pendaftaran...</p>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="hidden absolute inset-0 bg-white z-30 flex flex-col items-center justify-center lg:rounded-r-[2.5rem] p-10 text-center">
+          <div class="w-20 h-20 rounded-full flex items-center justify-center mb-6 shadow-xl" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0);">
+            <svg class="w-10 h-10" style="color: var(--teal);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+          </div>
+          <h3 class="text-2xl font-black mb-3" style="color: var(--deep);">Pendaftaran Berhasil!</h3>
+          <p class="text-sm leading-relaxed mb-8 max-w-sm" style="color: rgba(2,52,48,0.65);">
+            Terima kasih telah mendaftar. Kader kami akan segera menghubungi nomor WhatsApp Anda untuk konfirmasi jadwal kunjungan.
+          </p>
+          <button onclick="resetForm()" class="btn-outline">Daftar Kunjungan Lain</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== KONTAK ===================== -->
+<section id="kontak" class="py-24 relative overflow-hidden" style="background: var(--cream);">
+  <!-- Decorative background -->
+  <div class="absolute -top-20 -left-20 w-64 h-64 rounded-full opacity-[0.03] floating-slow" style="background: var(--mint);"></div>
+  <div class="absolute top-20 right-10 w-16 h-16 rounded-full border-4 opacity-[0.03] floating-rev" style="border-color: var(--teal);"></div>
+  
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+    <div class="text-center mb-12 reveal">
+      <div class="section-badge">📍 Hubungi Kami</div>
+      <h2 class="text-4xl sm:text-5xl font-black" style="color: var(--deep);">
+        Kami Ada <span class="gradient-text">Untuk Anda</span>
+      </h2>
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      <div class="reveal card-hover text-center rounded-3xl p-8 border" style="background: white; border-color: rgba(62,207,142,0.15);">
+        <div class="w-14 h-14 rounded-2xl mx-auto mb-5 flex items-center justify-center text-3xl" style="background: rgba(62,207,142,0.12);">📍</div>
+        <h3 class="font-bold mb-2" style="color: var(--deep);">Alamat</h3>
+        <p class="text-sm leading-relaxed" style="color: rgba(2,52,48,0.65);">Balai RW 05, Jl. Melati No. 12, Purbalingga Lor, Purbalingga</p>
+      </div>
+
+      <div class="reveal card-hover text-center rounded-3xl p-8 border" style="background: white; border-color: rgba(62,207,142,0.15);">
+        <div class="w-14 h-14 rounded-2xl mx-auto mb-5 flex items-center justify-center text-3xl" style="background: rgba(62,207,142,0.12);">📱</div>
+        <h3 class="font-bold mb-2" style="color: var(--deep);">WhatsApp Kader</h3>
+        <a href="https://wa.me/6285123456789" class="text-sm font-medium" style="color: var(--teal);">+62 851-2345-6789</a>
+        <p class="text-xs mt-1" style="color: rgba(2,52,48,0.5);">Senin – Sabtu, 07:00 – 17:00</p>
+      </div>
+
+      <div class="reveal card-hover text-center rounded-3xl p-8 border" style="background: white; border-color: rgba(62,207,142,0.15);">
+        <div class="w-14 h-14 rounded-2xl mx-auto mb-5 flex items-center justify-center text-3xl" style="background: rgba(62,207,142,0.12);">📧</div>
+        <h3 class="font-bold mb-2" style="color: var(--deep);">Email</h3>
+        <a href="mailto:posyandu.melati@gmail.com" class="text-sm font-medium" style="color: var(--teal);">posyandu.melati@gmail.com</a>
+        <p class="text-xs mt-1" style="color: rgba(2,52,48,0.5);">Balasan dalam 1×24 jam</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="py-12 border-t" style="background: var(--deep); border-color: rgba(62,207,142,0.15);">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid sm:grid-cols-3 gap-10 mb-10">
+
+      <!-- Brand -->
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #0f9a7b, #3ecf8e);">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <rect x="8" y="2" width="4" height="16" rx="2" fill="white"/>
+              <rect x="2" y="8" width="16" height="4" rx="2" fill="white"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-sm text-white" style="font-family: 'Inter', sans-serif;">Posyandu Melati Sehat</div>
+            <div class="text-xs" style="color: rgba(255,255,255,0.4);">Purbalingga, Jawa Tengah</div>
+          </div>
+        </div>
+        <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">
+          Melayani dengan hati, menjaga kesehatan komunitas sejak 2012. Bersama kita sehat, bersama kita kuat.
+        </p>
+      </div>
+
+      <!-- Quick links -->
+      <div>
+        <h4 class="text-sm font-bold text-white mb-4">Tautan Cepat</h4>
+        <ul class="space-y-2">
+          <li><a href="#layanan" class="text-sm hover:text-white transition" style="color: rgba(255,255,255,0.55);">Layanan Kami</a></li>
+          <li><a href="#jadwal" class="text-sm hover:text-white transition" style="color: rgba(255,255,255,0.55);">Jadwal Pelayanan</a></li>
+          <li><a href="#tim" class="text-sm hover:text-white transition" style="color: rgba(255,255,255,0.55);">Tim Kami</a></li>
+          <li><a href="#daftar" class="text-sm hover:text-white transition" style="color: rgba(255,255,255,0.55);">Daftar Online</a></li>
+        </ul>
+      </div>
+
+      <!-- Info -->
+      <div>
+        <h4 class="text-sm font-bold text-white mb-4">Jam Operasional</h4>
+        <ul class="space-y-2 text-sm" style="color: rgba(255,255,255,0.55);">
+          <li>Senin – Jumat: 07:30 – 12:00</li>
+          <li>Sabtu: 07:30 – 11:00</li>
+          <li>Minggu & Libur: Tutup</li>
+          <li class="mt-3 text-xs" style="color: rgba(255,255,255,0.4);">*Sesuai jadwal kegiatan bulanan</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-3" style="border-color: rgba(255,255,255,0.1);">
+      <p class="text-xs" style="color: rgba(255,255,255,0.35);">© 2024 Posyandu Melati Sehat. Hak cipta dilindungi.</p>
+      <div class="flex items-center gap-1 text-xs" style="color: rgba(255,255,255,0.35);">
+        <span>Dibuat dengan</span>
+        <span style="color: #ff6b6b;">❤️</span>
+        <span>untuk masyarakat Indonesia</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Back to Top Button -->
+<button id="back-to-top" class="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-xl cursor-pointer hover:scale-110 active:scale-95" style="background: linear-gradient(135deg, var(--teal), var(--mint)); box-shadow: 0 8px 24px rgba(15,154,123,0.3);" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Kembali ke Atas">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 15l-6-6-6 6"/>
+  </svg>
+</button>
+
+<!-- ===================== SCRIPTS ===================== -->
+<script>
+  // Mobile menu toggle
+  const menuBtn = document.getElementById('menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+  });
+  // Close on link click
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.style.transitionDelay = (i % 6) * 80 + 'ms';
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // Navbar scroll effect
+  const nav = document.querySelector('nav');
+  const backToTopBtn = document.getElementById('back-to-top');
+  
+  window.addEventListener('scroll', () => {
+    // Navbar logic
+    if (window.scrollY > 50) {
+      nav.style.background = 'rgba(255,255,255,0.95)';
+      nav.style.boxShadow = '0 4px 24px rgba(0,0,0,0.06)';
+    } else {
+      nav.style.background = 'rgba(255,255,255,0.85)';
+      nav.style.boxShadow = 'none';
+    }
+
+    // Back to top button logic
+    if (window.scrollY > 300) {
+      backToTopBtn.classList.add('show');
+    } else {
+      backToTopBtn.classList.remove('show');
+    }
+  });
+
+  // Form submit interactive
+  function handleSubmitInteractive(e) {
+    e.preventDefault();
+    const form = e.target;
+    const loading = document.getElementById('loadingState');
+    const success = document.getElementById('successMessage');
+    
+    // Show loading
+    loading.classList.remove('hidden');
+    
+    // Simulate API call
+    setTimeout(() => {
+      loading.classList.add('hidden');
+      form.style.display = 'none';
+      success.classList.remove('hidden');
+      success.style.animation = 'slideUp 0.5s ease forwards';
+    }, 1500);
+  }
+
+  // Reset form
+  function resetForm() {
+    const form = document.getElementById('daftarForm');
+    const success = document.getElementById('successMessage');
+    
+    form.reset();
+    success.classList.add('hidden');
+    form.style.display = 'block';
+    form.style.animation = 'slideUp 0.5s ease forwards';
+  }
+
+  // Input focus glow
+  document.querySelectorAll('input, select, textarea').forEach(el => {
+    el.addEventListener('focus', () => {
+      el.style.borderColor = 'rgba(62,207,142,0.6)';
+      el.style.background = 'rgba(255,255,255,0.18)';
+    });
+    el.addEventListener('blur', () => {
+      el.style.borderColor = 'rgba(255,255,255,0.2)';
+      el.style.background = 'rgba(255,255,255,0.12)';
+    });
+  });
+
+  // Input placeholder color (CSS injection)
+  const style = document.createElement('style');
+  style.textContent = `
+    input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.45) !important; }
+    select option { background: #023430 !important; color: white !important; }
+    .schedule-row:hover { background: rgba(62,207,142,0.07); cursor: default; }
+  `;
+  document.head.appendChild(style);
+</script>
+
+</body>
+</html>
