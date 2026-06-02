@@ -1,59 +1,107 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Informasi Posyandu (SIP)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi **Sistem Informasi Posyandu (SIP)** adalah sistem manajemen data Posyandu dan Kependudukan berbasis web yang dibangun menggunakan **Laravel 12**. Aplikasi ini dirancang untuk memudahkan kader posyandu dan perangkat desa dalam mencatat, mengelola, dan memantau kesehatan masyarakat mulai dari bayi, balita, ibu hamil, hingga lansia.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 1. Manajemen Kependudukan
+- **Data Penduduk:** Menampilkan daftar seluruh penduduk di wilayah Posyandu.
+- **Data Ibu:** Pencatatan spesifik untuk ibu rumah tangga.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 2. Rekam Medis & Kesehatan
+Aplikasi ini menyediakan pencatatan komprehensif untuk berbagai kelompok sasaran Posyandu:
+- 🤰 **Ibu Hamil:** Pencatatan pemeriksaan kehamilan berkala, deteksi faktor resiko, dan pendataan suami.
+- 👶 **Bayi & Balita:** Pencatatan berat badan, tinggi badan, imunisasi, dan perkembangan balita.
+- 👵 **Lansia:** Pemantauan kesehatan lanjut usia.
+- 👩 **WUS (Wanita Usia Subur) & PUS (Pasangan Usia Subur):** Pemantauan kesehatan reproduksi.
 
-## Learning Laravel
+### 3. Modul Konten Web Publik (Landing Page)
+Sistem ini tidak hanya portal admin, melainkan berfungsi sebagai *Company Profile* atau portal informasi masyarakat:
+- **Berita & Artikel:** Publikasi berita atau pengumuman seputar kegiatan Posyandu.
+- **Galeri Kegiatan:** Dokumentasi foto kegiatan desa dan posyandu.
+- **Jadwal Pelayanan:** Informasi jadwal buka Posyandu di setiap RW/Dusun.
+- **Tim Kami:** Profil kader posyandu dan perangkat yang bertugas.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 4. Interaksi Masyarakat
+- **Buku Tamu:** Pencatatan kunjungan fisik maupun virtual.
+- **Laporan/Aduan Masyarakat:** Sistem pelaporan (aduan) online dari warga yang dapat ditindaklanjuti oleh pengurus (dilengkapi dengan pelacakan status laporan).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 5. Pengaturan & Laporan
+- **Export Excel:** Semua data penduduk, kesehatan, dan interaksi dapat diunduh dalam format `.xlsx`.
+- **Manajemen User (Role & Permission):** Pengaturan hak akses untuk Kader, Bidan, dan Administrator.
+- **Master Data Posyandu:** Mengelola data detail, wilayah Dusun, dan RW yang diampu oleh masing-masing posyandu.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🛠️ Teknologi yang Digunakan
 
-### Premium Partners
+- **Backend:** Laravel 12.x (PHP ^8.2)
+- **Frontend Admin:** Blade Templates + Tailwind CSS + Select2 + SweetAlert2
+- **Database:** MySQL / SQLite
+- **Autentikasi & Otorisasi:** Laravel Sanctum + Spatie Laravel Permission
+- **Export Data:** Maatwebsite Excel
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## ⚙️ Panduan Instalasi (Local Development)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 1. Kebutuhan Sistem
+Pastikan sistem Anda sudah menginstal:
+- PHP >= 8.2
+- Composer
+- Node.js & NPM
+- MySQL / MariaDB (via XAMPP / Laragon dll)
 
-## Code of Conduct
+### 2. Clone Repositori
+```bash
+git clone https://github.com/username/posyandu-banjar.git
+cd posyandu-banjar
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 3. Instalasi Dependensi
+Jalankan perintah berikut untuk menginstal dependensi PHP dan Node.js:
+```bash
+composer install
+npm install
+```
 
-## Security Vulnerabilities
+### 4. Konfigurasi Environment (`.env`)
+Salin file konfigurasi bawaan dan sesuaikan nama database Anda:
+```bash
+cp .env.example .env
+```
+Buka file `.env` dan atur koneksi database:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=posyandu_banjar
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 5. Generate Key & Migrasi Database
+Jalankan migrasi untuk membuat tabel beserta data awal (*seeder*):
+```bash
+php artisan key:generate
+php artisan migrate --seed
+```
 
-## License
+### 6. Build Aset Frontend
+```bash
+npm run build
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 7. Jalankan Server Lokal
+```bash
+php artisan serve
+```
+Akses aplikasi melalui *browser* di: `http://localhost:8000`
+
+---
+
+## 📄 Lisensi
+
+Aplikasi ini adalah perangkat lunak sumber terbuka yang dilisensikan di bawah [Lisensi MIT](https://opensource.org/licenses/MIT).
