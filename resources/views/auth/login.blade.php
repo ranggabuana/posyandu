@@ -227,8 +227,9 @@
     </div>
     
     <!-- Footer info -->
-    <div class="text-center mt-8">
-      <p class="text-xs font-medium opacity-40">© {{ date('Y') }} {{ config('app.name', 'Posyandu Banjar') }}. Hak cipta dilindungi.</p>
+    <div class="text-center mt-8 space-y-1">
+      <p class="text-xs font-medium opacity-40">© {{ date('Y') }} {{ config('app.name', 'Posyandu Banjar') }}. Hak cipta dilindungi. Versi 1.0.0</p>
+      <p class="text-xs font-medium opacity-40">Diciptakan oleh <span class="font-bold text-teal-600">Clasnet</span></p>
     </div>
   </div>
 

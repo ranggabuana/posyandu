@@ -1,17 +1,18 @@
 <footer class="bg-white border-t border-gray-200 py-4 px-6">
-    <div class="flex flex-col md:flex-row justify-between items-center">
-        <div class="text-gray-600 text-sm">
-            © {{ date('Y') }} Admin Dashboard. All rights reserved.
+    <div class="flex flex-col md:flex-row justify-between items-center text-gray-500 text-xs gap-3">
+        <div>
+            © {{ date('Y') }} {{ \App\Models\Pengaturan::where('key', 'nama_aplikasi')->value('value') ?? config('app.name', 'Posyandu Banjar') }}. Hak Cipta Dilindungi. Versi 1.0.0
         </div>
-        <div class="flex space-x-6 mt-2 md:mt-0">
-            <a href="#"
-                class="text-gray-500 hover:text-gray-700 text-sm">Privacy
-                Policy</a>
-            <a href="#"
-                class="text-gray-500 hover:text-gray-700 text-sm">Terms of
-                Service</a>
-            <a href="#"
-                class="text-gray-500 hover:text-gray-700 text-sm">Contact</a>
+        <div class="flex items-center gap-4 flex-wrap md:flex-nowrap">
+            <div>
+                Diciptakan oleh <span class="font-bold text-gray-700">Clasnet</span>
+            </div>
+            <span class="text-gray-300 hidden md:inline">|</span>
+            <div class="flex space-x-4">
+                <a href="#" class="hover:text-gray-700 text-xs">Privacy Policy</a>
+                <a href="#" class="hover:text-gray-700 text-xs">Terms of Service</a>
+                <a href="#" class="hover:text-gray-700 text-xs">Contact</a>
+            </div>
         </div>
     </div>
 </footer>

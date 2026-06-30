@@ -403,11 +403,13 @@
     </div>
 
     <div class="pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-3" style="border-color: rgba(255,255,255,0.1);">
-      <p class="text-xs" style="color: rgba(255,255,255,0.35);">© {{ date('Y') }} {{ $settings['nama_aplikasi'] ?? 'Posyandu Melati Sehat' }}. Hak cipta dilindungi.</p>
-      <div class="flex items-center gap-1 text-xs" style="color: rgba(255,255,255,0.35);">
-        <span>Dibuat dengan</span>
+      <p class="text-xs" style="color: rgba(255,255,255,0.35);">© {{ date('Y') }} {{ $settings['nama_aplikasi'] ?? 'Posyandu Melati Sehat' }}. Hak cipta dilindungi. Versi 1.0.0</p>
+      <div class="flex items-center gap-1.5 text-xs" style="color: rgba(255,255,255,0.35);">
+        <span>Diciptakan oleh</span>
+        <span class="font-bold text-[var(--mint)]">Clasnet</span>
+        <span class="opacity-50">&bull; Dibuat dengan</span>
         <span style="color: #ff6b6b;">❤️</span>
-        <span>untuk masyarakat Indonesia</span>
+        <span>untuk Indonesia</span>
       </div>
     </div>
   </div>
