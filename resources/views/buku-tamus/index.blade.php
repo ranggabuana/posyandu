@@ -46,12 +46,15 @@
                     <tr class="bg-gray-50">
                         @php
                             $columns = [
-                                'nama' => 'Nama',
-                                'instansi' => 'Instansi',
-                                'keperluan' => 'Keperluan',
+                                'nama' => 'Nama Lengkap',
+                                'jabatan' => 'Jabatan',
+                                'alamat' => 'Alamat',
+                                'keperluan' => 'Tujuan',
                                 'tanggal_kunjungan' => 'Tanggal',
-                                'jam_masuk' => 'Jam',
                             ];
+                            if (!auth()->user()->hasRole('posyandu')) {
+                                $columns['posyandu_id'] = 'Posyandu';
+                            }
                         @endphp
 
                         @foreach($columns as $field => $label)
@@ -73,18 +76,26 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($bukuTamus as $item)
                     <tr class="hover:bg-blue-50/30 transition duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-semibold text-gray-900">{{ $item->nama }}</div>
-                            @if($item->no_telepon)
-                                <div class="text-xs text-gray-500">{{ $item->no_telepon }}</div>
-                            @endif
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                            {{ $item->nama }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $item->instansi ?? '-' }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ Str::limit($item->keperluan, 40) }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ \Carbon\Carbon::parse($item->tanggal_kunjungan)->format('d/m/Y') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                            {{ $item->jam_masuk }} - {{ $item->jam_keluar ?? '...' }}
+                            {{ $item->jabatan ?? '-' }}
                         </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {{ $item->alamat ?? '-' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {{ Str::limit($item->keperluan, 40) }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {{ \Carbon\Carbon::parse($item->tanggal_kunjungan)->format('d/m/Y') }}
+                        </td>
+                        @if(!auth()->user()->hasRole('posyandu'))
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {{ $item->posyandu->nama ?? 'Umum/Semua' }}
+                        </td>
+                        @endif
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex justify-end gap-2">
                                 <a href="{{ route('buku-tamus.edit', $item) }}" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">

@@ -33,15 +33,23 @@ class LaporanMasyarakatExport implements FromQuery, WithHeadings, WithEvents, Wi
             ->select(
                 'laporan_masyarakats.nama_pelapor',
                 'laporan_masyarakats.nik_pelapor',
+                'laporan_masyarakats.no_telepon',
                 'laporan_masyarakats.isi_laporan',
                 'laporan_masyarakats.kategori',
                 'laporan_masyarakats.status',
                 'laporan_masyarakats.balasan',
+                'laporan_masyarakats.hari_tanggal',
+                'laporan_masyarakats.alamat',
                 'penduduks.dusun',
                 'penduduks.rw',
                 'penduduks.rt',
-                'laporan_masyarakats.created_at'
+                'laporan_masyarakats.created_at',
+                'laporan_masyarakats.posyandu_id'
             );
+
+        if (!empty($this->filters['posyandu_id'])) {
+            $query->where('laporan_masyarakats.posyandu_id', $this->filters['posyandu_id']);
+        }
 
         if (!empty($this->filters['search'])) {
             $s = $this->filters['search'];
@@ -67,11 +75,14 @@ class LaporanMasyarakatExport implements FromQuery, WithHeadings, WithEvents, Wi
 
     public function map($laporan): array
     {
-        return [
+        $data = [
+            $laporan->hari_tanggal ? \Carbon\Carbon::parse($laporan->hari_tanggal)->format('d/m/Y') : '-',
             $laporan->nama_pelapor,
             $laporan->nik_pelapor . " ",
-            $laporan->isi_laporan,
+            $laporan->no_telepon,
+            $laporan->alamat,
             $laporan->kategori,
+            $laporan->isi_laporan,
             $laporan->status,
             $laporan->balasan,
             $laporan->dusun,
@@ -79,29 +90,46 @@ class LaporanMasyarakatExport implements FromQuery, WithHeadings, WithEvents, Wi
             $laporan->rt,
             $laporan->created_at ? $laporan->created_at->format('d/m/Y H:i') : '-',
         ];
+
+        $user = auth()->user();
+        if (!($user && $user->hasRole('posyandu') && $user->posyandu_id)) {
+            $data[] = $laporan->posyandu->nama ?? 'Umum/Semua';
+        }
+
+        return $data;
     }
 
     public function columnFormats(): array
     {
         return [
-            'B' => NumberFormat::FORMAT_TEXT,
+            'C' => NumberFormat::FORMAT_TEXT,
         ];
     }
 
     public function headings(): array
     {
-        return [
-            'Nama Pelapor',
-            'NIK Pelapor',
-            'Isi Laporan',
-            'Kategori',
+        $headers = [
+            'Hari/Tanggal Kejadian',
+            'Nama Lengkap',
+            'No. KTP',
+            'No. HP',
+            'Alamat',
+            'Jenis Keperluan',
+            'Keterangan',
             'Status',
             'Balasan',
             'Dusun',
             'RW',
             'RT',
-            'Tanggal Laporan'
+            'Tanggal Masuk'
         ];
+
+        $user = auth()->user();
+        if (!($user && $user->hasRole('posyandu') && $user->posyandu_id)) {
+            $headers[] = 'Posyandu';
+        }
+
+        return $headers;
     }
 
     public function startCell(): string
@@ -111,16 +139,20 @@ class LaporanMasyarakatExport implements FromQuery, WithHeadings, WithEvents, Wi
 
     public function registerEvents(): array
     {
+        $user = auth()->user();
+        $isPosyandu = $user && $user->hasRole('posyandu') && $user->posyandu_id;
+        $maxCol = $isPosyandu ? 'M' : 'N';
+
         return [
-            BeforeSheet::class => function(BeforeSheet $event) {
+            BeforeSheet::class => function(BeforeSheet $event) use ($maxCol) {
                 // Title
-                $event->sheet->getDelegate()->mergeCells('A1:J1');
+                $event->sheet->getDelegate()->mergeCells("A1:{$maxCol}1");
                 $event->sheet->setCellValue('A1', 'LAPORAN DATA ADUAN MASYARAKAT');
                 $event->sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
                 $event->sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 
                 // Filters info
-                $event->sheet->getDelegate()->mergeCells('A2:J2');
+                $event->sheet->getDelegate()->mergeCells("A2:{$maxCol}2");
                 $filterDesc = "Filter: ";
                 $filterDesc .= "Dusun: " . ($this->filters['dusun'] ?? 'Semua') . " | ";
                 $filterDesc .= "RW: " . ($this->filters['rw'] ?? 'Semua') . " | ";
@@ -130,12 +162,12 @@ class LaporanMasyarakatExport implements FromQuery, WithHeadings, WithEvents, Wi
                 $event->sheet->getStyle('A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 
                 // Meta info
-                $event->sheet->getDelegate()->mergeCells('A3:J3');
+                $event->sheet->getDelegate()->mergeCells("A3:{$maxCol}3");
                 $event->sheet->setCellValue('A3', "Tanggal Cetak: " . now()->format('d/m/Y H:i'));
                 $event->sheet->getStyle('A3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             },
-            AfterSheet::class => function(AfterSheet $event) {
-                $headerRange = 'A5:J5';
+            AfterSheet::class => function(AfterSheet $event) use ($maxCol) {
+                $headerRange = "A5:{$maxCol}5";
                 $event->sheet->getStyle($headerRange)->applyFromArray([
                     'font' => [
                         'bold' => true,
@@ -154,10 +186,18 @@ class LaporanMasyarakatExport implements FromQuery, WithHeadings, WithEvents, Wi
                 $event->sheet->getDelegate()->getRowDimension('5')->setRowHeight(25);
 
                 $lastRow = $event->sheet->getHighestRow();
-                $dataRange = 'A5:J' . $lastRow;
+                $dataRange = "A5:{$maxCol}" . $lastRow;
                 $event->sheet->getStyle($dataRange)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
                 
-                $event->sheet->getStyle('G6:I' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                // Center align specific columns (Hari/Tanggal, KTP, Status, Dusun, RW, RT, Tanggal Masuk)
+                $event->sheet->getStyle('A6:A' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $event->sheet->getStyle('C6:C' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $event->sheet->getStyle('H6:H' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $event->sheet->getStyle('J6:L' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $event->sheet->getStyle('M6:M' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                if ($maxCol === 'N') {
+                    $event->sheet->getStyle('N6:N' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                }
             },
         ];
     }

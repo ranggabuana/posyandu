@@ -83,12 +83,13 @@
             <!-- Category Selection -->
             <div>
               <label class="block text-sm font-bold mb-4" style="color: var(--deep);">Pilih Jenis Keperluan *</label>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 @foreach([
-                  ['id' => 'pelayanan', 'icon' => '🩺', 'label' => 'Pelayanan'],
-                  ['id' => 'fasilitas', 'icon' => '🏢', 'label' => 'Fasilitas'],
-                  ['id' => 'saran', 'icon' => '💡', 'label' => 'Saran'],
-                  ['id' => 'lainnya', 'icon' => '🏥', 'label' => 'Lainnya']
+                  ['id' => 'Bidang Pendidikan', 'icon' => '🎓', 'label' => 'Pendidikan'],
+                  ['id' => 'Bidang Pekerjaan Umum', 'icon' => '🏗️', 'label' => 'Pekerjaan Umum'],
+                  ['id' => 'Bidang Perumahan Rakyat', 'icon' => '🏠', 'label' => 'Perumahan Rakyat'],
+                  ['id' => 'Bidang Trantibum Linmas', 'icon' => '🛡️', 'label' => 'Trantibum Linmas'],
+                  ['id' => 'Bidang Sosial', 'icon' => '🤝', 'label' => 'Sosial']
                 ] as $svc)
                 <label class="relative cursor-pointer group">
                   <input type="radio" name="kategori" value="{{ $svc['id'] }}" class="peer sr-only" required {{ old('kategori') == $svc['id'] ? 'checked' : '' }}>
@@ -103,32 +104,67 @@
             </div>
 
             <div class="grid sm:grid-cols-2 gap-6 pt-4">
+              <!-- Hari/Tanggal -->
+              <div class="relative">
+                <input type="date" name="hari_tanggal" id="hari_tanggal" value="{{ old('hari_tanggal') }}" 
+                       class="peer w-full px-5 py-4 rounded-2xl border-2 outline-none transition-all focus:border-mint @error('hari_tanggal') border-red-400 @enderror" 
+                       style="border-color: #f3f4f6; color: var(--deep); background: #fafafa;" required />
+                <label for="hari_tanggal" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-focus:text-teal">Hari / Tanggal *</label>
+                @error('hari_tanggal') <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p> @enderror
+              </div>
+
+              <!-- Nama Lengkap -->
               <div class="relative">
                 <input type="text" name="nama_pelapor" id="nama_pelapor" value="{{ old('nama_pelapor') }}" class="peer w-full px-5 py-4 rounded-2xl border-2 outline-none transition-all placeholder-transparent focus:border-mint @error('nama_pelapor') border-red-400 @enderror" style="border-color: #f3f4f6; color: var(--deep); background: #fafafa;" placeholder="Nama Lengkap" required />
-                <label for="nama_pelapor" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-bold peer-focus:-top-2.5 peer-focus:text-[10px] peer-focus:text-teal">Nama Pelapor *</label>
+                <label for="nama_pelapor" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-bold peer-focus:-top-2.5 peer-focus:text-[10px] peer-focus:text-teal">Nama Lengkap *</label>
                 @error('nama_pelapor') <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p> @enderror
               </div>
-              
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-6">
+              <!-- No. KTP -->
               <div class="relative">
                 <input type="text" name="nik_pelapor" id="nik_pelapor" value="{{ old('nik_pelapor') }}" 
                        maxlength="16" minlength="16" pattern="\d{16}"
-                       class="peer w-full px-5 py-4 rounded-2xl border-2 outline-none transition-all placeholder-transparent focus:border-mint @error('nik_pelapor') border-red-400 @enderror" style="border-color: #f3f4f6; color: var(--deep); background: #fafafa;" placeholder="NIK (16 Digit)" required />
-                <label for="nik_pelapor" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-bold peer-focus:-top-2.5 peer-focus:text-[10px] peer-focus:text-teal">NIK Pelapor (16 Digit) *</label>
+                       class="peer w-full px-5 py-4 rounded-2xl border-2 outline-none transition-all placeholder-transparent focus:border-mint @error('nik_pelapor') border-red-400 @enderror" style="border-color: #f3f4f6; color: var(--deep); background: #fafafa;" placeholder="No. KTP" required />
+                <label for="nik_pelapor" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-bold peer-focus:-top-2.5 peer-focus:text-[10px] peer-focus:text-teal">No. KTP (16 Digit) *</label>
                 @error('nik_pelapor') <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p> @enderror
+              </div>
+
+              <!-- No. HP -->
+              <div class="relative">
+                <input type="tel" name="no_telepon" id="no_telepon" value="{{ old('no_telepon') }}" 
+                       maxlength="20"
+                       class="peer w-full px-5 py-4 rounded-2xl border-2 outline-none transition-all placeholder-transparent focus:border-mint @error('no_telepon') border-red-400 @enderror" style="border-color: #f3f4f6; color: var(--deep); background: #fafafa;" placeholder="No. HP" required />
+                <label for="no_telepon" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-bold peer-focus:-top-2.5 peer-focus:text-[10px] peer-focus:text-teal">No. HP *</label>
+                @error('no_telepon') <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p> @enderror
               </div>
             </div>
 
+            <!-- Posyandu Dropdown -->
             <div class="relative">
-              <input type="tel" name="no_telepon" id="no_telepon" value="{{ old('no_telepon') }}" 
-                     maxlength="20"
-                     class="peer w-full px-5 py-4 rounded-2xl border-2 outline-none transition-all placeholder-transparent focus:border-mint @error('no_telepon') border-red-400 @enderror" style="border-color: #f3f4f6; color: var(--deep); background: #fafafa;" placeholder="No. Telepon" required />
-              <label for="no_telepon" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-bold peer-focus:-top-2.5 peer-focus:text-[10px] peer-focus:text-teal">No. Telepon / WhatsApp *</label>
-              @error('no_telepon') <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p> @enderror
+              <select name="posyandu_id" id="posyandu_id" class="peer w-full px-5 py-4 rounded-2xl border-2 outline-none appearance-none transition-all focus:border-mint bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_1.25rem_center] bg-no-repeat @error('posyandu_id') border-red-400 @enderror" style="border-color: #f3f4f6; color: var(--deep); background: #fafafa;" required>
+                <option value="">Pilih Posyandu</option>
+                @foreach($posyandus as $p)
+                  <option value="{{ $p->id }}" {{ old('posyandu_id') == $p->id ? 'selected' : '' }}>{{ $p->nama }}</option>
+                @endforeach
+              </select>
+              <label for="posyandu_id" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-focus:text-teal">Posyandu *</label>
+              @error('posyandu_id') <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p> @enderror
             </div>
 
+            <!-- Alamat -->
             <div class="relative">
-              <textarea name="isi_laporan" id="isi_laporan" rows="4" class="peer w-full px-5 py-4 rounded-2xl border-2 outline-none transition-all placeholder-transparent focus:border-mint resize-none @error('isi_laporan') border-red-400 @enderror" style="border-color: #f3f4f6; color: var(--deep); background: #fafafa;" placeholder="Isi Laporan" required>{{ old('isi_laporan') }}</textarea>
-              <label for="isi_laporan" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-bold peer-focus:-top-2.5 peer-focus:text-[10px] peer-focus:text-teal">Isi Laporan / Aduan *</label>
+              <input type="text" name="alamat" id="alamat" value="{{ old('alamat') }}" 
+                     class="peer w-full px-5 py-4 rounded-2xl border-2 outline-none transition-all placeholder-transparent focus:border-mint @error('alamat') border-red-400 @enderror" style="border-color: #f3f4f6; color: var(--deep); background: #fafafa;" placeholder="Alamat" required />
+              <label for="alamat" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-bold peer-focus:-top-2.5 peer-focus:text-[10px] peer-focus:text-teal">Alamat *</label>
+              @error('alamat') <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p> @enderror
+            </div>
+
+            <!-- Keterangan -->
+            <div class="relative">
+              <textarea name="isi_laporan" id="isi_laporan" rows="4" class="peer w-full px-5 py-4 rounded-2xl border-2 outline-none transition-all placeholder-transparent focus:border-mint resize-none @error('isi_laporan') border-red-400 @enderror" style="border-color: #f3f4f6; color: var(--deep); background: #fafafa;" placeholder="Keterangan" required>{{ old('isi_laporan') }}</textarea>
+              <label for="isi_laporan" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-bold peer-focus:-top-2.5 peer-focus:text-[10px] peer-focus:text-teal">Keterangan *</label>
               @error('isi_laporan') <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p> @enderror
             </div>
 
@@ -340,7 +376,13 @@ function buildCard(item, index) {
     var minutes = String(date.getMinutes()).padStart(2, '0');
     var formattedTime = hours + ':' + minutes;
 
-    var kategoriIcons = { 'pelayanan': '🩺', 'fasilitas': '🏢', 'saran': '💡', 'lainnya': '🏥' };
+    var kategoriIcons = { 
+        'Bidang Pendidikan': '🎓', 
+        'Bidang Pekerjaan Umum': '🏗️', 
+        'Bidang Perumahan Rakyat': '🏠', 
+        'Bidang Trantibum Linmas': '🛡️', 
+        'Bidang Sosial': '🤝' 
+    };
     var kategoriIcon = kategoriIcons[item.kategori] || '📋';
 
     // Progress steps
@@ -419,6 +461,18 @@ function buildCard(item, index) {
 
     // Card Body
     card += '<div class="px-6 md:px-8 pb-6 md:pb-8">';
+    card += '<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 text-xs text-gray-500 font-semibold">';
+    if (item.hari_tanggal) {
+        var htDate = new Date(item.hari_tanggal);
+        var htFormatted = htDate.getDate() + ' ' + months[htDate.getMonth()] + ' ' + htDate.getFullYear();
+        card += '<div><span class="block text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Hari / Tanggal Kejadian</span>' + htFormatted + '</div>';
+    }
+    if (item.alamat) {
+        card += '<div><span class="block text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Alamat</span>' + escapeHtml(item.alamat) + '</div>';
+    }
+    var posyanduName = (item.posyandu && item.posyandu.nama) ? item.posyandu.nama : '-';
+    card += '<div><span class="block text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Posyandu Tujuan</span>' + escapeHtml(posyanduName) + '</div>';
+    card += '</div>';
     card += '<div class="rounded-2xl p-4 mb-1" style="background: #fafafa; border: 1px solid #f3f4f6;">';
     card += '<p class="text-sm leading-relaxed text-gray-700">' + escapeHtml(item.isi_laporan) + '</p>';
     card += '</div>';

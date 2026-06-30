@@ -30,21 +30,24 @@ class BukuTamuExport implements FromQuery, WithHeadings, WithEvents, WithCustomS
     {
         $query = BukuTamu::query()
             ->select(
-                'nama',
-                'instansi',
-                'keperluan',
-                'no_telepon',
                 'tanggal_kunjungan',
-                'jam_masuk',
-                'jam_keluar',
+                'nama',
+                'jabatan',
+                'alamat',
+                'keperluan',
                 'keterangan'
             );
+
+        if (!empty($this->filters['posyandu_id'])) {
+            $query->where('posyandu_id', $this->filters['posyandu_id']);
+        }
 
         if (!empty($this->filters['search'])) {
             $s = $this->filters['search'];
             $query->where(function($q) use ($s) {
                 $q->where('nama', 'like', '%' . $s . '%')
-                  ->orWhere('instansi', 'like', '%' . $s . '%')
+                  ->orWhere('jabatan', 'like', '%' . $s . '%')
+                  ->orWhere('alamat', 'like', '%' . $s . '%')
                   ->orWhere('keperluan', 'like', '%' . $s . '%');
             });
         }
@@ -54,37 +57,45 @@ class BukuTamuExport implements FromQuery, WithHeadings, WithEvents, WithCustomS
 
     public function map($tamu): array
     {
-        return [
+        $data = [
+            $tamu->tanggal_kunjungan ? \Carbon\Carbon::parse($tamu->tanggal_kunjungan)->format('d/m/Y') : '-',
             $tamu->nama,
-            $tamu->instansi,
+            $tamu->jabatan,
+            $tamu->alamat,
             $tamu->keperluan,
-            $tamu->no_telepon . " ",
-            $tamu->tanggal_kunjungan,
-            $tamu->jam_masuk,
-            $tamu->jam_keluar,
             $tamu->keterangan,
         ];
+
+        $user = auth()->user();
+        if (!($user && $user->hasRole('posyandu') && $user->posyandu_id)) {
+            $data[] = $tamu->posyandu->nama ?? 'Umum/Semua';
+        }
+
+        return $data;
     }
 
     public function columnFormats(): array
     {
-        return [
-            'D' => NumberFormat::FORMAT_TEXT,
-        ];
+        return [];
     }
 
     public function headings(): array
     {
-        return [
-            'Nama',
-            'Instansi',
-            'Keperluan',
-            'No. Telepon',
-            'Tanggal Kunjungan',
-            'Jam Masuk',
-            'Jam Keluar',
-            'Keterangan'
+        $headers = [
+            'Tanggal',
+            'Nama Lengkap',
+            'Jabatan',
+            'Alamat',
+            'Tujuan',
+            'Kesan / Pesan'
         ];
+
+        $user = auth()->user();
+        if (!($user && $user->hasRole('posyandu') && $user->posyandu_id)) {
+            $headers[] = 'Posyandu';
+        }
+
+        return $headers;
     }
 
     public function startCell(): string
@@ -94,25 +105,29 @@ class BukuTamuExport implements FromQuery, WithHeadings, WithEvents, WithCustomS
 
     public function registerEvents(): array
     {
+        $user = auth()->user();
+        $isPosyandu = $user && $user->hasRole('posyandu') && $user->posyandu_id;
+        $maxCol = $isPosyandu ? 'F' : 'G';
+
         return [
-            BeforeSheet::class => function(BeforeSheet $event) {
-                $event->sheet->getDelegate()->mergeCells('A1:H1');
+            BeforeSheet::class => function(BeforeSheet $event) use ($maxCol) {
+                $event->sheet->getDelegate()->mergeCells("A1:{$maxCol}1");
                 $event->sheet->setCellValue('A1', 'LAPORAN DATA BUKU TAMU');
                 $event->sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
                 $event->sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 
-                $event->sheet->getDelegate()->mergeCells('A2:H2');
+                $event->sheet->getDelegate()->mergeCells("A2:{$maxCol}2");
                 $filterDesc = "Filter: ";
                 $filterDesc .= "Search: " . ($this->filters['search'] ?? '-');
                 $event->sheet->setCellValue('A2', $filterDesc);
                 $event->sheet->getStyle('A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 
-                $event->sheet->getDelegate()->mergeCells('A3:H3');
+                $event->sheet->getDelegate()->mergeCells("A3:{$maxCol}3");
                 $event->sheet->setCellValue('A3', "Tanggal Cetak: " . now()->format('d/m/Y H:i'));
                 $event->sheet->getStyle('A3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             },
-            AfterSheet::class => function(AfterSheet $event) {
-                $headerRange = 'A5:H5';
+            AfterSheet::class => function(AfterSheet $event) use ($maxCol) {
+                $headerRange = "A5:{$maxCol}5";
                 $event->sheet->getStyle($headerRange)->applyFromArray([
                     'font' => [
                         'bold' => true,
@@ -131,8 +146,11 @@ class BukuTamuExport implements FromQuery, WithHeadings, WithEvents, WithCustomS
                 $event->sheet->getDelegate()->getRowDimension('5')->setRowHeight(25);
 
                 $lastRow = $event->sheet->getHighestRow();
-                $dataRange = 'A5:H' . $lastRow;
+                $dataRange = "A5:{$maxCol}" . $lastRow;
                 $event->sheet->getStyle($dataRange)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+                
+                // Center align specific columns (Tanggal)
+                $event->sheet->getStyle('A6:A' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             },
         ];
     }

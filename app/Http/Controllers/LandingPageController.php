@@ -71,6 +71,7 @@ class LandingPageController extends Controller
     public function aduan()
     {
         $settings = Pengaturan::pluck('value', 'key');
+        $posyandus = Posyandu::orderBy('nama')->get();
         
         // Simple Math Captcha
         $n1 = rand(1, 9);
@@ -78,7 +79,7 @@ class LandingPageController extends Controller
         session(['captcha_result' => $n1 + $n2]);
         $captcha_question = "$n1 + $n2 = ?";
 
-        return view('public.aduan', compact('settings', 'captcha_question'));
+        return view('public.aduan', compact('settings', 'captcha_question', 'posyandus'));
     }
 
     public function refreshCaptcha()
@@ -92,17 +93,25 @@ class LandingPageController extends Controller
     public function submitAduan(Request $request)
     {
         $validated = $request->validate([
+            'posyandu_id' => 'required|exists:posyandus,id',
+            'hari_tanggal' => 'required|date',
             'nama_pelapor' => 'required|string|max:255',
             'nik_pelapor' => 'required|string|size:16',
             'no_telepon' => 'required|string|max:20',
+            'alamat' => 'required|string',
             'isi_laporan' => 'required|string',
             'kategori' => 'required|string|max:100',
             'foto_bukti' => 'nullable|image|max:2048',
             'captcha' => 'required|integer|in:' . session('captcha_result'),
         ], [
+            'posyandu_id.required' => 'Posyandu wajib dipilih.',
+            'posyandu_id.exists' => 'Posyandu tidak valid.',
             'nik_pelapor.size' => 'NIK harus berjumlah 16 digit.',
             'captcha.in' => 'Jawaban captcha salah.',
-            'no_telepon.required' => 'No. Telepon wajib diisi.',
+            'no_telepon.required' => 'No. HP wajib diisi.',
+            'hari_tanggal.required' => 'Hari/Tanggal wajib diisi.',
+            'hari_tanggal.date' => 'Format Hari/Tanggal tidak valid.',
+            'alamat.required' => 'Alamat wajib diisi.',
         ]);
 
         // Remove captcha from validated data — it's only for validation, not for storage
@@ -128,9 +137,9 @@ class LandingPageController extends Controller
             'nik' => 'required|string|size:16',
         ]);
 
-        $laporans = LaporanMasyarakat::where('nik_pelapor', $request->nik)
+        $laporans = LaporanMasyarakat::with('posyandu')->where('nik_pelapor', $request->nik)
             ->orderBy('created_at', 'desc')
-            ->get(['id', 'nama_pelapor', 'isi_laporan', 'kategori', 'status', 'balasan', 'created_at']);
+            ->get();
 
         return response()->json($laporans);
     }

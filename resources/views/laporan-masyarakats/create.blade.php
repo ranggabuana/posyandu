@@ -28,42 +28,72 @@
                     <div class="p-8 space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Nama Pelapor <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">Hari / Tanggal Kejadian <span class="text-red-500">*</span></label>
+                                <input type="date" name="hari_tanggal" value="{{ old('hari_tanggal') }}" required
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                                @error('hari_tanggal') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
                                 <input type="text" name="nama_pelapor" value="{{ old('nama_pelapor') }}" placeholder="Nama Lengkap" required
                                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
                                 @error('nama_pelapor') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
                             </div>
 
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">NIK Pelapor <span class="text-red-500">*</span></label>
-                                <input type="text" name="nik_pelapor" value="{{ old('nik_pelapor') }}" placeholder="16 Digit NIK" required
+                                <label class="block text-sm font-bold text-gray-700 mb-2">No. KTP <span class="text-red-500">*</span></label>
+                                <input type="text" name="nik_pelapor" value="{{ old('nik_pelapor') }}" placeholder="16 Digit No. KTP" required
+                                    maxlength="16" minlength="16" pattern="\d{16}"
                                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
                                 @error('nik_pelapor') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
                             </div>
 
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">No. Telepon</label>
-                                <input type="text" name="no_telepon" value="{{ old('no_telepon') }}" placeholder="No. Telepon / WhatsApp"
+                                <label class="block text-sm font-bold text-gray-700 mb-2">No. HP <span class="text-red-500">*</span></label>
+                                <input type="text" name="no_telepon" value="{{ old('no_telepon') }}" placeholder="No. HP / WhatsApp" required
                                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
                                 @error('no_telepon') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
                             </div>
 
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Kategori <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">Alamat <span class="text-red-500">*</span></label>
+                                <input type="text" name="alamat" value="{{ old('alamat') }}" placeholder="Alamat Lengkap" required
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                                @error('alamat') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">Jenis Keperluan <span class="text-red-500">*</span></label>
                                 <select name="kategori" required
                                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1rem_1rem] bg-[right_0.75rem_center] bg-no-repeat">
-                                    <option value="pelayanan" {{ old('kategori') == 'pelayanan' ? 'selected' : '' }}>Pelayanan</option>
-                                    <option value="infrastruktur" {{ old('kategori') == 'infrastruktur' ? 'selected' : '' }}>Infrastruktur</option>
-                                    <option value="kesehatan" {{ old('kategori') == 'kesehatan' ? 'selected' : '' }}>Kesehatan</option>
-                                    <option value="lainnya" {{ old('kategori') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
+                                    <option value="Bidang Pendidikan" {{ old('kategori') == 'Bidang Pendidikan' ? 'selected' : '' }}>Bidang Pendidikan</option>
+                                    <option value="Bidang Pekerjaan Umum" {{ old('kategori') == 'Bidang Pekerjaan Umum' ? 'selected' : '' }}>Bidang Pekerjaan Umum</option>
+                                    <option value="Bidang Perumahan Rakyat" {{ old('kategori') == 'Bidang Perumahan Rakyat' ? 'selected' : '' }}>Bidang Perumahan Rakyat</option>
+                                    <option value="Bidang Trantibum Linmas" {{ old('kategori') == 'Bidang Trantibum Linmas' ? 'selected' : '' }}>Bidang Trantibum Linmas</option>
+                                    <option value="Bidang Sosial" {{ old('kategori') == 'Bidang Sosial' ? 'selected' : '' }}>Bidang Sosial</option>
                                 </select>
                                 @error('kategori') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
                             </div>
+
+                            @if(!empty($posyandus) && count($posyandus) > 0)
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">Posyandu <span class="text-red-500">*</span></label>
+                                <select name="posyandu_id" required
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1rem_1rem] bg-[right_0.75rem_center] bg-no-repeat">
+                                    <option value="">Pilih Posyandu</option>
+                                    @foreach($posyandus as $p)
+                                        <option value="{{ $p->id }}" {{ old('posyandu_id') == $p->id ? 'selected' : '' }}>{{ $p->nama }}</option>
+                                    @endforeach
+                                </select>
+                                @error('posyandu_id') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
+                            </div>
+                            @endif
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Isi Laporan <span class="text-red-500">*</span></label>
-                            <textarea name="isi_laporan" rows="6" placeholder="Tulis aduan atau laporan secara lengkap..." required
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Keterangan <span class="text-red-500">*</span></label>
+                            <textarea name="isi_laporan" rows="6" placeholder="Tulis keterangan atau laporan secara lengkap..." required
                                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">{{ old('isi_laporan') }}</textarea>
                             @error('isi_laporan') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
                         </div>

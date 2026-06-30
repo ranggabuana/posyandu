@@ -53,13 +53,16 @@
                     <tr class="bg-gray-50">
                         @php
                             $columns = [
-                                'nama_pelapor' => 'Pelapor',
-                                'no_telepon' => 'No. Telepon',
-                                'kategori' => 'Kategori',
-                                'isi_laporan' => 'Isi Laporan',
+                                'nama_pelapor' => 'Nama Lengkap',
+                                'no_telepon' => 'No. HP',
+                                'kategori' => 'Jenis Keperluan',
+                                'isi_laporan' => 'Keterangan',
                                 'status' => 'Status',
                                 'created_at' => 'Tanggal Masuk',
                             ];
+                            if (!auth()->user()->hasRole('posyandu')) {
+                                $columns['posyandu_id'] = 'Posyandu';
+                            }
                         @endphp
 
                         @foreach($columns as $field => $label)
@@ -83,7 +86,7 @@
                     <tr class="hover:bg-blue-50/30 transition duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-semibold text-gray-900">{{ $item->nama_pelapor }}</div>
-                            <div class="text-xs text-gray-500">NIK: {{ $item->nik_pelapor }}</div>
+                            <div class="text-xs text-gray-500">KTP: {{ $item->nik_pelapor }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                             {{ $item->no_telepon ?? '-' }}
@@ -112,6 +115,11 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                             {{ $item->created_at->format('d-m-Y H:i') }}
                         </td>
+                        @if(!auth()->user()->hasRole('posyandu'))
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {{ $item->posyandu->nama ?? 'Umum/Semua' }}
+                        </td>
+                        @endif
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex justify-end gap-2">
                                 <a href="{{ route('laporan-masyarakats.edit', $item) }}" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit/Tanggapi">

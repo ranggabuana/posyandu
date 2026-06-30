@@ -29,26 +29,38 @@
                     <div class="p-8 space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label class="block text-sm font-bold text-gray-500 mb-1">Nama Pelapor</label>
+                                <label class="block text-sm font-bold text-gray-500 mb-1">Hari / Tanggal Kejadian</label>
+                                <p class="text-gray-900 font-semibold">{{ $laporanMasyarakat->hari_tanggal ? \Carbon\Carbon::parse($laporanMasyarakat->hari_tanggal)->translatedFormat('l, d F Y') : '-' }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-500 mb-1">Nama Lengkap</label>
                                 <p class="text-gray-900 font-semibold">{{ $laporanMasyarakat->nama_pelapor }}</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-bold text-gray-500 mb-1">NIK Pelapor</label>
+                                <label class="block text-sm font-bold text-gray-500 mb-1">No. KTP</label>
                                 <p class="text-gray-900 font-semibold">{{ $laporanMasyarakat->nik_pelapor ?? '-' }}</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-bold text-gray-500 mb-1">No. Telepon</label>
+                                <label class="block text-sm font-bold text-gray-500 mb-1">No. HP</label>
                                 <p class="text-gray-900 font-semibold">{{ $laporanMasyarakat->no_telepon ?? '-' }}</p>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-bold text-gray-500 mb-1">Alamat</label>
+                                <p class="text-gray-900 font-semibold">{{ $laporanMasyarakat->alamat ?? '-' }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-500 mb-1">Posyandu Tujuan</label>
+                                <p class="text-gray-900 font-semibold">{{ $laporanMasyarakat->posyandu->nama ?? '-' }}</p>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-gray-500 mb-1">Kategori</label>
+                            <label class="block text-sm font-bold text-gray-500 mb-1">Jenis Keperluan</label>
                             <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase">{{ $laporanMasyarakat->kategori }}</span>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-gray-500 mb-1">Pesan Laporan</label>
+                            <label class="block text-sm font-bold text-gray-500 mb-1">Keterangan</label>
                             <div class="p-4 bg-gray-50 rounded-xl border border-gray-200 text-gray-800">
                                 {{ $laporanMasyarakat->isi_laporan }}
                             </div>

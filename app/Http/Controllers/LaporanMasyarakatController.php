@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\LaporanMasyarakat;
+use App\Models\Posyandu;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LaporanMasyarakatExport;
-
 use App\Traits\HasHierarchicalFilter;
 
 class LaporanMasyarakatController extends Controller
@@ -15,9 +15,15 @@ class LaporanMasyarakatController extends Controller
 
     public function index(Request $request)
     {
-        $query = LaporanMasyarakat::query()
+        $user = auth()->user();
+        $query = LaporanMasyarakat::with('posyandu')
             ->leftJoin('penduduks', 'laporan_masyarakats.nik_pelapor', '=', 'penduduks.nik')
             ->select('laporan_masyarakats.*');
+            
+        // Scope to posyandu if the logged-in user belongs to one
+        if ($user && $user->hasRole('posyandu') && $user->posyandu_id) {
+            $query->where('laporan_masyarakats.posyandu_id', $user->posyandu_id);
+        }
             
         if ($request->search) {
             $query->where(function($q) use ($request) {
@@ -41,23 +47,45 @@ class LaporanMasyarakatController extends Controller
 
     public function create()
     {
-        return view('laporan-masyarakats.create');
+        $user = auth()->user();
+        $posyandus = [];
+        if (!($user && $user->hasRole('posyandu') && $user->posyandu_id)) {
+            $posyandus = Posyandu::orderBy('nama')->get();
+        }
+        return view('laporan-masyarakats.create', compact('posyandus'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $user = auth()->user();
+        $isPosyanduUser = $user && $user->hasRole('posyandu') && $user->posyandu_id;
+        
+        $rules = [
+            'hari_tanggal' => 'required|date',
             'nama_pelapor' => 'required|string|max:255',
-            'nik_pelapor' => 'required|string|max:20',
+            'nik_pelapor' => 'required|string|size:16',
             'no_telepon' => 'nullable|string|max:20',
+            'alamat' => 'required|string',
             'isi_laporan' => 'required|string',
             'kategori' => 'nullable|string|max:100',
             'foto_bukti' => 'nullable|image|max:2048',
             'status' => 'required|in:baru,diproses,selesai,ditolak',
+        ];
+
+        if (!$isPosyanduUser) {
+            $rules['posyandu_id'] = 'nullable|exists:posyandus,id';
+        }
+
+        $validated = $request->validate($rules, [
+            'nik_pelapor.size' => 'NIK harus berjumlah 16 digit.',
         ]);
 
         if ($request->hasFile('foto_bukti')) {
             $validated['foto_bukti'] = $request->file('foto_bukti')->store('laporan', 'public');
+        }
+
+        if ($isPosyanduUser) {
+            $validated['posyandu_id'] = $user->posyandu_id;
         }
 
         LaporanMasyarakat::create($validated);
@@ -66,11 +94,31 @@ class LaporanMasyarakatController extends Controller
 
     public function edit(LaporanMasyarakat $laporanMasyarakat)
     {
-        return view('laporan-masyarakats.edit', compact('laporanMasyarakat'));
+        $user = auth()->user();
+        if ($user && $user->hasRole('posyandu') && $user->posyandu_id) {
+            if ($laporanMasyarakat->posyandu_id != $user->posyandu_id) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+        
+        $posyandus = [];
+        if (!($user && $user->hasRole('posyandu') && $user->posyandu_id)) {
+            $posyandus = Posyandu::orderBy('nama')->get();
+        }
+        return view('laporan-masyarakats.edit', compact('laporanMasyarakat', 'posyandus'));
     }
 
     public function update(Request $request, LaporanMasyarakat $laporanMasyarakat)
     {
+        $user = auth()->user();
+        $isPosyanduUser = $user && $user->hasRole('posyandu') && $user->posyandu_id;
+        
+        if ($isPosyanduUser) {
+            if ($laporanMasyarakat->posyandu_id != $user->posyandu_id) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+
         $validated = $request->validate([
             'status' => 'required|in:baru,diproses,selesai,ditolak',
             'balasan' => 'nullable|string',
@@ -82,12 +130,24 @@ class LaporanMasyarakatController extends Controller
 
     public function destroy(LaporanMasyarakat $laporanMasyarakat)
     {
+        $user = auth()->user();
+        if ($user && $user->hasRole('posyandu') && $user->posyandu_id) {
+            if ($laporanMasyarakat->posyandu_id != $user->posyandu_id) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+
         $laporanMasyarakat->delete();
         return redirect()->route('laporan-masyarakats.index')->with('success', 'Data berhasil dihapus');
     }
 
     public function export(Request $request)
     {
-        return Excel::download(new LaporanMasyarakatExport($request->all()), 'laporan-masyarakats.xlsx');
+        $filters = $request->all();
+        $user = auth()->user();
+        if ($user && $user->hasRole('posyandu') && $user->posyandu_id) {
+            $filters['posyandu_id'] = $user->posyandu_id;
+        }
+        return Excel::download(new LaporanMasyarakatExport($filters), 'laporan-masyarakats.xlsx');
     }
 }
