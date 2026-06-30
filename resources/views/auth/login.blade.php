@@ -188,8 +188,11 @@
                 <div class="relative">
                     <input type="password" name="password" id="password" 
                         placeholder="Masukkan password" required
-                        class="form-input text-sm">
+                        class="form-input text-sm pr-12">
                     <i class="mdi mdi-lock input-icon"></i>
+                    <button type="button" id="toggle-password" class="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-gray-400 hover:text-teal-600 focus:outline-none" title="Lihat Password">
+                        <i class="mdi mdi-eye" id="toggle-password-icon"></i>
+                    </button>
                 </div>
                 @error('password')
                     <p class="text-red-500 text-xs mt-2 ml-1 flex items-center gap-1 font-medium">
@@ -239,6 +242,27 @@
         el.parentElement.querySelector('i').style.color = '#9ca3af';
       });
     });
+
+    // Toggle password visibility
+    const togglePasswordBtn = document.getElementById('toggle-password');
+    const togglePasswordIcon = document.getElementById('toggle-password-icon');
+    const passwordInput = document.getElementById('password');
+
+    if (togglePasswordBtn && passwordInput && togglePasswordIcon) {
+        togglePasswordBtn.addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                togglePasswordIcon.classList.remove('mdi-eye');
+                togglePasswordIcon.classList.add('mdi-eye-off');
+                togglePasswordBtn.title = "Sembunyikan Password";
+            } else {
+                passwordInput.type = 'password';
+                togglePasswordIcon.classList.remove('mdi-eye-off');
+                togglePasswordIcon.classList.add('mdi-eye');
+                togglePasswordBtn.title = "Lihat Password";
+            }
+        });
+    }
   </script>
 </body>
 </html>
