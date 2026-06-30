@@ -3,9 +3,9 @@
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold text-gray-800">Buku Tamu</h2>
         <div class="flex space-x-2">
-            <a href="{{ route('buku-tamus.export') }}" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2">
+            <button type="button" onclick="openExportModal()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2">
                 <i class="mdi mdi-file-excel"></i> Export Excel
-            </a>
+            </button>
             <a href="{{ route('buku-tamus.create') }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2">
                 <i class="mdi mdi-plus"></i> Tambah Data
             </a>
@@ -129,7 +129,83 @@
         </div>
     </div>
 
+    <!-- Export Excel Modal -->
+    <div id="export-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <!-- Backdrop overlay -->
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="closeExportModal()"></div>
+        
+        <!-- Modal container -->
+        <div class="flex min-h-screen items-center justify-center p-4 text-center">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-gray-100">
+                <!-- Header -->
+                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+                    <div class="flex items-center flex-row">
+                        <div class="p-2 bg-green-500/10 rounded-lg mr-3 flex items-center justify-center">
+                            <i class="mdi mdi-file-excel text-green-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">Export Excel Buku Tamu</h3>
+                    </div>
+                    <button type="button" onclick="closeExportModal()" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="mdi mdi-close text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Form -->
+                <form action="{{ route('buku-tamus.export') }}" method="GET">
+                    <div class="p-6 space-y-4">
+                        @if(!auth()->user()->hasRole('posyandu') && !empty($posyandus))
+                        <div>
+                            <label for="posyandu_id" class="block text-sm font-bold text-gray-700 mb-2">Pilih Posyandu</label>
+                            <select name="posyandu_id" id="posyandu_id"
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">
+                                <option value="">Semua Posyandu</option>
+                                @foreach($posyandus as $p)
+                                    <option value="{{ $p->id }}">{{ $p->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="start_date" class="block text-sm font-bold text-gray-700 mb-2">Tanggal Mulai</label>
+                                <input type="date" name="start_date" id="start_date"
+                                    class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">
+                            </div>
+                            <div>
+                                <label for="end_date" class="block text-sm font-bold text-gray-700 mb-2">Tanggal Selesai</label>
+                                <input type="date" name="end_date" id="end_date"
+                                    class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3 rounded-b-2xl">
+                        <button type="button" onclick="closeExportModal()"
+                            class="px-4 py-2 bg-white text-gray-700 font-semibold rounded-xl border border-gray-200 hover:bg-gray-50 transition">
+                            Batal
+                        </button>
+                        <button type="submit" onclick="closeExportModal()"
+                            class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-lg shadow-green-500/20 transition active:scale-[0.98] flex items-center justify-center gap-2">
+                            <i class="mdi mdi-download"></i>
+                            Export
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function openExportModal() {
+            document.getElementById('export-modal').classList.remove('hidden');
+        }
+
+        function closeExportModal() {
+            document.getElementById('export-modal').classList.add('hidden');
+        }
+
         function updateSort(field) {
             const form = document.getElementById('filter-form');
             const currentField = form.sort.value;

@@ -1,13 +1,14 @@
 <?php
-
+ 
 namespace App\Exports;
-
+ 
 use App\Models\BukuTamu;
+use App\Models\Posyandu;
+use App\Models\Pengaturan;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -16,48 +17,43 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
-
-class BukuTamuExport implements FromQuery, WithHeadings, WithEvents, WithCustomStartCell, ShouldAutoSize, WithMapping, WithColumnFormatting
+ 
+class BukuTamuExport implements FromQuery, WithHeadings, WithEvents, WithCustomStartCell, WithMapping, WithColumnFormatting
 {
     protected $filters;
-
+    protected $settings;
+    private $rowNumber = 0;
+ 
     public function __construct($filters = [])
     {
         $this->filters = $filters;
+        $this->settings = Pengaturan::pluck('value', 'key')->toArray();
     }
-
+ 
     public function query()
     {
-        $query = BukuTamu::query()
-            ->select(
-                'tanggal_kunjungan',
-                'nama',
-                'jabatan',
-                'alamat',
-                'keperluan',
-                'keterangan'
-            );
-
+        $query = BukuTamu::query();
+ 
         if (!empty($this->filters['posyandu_id'])) {
             $query->where('posyandu_id', $this->filters['posyandu_id']);
         }
-
-        if (!empty($this->filters['search'])) {
-            $s = $this->filters['search'];
-            $query->where(function($q) use ($s) {
-                $q->where('nama', 'like', '%' . $s . '%')
-                  ->orWhere('jabatan', 'like', '%' . $s . '%')
-                  ->orWhere('alamat', 'like', '%' . $s . '%')
-                  ->orWhere('keperluan', 'like', '%' . $s . '%');
-            });
+ 
+        if (!empty($this->filters['start_date'])) {
+            $query->whereDate('tanggal_kunjungan', '>=', $this->filters['start_date']);
         }
-
-        return $query->orderBy('tanggal_kunjungan', 'desc');
+ 
+        if (!empty($this->filters['end_date'])) {
+            $query->whereDate('tanggal_kunjungan', '<=', $this->filters['end_date']);
+        }
+ 
+        return $query->orderBy('tanggal_kunjungan', 'asc');
     }
-
+ 
     public function map($tamu): array
     {
-        $data = [
+        $this->rowNumber++;
+        return [
+            $this->rowNumber,
             $tamu->tanggal_kunjungan ? \Carbon\Carbon::parse($tamu->tanggal_kunjungan)->format('d/m/Y') : '-',
             $tamu->nama,
             $tamu->jabatan,
@@ -65,92 +61,119 @@ class BukuTamuExport implements FromQuery, WithHeadings, WithEvents, WithCustomS
             $tamu->keperluan,
             $tamu->keterangan,
         ];
-
-        $user = auth()->user();
-        if (!($user && $user->hasRole('posyandu') && $user->posyandu_id)) {
-            $data[] = $tamu->posyandu->nama ?? 'Umum/Semua';
-        }
-
-        return $data;
     }
-
+ 
     public function columnFormats(): array
     {
         return [];
     }
-
+ 
     public function headings(): array
     {
-        $headers = [
-            'Tanggal',
-            'Nama Lengkap',
-            'Jabatan',
-            'Alamat',
-            'Tujuan',
-            'Kesan / Pesan'
+        return [
+            'NO',
+            'TANGGAL',
+            'NAMA',
+            'JABATAN',
+            'ALAMAT',
+            'TUJUAN',
+            'KESAN/PESAN'
         ];
-
-        $user = auth()->user();
-        if (!($user && $user->hasRole('posyandu') && $user->posyandu_id)) {
-            $headers[] = 'Posyandu';
-        }
-
-        return $headers;
     }
-
+ 
     public function startCell(): string
     {
-        return 'A5';
+        return 'A7';
     }
-
+ 
     public function registerEvents(): array
     {
-        $user = auth()->user();
-        $isPosyandu = $user && $user->hasRole('posyandu') && $user->posyandu_id;
-        $maxCol = $isPosyandu ? 'F' : 'G';
-
         return [
-            BeforeSheet::class => function(BeforeSheet $event) use ($maxCol) {
-                $event->sheet->getDelegate()->mergeCells("A1:{$maxCol}1");
-                $event->sheet->setCellValue('A1', 'LAPORAN DATA BUKU TAMU');
-                $event->sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
-                $event->sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            BeforeSheet::class => function(BeforeSheet $event) {
+                $sheet = $event->sheet->getDelegate();
                 
-                $event->sheet->getDelegate()->mergeCells("A2:{$maxCol}2");
-                $filterDesc = "Filter: ";
-                $filterDesc .= "Search: " . ($this->filters['search'] ?? '-');
-                $event->sheet->setCellValue('A2', $filterDesc);
-                $event->sheet->getStyle('A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                // Merge cells A1:G1 for title
+                $sheet->mergeCells("A1:G1");
+                $sheet->setCellValue('A1', 'BUKU TAMU');
+                $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(11);
+                $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 
-                $event->sheet->getDelegate()->mergeCells("A3:{$maxCol}3");
-                $event->sheet->setCellValue('A3', "Tanggal Cetak: " . now()->format('d/m/Y H:i'));
-                $event->sheet->getStyle('A3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                // Fetch posyandu name dynamically
+                $posyanduName = '.............';
+                if (!empty($this->filters['posyandu_id'])) {
+                    $p = Posyandu::find($this->filters['posyandu_id']);
+                    if ($p) {
+                        $posyanduName = strtoupper($p->nama);
+                    }
+                }
+                
+                $desaName = strtoupper($this->settings['nama_desa'] ?? 'BANJAR');
+                $sheet->mergeCells("A2:G2");
+                if (str_starts_with($desaName, 'DESA')) {
+                    $sheet->setCellValue('A2', "POSYANDU {$posyanduName} {$desaName}");
+                } else {
+                    $sheet->setCellValue('A2', "POSYANDU {$posyanduName} DESA {$desaName}");
+                }
+                $sheet->getStyle('A2')->getFont()->setBold(true)->setSize(11);
+                $sheet->getStyle('A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+ 
+                // Merge empty rows 3 and 4
+                $sheet->mergeCells("A3:G3");
+                $sheet->mergeCells("A4:G4");
             },
-            AfterSheet::class => function(AfterSheet $event) use ($maxCol) {
-                $headerRange = "A5:{$maxCol}5";
-                $event->sheet->getStyle($headerRange)->applyFromArray([
+            AfterSheet::class => function(AfterSheet $event) {
+                $sheet = $event->sheet->getDelegate();
+                $lastRow = $sheet->getHighestRow();
+                
+                // Set Column Widths exactly as in buku tamu.xlsx
+                $sheet->getColumnDimension('A')->setWidth(8);
+                $sheet->getColumnDimension('B')->setWidth(23);
+                $sheet->getColumnDimension('C')->setWidth(30);
+                $sheet->getColumnDimension('D')->setWidth(23);
+                $sheet->getColumnDimension('E')->setWidth(31);
+                $sheet->getColumnDimension('F')->setWidth(26);
+                $sheet->getColumnDimension('G')->setWidth(38);
+                
+                // Table style range: from A7 to G[lastRow]
+                $tableRange = "A7:G" . ($lastRow < 7 ? 7 : $lastRow);
+                
+                // Set Borders to thin black, matching the template
+                $sheet->getStyle($tableRange)->applyFromArray([
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'],
+                        ],
+                    ],
+                ]);
+                
+                // Set Header styling at row 7
+                $sheet->getStyle('A7:G7')->applyFromArray([
                     'font' => [
                         'bold' => true,
-                        'color' => ['rgb' => 'FFFFFF'],
-                    ],
-                    'fill' => [
-                        'fillType' => Fill::FILL_SOLID,
-                        'startColor' => ['rgb' => '0F9A7B'],
+                        'size' => 11,
                     ],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
                         'vertical' => Alignment::VERTICAL_CENTER,
                     ],
                 ]);
-
-                $event->sheet->getDelegate()->getRowDimension('5')->setRowHeight(25);
-
-                $lastRow = $event->sheet->getHighestRow();
-                $dataRange = "A5:{$maxCol}" . $lastRow;
-                $event->sheet->getStyle($dataRange)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
                 
-                // Center align specific columns (Tanggal)
-                $event->sheet->getStyle('A6:A' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                // Style the header row height
+                $sheet->getRowDimension('7')->setRowHeight(25);
+                
+                // Alignments and text wrapping for data cells
+                if ($lastRow >= 8) {
+                    $sheet->getStyle("A8:A{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle("B8:B{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    
+                    // Left align columns C to G
+                    $sheet->getStyle("C8:G{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                    
+                    // V-align top and enable wrapText for all data rows
+                    $sheet->getStyle("A8:G{$lastRow}")->getAlignment()->setVertical(Alignment::VERTICAL_TOP);
+                    $sheet->getStyle("A8:G{$lastRow}")->getAlignment()->setWrapText(true);
+                }
             },
         ];
     }

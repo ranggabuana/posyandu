@@ -3,27 +3,31 @@
 namespace App\Exports;
 
 use App\Models\LaporanMasyarakat;
+use App\Models\Posyandu;
+use App\Models\Pengaturan;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
-use Maatwebsite\Excel\Events\AfterSheet;
-use Maatwebsite\Excel\Events\BeforeSheet;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Events\BeforeSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class LaporanMasyarakatExport implements FromQuery, WithHeadings, WithEvents, WithCustomStartCell, ShouldAutoSize, WithMapping, WithColumnFormatting
+class LaporanMasyarakatExport implements FromQuery, WithHeadings, WithEvents, WithCustomStartCell, WithMapping, WithColumnFormatting
 {
     protected $filters;
+    protected $settings;
+    private $rowNumber = 0;
 
     public function __construct($filters = [])
     {
         $this->filters = $filters;
+        $this->settings = Pengaturan::pluck('value', 'key')->toArray();
     }
 
     public function query()
@@ -43,12 +47,25 @@ class LaporanMasyarakatExport implements FromQuery, WithHeadings, WithEvents, Wi
                 'penduduks.dusun',
                 'penduduks.rw',
                 'penduduks.rt',
+                \DB::raw('COALESCE(laporan_masyarakats.no_kk, penduduks.no_kk) as no_kk'),
                 'laporan_masyarakats.created_at',
                 'laporan_masyarakats.posyandu_id'
             );
 
         if (!empty($this->filters['posyandu_id'])) {
             $query->where('laporan_masyarakats.posyandu_id', $this->filters['posyandu_id']);
+        }
+
+        if (!empty($this->filters['kategori'])) {
+            $query->where('laporan_masyarakats.kategori', $this->filters['kategori']);
+        }
+
+        if (!empty($this->filters['start_date'])) {
+            $query->whereDate('laporan_masyarakats.created_at', '>=', $this->filters['start_date']);
+        }
+
+        if (!empty($this->filters['end_date'])) {
+            $query->whereDate('laporan_masyarakats.created_at', '<=', $this->filters['end_date']);
         }
 
         if (!empty($this->filters['search'])) {
@@ -60,143 +77,174 @@ class LaporanMasyarakatExport implements FromQuery, WithHeadings, WithEvents, Wi
             });
         }
 
-        if (!empty($this->filters['dusun'])) {
-            $query->where('penduduks.dusun', $this->filters['dusun']);
-        }
-        if (!empty($this->filters['rw'])) {
-            $query->where('penduduks.rw', $this->filters['rw']);
-        }
-        if (!empty($this->filters['rt'])) {
-            $query->where('penduduks.rt', $this->filters['rt']);
-        }
-
-        return $query->orderBy('laporan_masyarakats.created_at', 'desc');
+        return $query->orderBy('laporan_masyarakats.created_at', 'asc');
     }
 
     public function map($laporan): array
     {
-        $data = [
+        $this->rowNumber++;
+        return [
+            $this->rowNumber,
             $laporan->hari_tanggal ? \Carbon\Carbon::parse($laporan->hari_tanggal)->format('d/m/Y') : '-',
             $laporan->nama_pelapor,
             $laporan->nik_pelapor . " ",
-            $laporan->no_telepon,
+            ($laporan->no_kk ?? '-') . " ",
             $laporan->alamat,
             $laporan->kategori,
             $laporan->isi_laporan,
-            $laporan->status,
-            $laporan->balasan,
-            $laporan->dusun,
-            $laporan->rw,
-            $laporan->rt,
-            $laporan->created_at ? $laporan->created_at->format('d/m/Y H:i') : '-',
         ];
-
-        $user = auth()->user();
-        if (!($user && $user->hasRole('posyandu') && $user->posyandu_id)) {
-            $data[] = $laporan->posyandu->nama ?? 'Umum/Semua';
-        }
-
-        return $data;
     }
 
     public function columnFormats(): array
     {
         return [
-            'C' => NumberFormat::FORMAT_TEXT,
+            'D' => NumberFormat::FORMAT_TEXT,
+            'E' => NumberFormat::FORMAT_TEXT,
         ];
     }
 
     public function headings(): array
     {
-        $headers = [
-            'Hari/Tanggal Kejadian',
-            'Nama Lengkap',
-            'No. KTP',
-            'No. HP',
-            'Alamat',
-            'Jenis Keperluan',
-            'Keterangan',
-            'Status',
-            'Balasan',
-            'Dusun',
-            'RW',
-            'RT',
-            'Tanggal Masuk'
+        return [
+            'NO',
+            'HARI/TGL',
+            'NAMA',
+            'NO KTP',
+            'NO KK',
+            'ALAMAT',
+            'JENIS PERMOHONAN',
+            'KETERANGAN'
         ];
-
-        $user = auth()->user();
-        if (!($user && $user->hasRole('posyandu') && $user->posyandu_id)) {
-            $headers[] = 'Posyandu';
-        }
-
-        return $headers;
     }
 
     public function startCell(): string
     {
-        return 'A5';
+        return 'A6';
     }
 
     public function registerEvents(): array
     {
-        $user = auth()->user();
-        $isPosyandu = $user && $user->hasRole('posyandu') && $user->posyandu_id;
-        $maxCol = $isPosyandu ? 'M' : 'N';
-
         return [
-            BeforeSheet::class => function(BeforeSheet $event) use ($maxCol) {
-                // Title
-                $event->sheet->getDelegate()->mergeCells("A1:{$maxCol}1");
-                $event->sheet->setCellValue('A1', 'LAPORAN DATA ADUAN MASYARAKAT');
-                $event->sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
-                $event->sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            BeforeSheet::class => function(BeforeSheet $event) {
+                $sheet = $event->sheet->getDelegate();
                 
-                // Filters info
-                $event->sheet->getDelegate()->mergeCells("A2:{$maxCol}2");
-                $filterDesc = "Filter: ";
-                $filterDesc .= "Dusun: " . ($this->filters['dusun'] ?? 'Semua') . " | ";
-                $filterDesc .= "RW: " . ($this->filters['rw'] ?? 'Semua') . " | ";
-                $filterDesc .= "RT: " . ($this->filters['rt'] ?? 'Semua') . " | ";
-                $filterDesc .= "Search: " . ($this->filters['search'] ?? '-');
-                $event->sheet->setCellValue('A2', $filterDesc);
-                $event->sheet->getStyle('A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                // Merge A2:H2 for the dynamic title
+                $sheet->mergeCells("A2:H2");
                 
-                // Meta info
-                $event->sheet->getDelegate()->mergeCells("A3:{$maxCol}3");
-                $event->sheet->setCellValue('A3', "Tanggal Cetak: " . now()->format('d/m/Y H:i'));
-                $event->sheet->getStyle('A3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $kategoriName = 'MASYARAKAT';
+                if (!empty($this->filters['kategori'])) {
+                    $kategoriName = strtoupper($this->filters['kategori']);
+                }
+                
+                if (str_starts_with($kategoriName, 'BIDANG')) {
+                    $title = "BUKU PELAYANAN {$kategoriName}";
+                } else {
+                    $title = "BUKU PELAYANAN BIDANG {$kategoriName}";
+                }
+                
+                $sheet->setCellValue('A2', $title);
+                $sheet->getStyle('A2')->getFont()->setBold(true)->setSize(14);
+                $sheet->getStyle('A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                
+                // Merge A3:H3 for Posyandu & Village info
+                $posyanduName = '.............';
+                if (!empty($this->filters['posyandu_id'])) {
+                    $p = Posyandu::find($this->filters['posyandu_id']);
+                    if ($p) {
+                        $posyanduName = strtoupper($p->nama);
+                    }
+                }
+                $desaName = strtoupper($this->settings['nama_desa'] ?? 'BANJAR');
+                $sheet->mergeCells("A3:H3");
+                
+                if (str_starts_with($desaName, 'DESA')) {
+                    $sheet->setCellValue('A3', "POSYANDU {$posyanduName} {$desaName}");
+                } else {
+                    $sheet->setCellValue('A3', "POSYANDU {$posyanduName} DESA {$desaName}");
+                }
+                $sheet->getStyle('A3')->getFont()->setBold(true)->setSize(14);
+                $sheet->getStyle('A3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+                // Row 4: A4 for Month / Period
+                $bulanText = '…...............................';
+                if (!empty($this->filters['start_date']) && !empty($this->filters['end_date'])) {
+                    $start = \Carbon\Carbon::parse($this->filters['start_date'])->locale('id');
+                    $end = \Carbon\Carbon::parse($this->filters['end_date'])->locale('id');
+                    if ($start->format('Y-m') === $end->format('Y-m')) {
+                        $bulanText = strtoupper($start->translatedFormat('F Y'));
+                    } else {
+                        $bulanText = strtoupper($start->translatedFormat('d F Y') . ' - ' . $end->translatedFormat('d F Y'));
+                    }
+                }
+                $sheet->setCellValue('A4', "BULAN : {$bulanText}");
+                $sheet->getStyle('A4')->getFont()->setBold(true)->setSize(11);
+                
+                // Row 5: Merge A5:C5 with thin bottom border
+                $sheet->mergeCells("A5:C5");
+                $sheet->getStyle('A5:C5')->applyFromArray([
+                    'borders' => [
+                        'bottom' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'],
+                        ]
+                    ]
+                ]);
             },
-            AfterSheet::class => function(AfterSheet $event) use ($maxCol) {
-                $headerRange = "A5:{$maxCol}5";
-                $event->sheet->getStyle($headerRange)->applyFromArray([
+            AfterSheet::class => function(AfterSheet $event) {
+                $sheet = $event->sheet->getDelegate();
+                $lastRow = $sheet->getHighestRow();
+                
+                // Set Column Widths exactly as in aduan.xlsx
+                $sheet->getColumnDimension('A')->setWidth(8);
+                $sheet->getColumnDimension('B')->setWidth(25);
+                $sheet->getColumnDimension('C')->setWidth(30);
+                $sheet->getColumnDimension('D')->setWidth(30);
+                $sheet->getColumnDimension('E')->setWidth(27);
+                $sheet->getColumnDimension('F')->setWidth(15);
+                $sheet->getColumnDimension('G')->setWidth(37);
+                $sheet->getColumnDimension('H')->setWidth(29);
+                
+                // Table style range: from A6 to H[lastRow]
+                $tableRange = "A6:H" . ($lastRow < 6 ? 6 : $lastRow);
+                
+                // Set Borders to thin black, matching the template
+                $sheet->getStyle($tableRange)->applyFromArray([
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'],
+                        ],
+                    ],
+                ]);
+                
+                // Set Header styling at row 6
+                $sheet->getStyle('A6:H6')->applyFromArray([
                     'font' => [
                         'bold' => true,
-                        'color' => ['rgb' => 'FFFFFF'],
-                    ],
-                    'fill' => [
-                        'fillType' => Fill::FILL_SOLID,
-                        'startColor' => ['rgb' => '0F9A7B'],
+                        'size' => 14,
                     ],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
                         'vertical' => Alignment::VERTICAL_CENTER,
                     ],
                 ]);
-
-                $event->sheet->getDelegate()->getRowDimension('5')->setRowHeight(25);
-
-                $lastRow = $event->sheet->getHighestRow();
-                $dataRange = "A5:{$maxCol}" . $lastRow;
-                $event->sheet->getStyle($dataRange)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
                 
-                // Center align specific columns (Hari/Tanggal, KTP, Status, Dusun, RW, RT, Tanggal Masuk)
-                $event->sheet->getStyle('A6:A' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('C6:C' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('H6:H' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('J6:L' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $event->sheet->getStyle('M6:M' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                if ($maxCol === 'N') {
-                    $event->sheet->getStyle('N6:N' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                // Style the header row height
+                $sheet->getRowDimension('6')->setRowHeight(25);
+                
+                // Alignments and text wrapping for data cells
+                if ($lastRow >= 7) {
+                    $sheet->getStyle("A7:A{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle("B7:B{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    $sheet->getStyle("D7:E{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    
+                    // Left align other columns
+                    $sheet->getStyle("C7:C{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                    $sheet->getStyle("F7:H{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                    
+                    // V-align top and enable wrapText
+                    $sheet->getStyle("A7:H{$lastRow}")->getAlignment()->setVertical(Alignment::VERTICAL_TOP);
+                    $sheet->getStyle("A7:H{$lastRow}")->getAlignment()->setWrapText(true);
                 }
             },
         ];

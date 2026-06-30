@@ -518,19 +518,17 @@
   document.querySelectorAll('input, select, textarea').forEach(el => {
     el.addEventListener('focus', () => {
       el.style.borderColor = 'rgba(62,207,142,0.6)';
-      el.style.background = 'rgba(255,255,255,0.18)';
     });
     el.addEventListener('blur', () => {
-      el.style.borderColor = 'rgba(255,255,255,0.2)';
-      el.style.background = 'rgba(255,255,255,0.12)';
+      el.style.borderColor = '';
     });
   });
 
   // Input placeholder color (CSS injection)
   const style = document.createElement('style');
   style.textContent = `
-    input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.45) !important; }
-    select option { background: #023430 !important; color: white !important; }
+    input::placeholder, textarea::placeholder { color: rgba(2, 52, 48, 0.4) !important; }
+    select option { background: #ffffff !important; color: #023430 !important; }
     .schedule-row:hover { background: rgba(62,207,142,0.07); cursor: default; }
   `;
   document.head.appendChild(style);

@@ -41,8 +41,21 @@ class LaporanMasyarakatController extends Controller
 
         $laporanMasyarakats = $query->orderBy($sortField, $sortDirection)->paginate($perPage)->withQueryString();
 
+        $posyandus = [];
+        if (!($user && $user->hasRole('posyandu') && $user->posyandu_id)) {
+            $posyandus = Posyandu::orderBy('nama')->get();
+        }
+ 
+        $kategories = [
+            'Bidang Pendidikan',
+            'Bidang Pekerjaan Umum',
+            'Bidang Perumahan Rakyat',
+            'Bidang Trantibum Linmas',
+            'Bidang Sosial',
+        ];
+ 
         $filters = $this->getHierarchicalFilterOptions($request);
-        return view('laporan-masyarakats.index', array_merge(compact('laporanMasyarakats'), $filters));
+        return view('laporan-masyarakats.index', array_merge(compact('laporanMasyarakats', 'posyandus', 'kategories'), $filters));
     }
 
     public function create()
@@ -64,6 +77,7 @@ class LaporanMasyarakatController extends Controller
             'hari_tanggal' => 'required|date',
             'nama_pelapor' => 'required|string|max:255',
             'nik_pelapor' => 'required|string|size:16',
+            'no_kk' => 'required|string|size:16',
             'no_telepon' => 'nullable|string|max:20',
             'alamat' => 'required|string',
             'isi_laporan' => 'required|string',
@@ -78,6 +92,8 @@ class LaporanMasyarakatController extends Controller
 
         $validated = $request->validate($rules, [
             'nik_pelapor.size' => 'NIK harus berjumlah 16 digit.',
+            'no_kk.required' => 'No. KK wajib diisi.',
+            'no_kk.size' => 'No. KK harus berjumlah 16 digit.',
         ]);
 
         if ($request->hasFile('foto_bukti')) {

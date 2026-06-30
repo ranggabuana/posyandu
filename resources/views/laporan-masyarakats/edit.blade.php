@@ -41,6 +41,10 @@
                                 <p class="text-gray-900 font-semibold">{{ $laporanMasyarakat->nik_pelapor ?? '-' }}</p>
                             </div>
                             <div>
+                                <label class="block text-sm font-bold text-gray-500 mb-1">No. KK</label>
+                                <p class="text-gray-900 font-semibold">{{ $laporanMasyarakat->no_kk ?? '-' }}</p>
+                            </div>
+                            <div>
                                 <label class="block text-sm font-bold text-gray-500 mb-1">No. HP</label>
                                 <p class="text-gray-900 font-semibold">{{ $laporanMasyarakat->no_telepon ?? '-' }}</p>
                             </div>

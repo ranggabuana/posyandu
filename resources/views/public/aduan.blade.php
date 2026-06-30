@@ -131,6 +131,17 @@
                 @error('nik_pelapor') <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p> @enderror
               </div>
 
+              <!-- No. KK -->
+              <div class="relative">
+                <input type="text" name="no_kk" id="no_kk" value="{{ old('no_kk') }}" 
+                       maxlength="16" minlength="16" pattern="\d{16}"
+                       class="peer w-full px-5 py-4 rounded-2xl border-2 outline-none transition-all placeholder-transparent focus:border-mint @error('no_kk') border-red-400 @enderror" style="border-color: #f3f4f6; color: var(--deep); background: #fafafa;" placeholder="No. KK" required />
+                <label for="no_kk" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-bold peer-focus:-top-2.5 peer-focus:text-[10px] peer-focus:text-teal">No. KK (16 Digit) *</label>
+                @error('no_kk') <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p> @enderror
+              </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-6">
               <!-- No. HP -->
               <div class="relative">
                 <input type="tel" name="no_telepon" id="no_telepon" value="{{ old('no_telepon') }}" 
@@ -139,18 +150,18 @@
                 <label for="no_telepon" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:font-bold peer-focus:-top-2.5 peer-focus:text-[10px] peer-focus:text-teal">No. HP *</label>
                 @error('no_telepon') <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p> @enderror
               </div>
-            </div>
 
-            <!-- Posyandu Dropdown -->
-            <div class="relative">
-              <select name="posyandu_id" id="posyandu_id" class="peer w-full px-5 py-4 rounded-2xl border-2 outline-none appearance-none transition-all focus:border-mint bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_1.25rem_center] bg-no-repeat @error('posyandu_id') border-red-400 @enderror" style="border-color: #f3f4f6; color: var(--deep); background: #fafafa;" required>
-                <option value="">Pilih Posyandu</option>
-                @foreach($posyandus as $p)
-                  <option value="{{ $p->id }}" {{ old('posyandu_id') == $p->id ? 'selected' : '' }}>{{ $p->nama }}</option>
-                @endforeach
-              </select>
-              <label for="posyandu_id" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-focus:text-teal">Posyandu *</label>
-              @error('posyandu_id') <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p> @enderror
+              <!-- Posyandu Dropdown -->
+              <div class="relative">
+                <select name="posyandu_id" id="posyandu_id" class="peer w-full px-5 py-4 rounded-2xl border-2 outline-none appearance-none transition-all focus:border-mint bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-[right_1.25rem_center] bg-no-repeat @error('posyandu_id') border-red-400 @enderror" style="border-color: #f3f4f6; color: var(--deep); background: #fafafa;" required>
+                  <option value="">Pilih Posyandu</option>
+                  @foreach($posyandus as $p)
+                    <option value="{{ $p->id }}" {{ old('posyandu_id') == $p->id ? 'selected' : '' }}>{{ $p->nama }}</option>
+                  @endforeach
+                </select>
+                <label for="posyandu_id" class="absolute left-5 -top-2.5 bg-white px-2 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all peer-focus:text-teal">Posyandu *</label>
+                @error('posyandu_id') <p class="text-[10px] text-red-500 mt-1 font-bold">{{ $message }}</p> @enderror
+              </div>
             </div>
 
             <!-- Alamat -->
@@ -456,6 +467,7 @@ function buildCard(item, index) {
     card += '<span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-gray-100 text-gray-500">' + escapeHtml(item.kategori) + '</span>';
     card += '</div>';
     card += '<p class="text-sm font-bold truncate" style="color: var(--deep);">' + escapeHtml(item.nama_pelapor) + '</p>';
+    card += '<p class="text-[10px] text-gray-500 font-medium mt-0.5">NIK: ' + escapeHtml(item.nik_pelapor) + (item.no_kk ? ' | KK: ' + escapeHtml(item.no_kk) : '') + '</p>';
     card += '<p class="text-[11px] text-gray-400 font-medium mt-0.5"><i class="mdi mdi-calendar-clock mr-1"></i>' + formattedDate + ' &bull; ' + formattedTime + '</p>';
     card += '</div></div></div>';
 

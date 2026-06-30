@@ -50,6 +50,14 @@
                             </div>
 
                             <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">No. KK <span class="text-red-500">*</span></label>
+                                <input type="text" name="no_kk" value="{{ old('no_kk') }}" placeholder="16 Digit No. KK" required
+                                    maxlength="16" minlength="16" pattern="\d{16}"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                                @error('no_kk') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
+                            </div>
+
+                            <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-2">No. HP <span class="text-red-500">*</span></label>
                                 <input type="text" name="no_telepon" value="{{ old('no_telepon') }}" placeholder="No. HP / WhatsApp" required
                                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">

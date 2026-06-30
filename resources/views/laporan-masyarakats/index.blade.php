@@ -2,9 +2,9 @@
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold text-gray-800">Laporan Masyarakat</h2>
         <div class="flex space-x-2">
-            <a href="{{ route('laporan-masyarakats.export') }}" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2">
+            <button type="button" onclick="openExportModal()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2">
                 <i class="mdi mdi-file-excel"></i> Export Excel
-            </a>
+            </button>
             <a href="{{ route('laporan-masyarakats.create') }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2">
                 <i class="mdi mdi-plus"></i> Tambah Data
             </a>
@@ -84,19 +84,20 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($laporanMasyarakats as $item)
                     <tr class="hover:bg-blue-50/30 transition duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-semibold text-gray-900">{{ $item->nama_pelapor }}</div>
-                            <div class="text-xs text-gray-500">KTP: {{ $item->nik_pelapor }}</div>
+                        <td class="px-6 py-4">
+                            <div class="text-sm font-semibold text-gray-900 break-words">{{ $item->nama_pelapor }}</div>
+                            <div class="text-xs text-gray-500 mt-1">KTP: {{ $item->nik_pelapor }}</div>
+                            <div class="text-xs text-gray-500">KK: {{ $item->no_kk ?? '-' }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                             {{ $item->no_telepon ?? '-' }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                            <span class="px-2 py-0.5 bg-gray-100 border border-gray-200 text-gray-700 rounded-full text-xs font-medium uppercase">
+                        <td class="px-6 py-4 text-sm text-gray-600">
+                            <span class="inline-block px-2 py-0.5 bg-gray-100 border border-gray-200 text-gray-700 rounded-full text-xs font-medium uppercase whitespace-normal break-words max-w-[150px]">
                                 {{ $item->kategori }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate" title="{{ $item->isi_laporan }}">
+                        <td class="px-6 py-4 text-sm text-gray-600 max-w-[180px] whitespace-normal break-words" title="{{ $item->isi_laporan }}">
                             {{ $item->isi_laporan }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -116,7 +117,7 @@
                             {{ $item->created_at->format('d-m-Y H:i') }}
                         </td>
                         @if(!auth()->user()->hasRole('posyandu'))
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        <td class="px-6 py-4 text-sm text-gray-600 break-words">
                             {{ $item->posyandu->nama ?? 'Umum/Semua' }}
                         </td>
                         @endif
@@ -153,7 +154,96 @@
         </div>
     </div>
 
+    <!-- Export Excel Modal -->
+    <div id="export-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <!-- Backdrop overlay -->
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="closeExportModal()"></div>
+        
+        <!-- Modal container -->
+        <div class="flex min-h-screen items-center justify-center p-4 text-center">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-gray-100">
+                <!-- Header -->
+                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+                    <div class="flex items-center flex-row">
+                        <div class="p-2 bg-green-500/10 rounded-lg mr-3 flex items-center justify-center">
+                            <i class="mdi mdi-file-excel text-green-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">Export Excel Laporan</h3>
+                    </div>
+                    <button type="button" onclick="closeExportModal()" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="mdi mdi-close text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Form -->
+                <form action="{{ route('laporan-masyarakats.export') }}" method="GET">
+                    <div class="p-6 space-y-4">
+                        @if(!auth()->user()->hasRole('posyandu') && !empty($posyandus))
+                        <div>
+                            <label for="posyandu_id" class="block text-sm font-bold text-gray-700 mb-2">Pilih Posyandu</label>
+                            <select name="posyandu_id" id="posyandu_id"
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">
+                                <option value="">Semua Posyandu</option>
+                                @foreach($posyandus as $p)
+                                    <option value="{{ $p->id }}">{{ $p->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
+
+                        @if(!empty($kategories))
+                        <div>
+                            <label for="kategori" class="block text-sm font-bold text-gray-700 mb-2">Pilih Jenis Keperluan</label>
+                            <select name="kategori" id="kategori"
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">
+                                <option value="">Semua Keperluan</option>
+                                @foreach($kategories as $kat)
+                                    <option value="{{ $kat }}">{{ $kat }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="start_date" class="block text-sm font-bold text-gray-700 mb-2">Tanggal Mulai</label>
+                                <input type="date" name="start_date" id="start_date"
+                                    class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">
+                            </div>
+                            <div>
+                                <label for="end_date" class="block text-sm font-bold text-gray-700 mb-2">Tanggal Selesai</label>
+                                <input type="date" name="end_date" id="end_date"
+                                    class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3 rounded-b-2xl">
+                        <button type="button" onclick="closeExportModal()"
+                            class="px-4 py-2 bg-white text-gray-700 font-semibold rounded-xl border border-gray-200 hover:bg-gray-50 transition">
+                            Batal
+                        </button>
+                        <button type="submit" onclick="closeExportModal()"
+                            class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-lg shadow-green-500/20 transition active:scale-[0.98] flex items-center justify-center gap-2">
+                            <i class="mdi mdi-download"></i>
+                            Export
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function openExportModal() {
+            document.getElementById('export-modal').classList.remove('hidden');
+        }
+
+        function closeExportModal() {
+            document.getElementById('export-modal').classList.add('hidden');
+        }
+
         function updateSort(field) {
             const form = document.getElementById('filter-form');
             const currentField = form.sort.value;

@@ -35,7 +35,12 @@ class BukuTamuController extends Controller
 
         $bukuTamus = $query->orderBy($sortField, $sortDirection)->paginate($perPage)->withQueryString();
         
-        return view('buku-tamus.index', compact('bukuTamus'));
+        $posyandus = [];
+        if (!($user && $user->hasRole('posyandu') && $user->posyandu_id)) {
+            $posyandus = Posyandu::orderBy('nama')->get();
+        }
+        
+        return view('buku-tamus.index', compact('bukuTamus', 'posyandus'));
     }
 
     public function create()
