@@ -117,9 +117,25 @@ class BukuTamuExport implements FromQuery, WithHeadings, WithEvents, WithCustomS
                 $sheet->getStyle('A2')->getFont()->setBold(true)->setSize(11);
                 $sheet->getStyle('A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
  
-                // Merge empty rows 3 and 4
+                // Merge empty row 3
                 $sheet->mergeCells("A3:G3");
+                
+                // Merge A4:G4 and set Period
+                $periodeText = '…...............................';
+                if (!empty($this->filters['start_date']) && !empty($this->filters['end_date'])) {
+                    $start = \Carbon\Carbon::parse($this->filters['start_date'])->locale('id');
+                    $end = \Carbon\Carbon::parse($this->filters['end_date'])->locale('id');
+                    if ($start->format('Y-m-d') === $end->format('Y-m-d')) {
+                        $periodeText = strtoupper($start->translatedFormat('d F Y'));
+                    } elseif ($start->format('Y-m') === $end->format('Y-m')) {
+                        $periodeText = strtoupper($start->translatedFormat('d') . ' - ' . $end->translatedFormat('d F Y'));
+                    } else {
+                        $periodeText = strtoupper($start->translatedFormat('d F Y') . ' - ' . $end->translatedFormat('d F Y'));
+                    }
+                }
                 $sheet->mergeCells("A4:G4");
+                $sheet->setCellValue('A4', "PERIODE : {$periodeText}");
+                $sheet->getStyle('A4')->getFont()->setBold(true)->setSize(11);
             },
             AfterSheet::class => function(AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
