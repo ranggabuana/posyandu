@@ -105,33 +105,69 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Pemantauan Timbangan -->
+                <!-- Card 2: Pemantauan Timbangan & Pengukuran -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="px-8 py-5 border-b border-gray-50 bg-gray-50/30">
                         <div class="flex items-center">
                             <div class="p-2.5 bg-blue-500/10 rounded-lg mr-4">
                                 <i class="mdi mdi-scale-bathroom text-blue-600 text-xl"></i>
                             </div>
-                            <h3 class="text-lg font-bold text-gray-800">Timbangan Berat Badan (Rutin Setiap Bulan)</h3>
+                            <h3 class="text-lg font-bold text-gray-800">Timbangan & Pengukuran Bulanan (Rutin Setiap Bulan)</h3>
                         </div>
                     </div>
-                    <div class="p-8">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                            @for($i = 1; $i <= 12; $i++)
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-2">Bulan Ke-{{ $i }} (kg)</label>
-                                    <div class="relative">
-                                        <input type="number" step="0.01" name="bb_bulan_{{ $i }}" 
-                                            value="{{ old('bb_bulan_' . $i, $bayiBalita->{'bb_bulan_' . $i}) }}" placeholder="0.00" 
-                                            class="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">
-                                        <span class="absolute inset-y-0 right-0 pr-4 flex items-center text-sm font-semibold text-gray-400">
-                                            kg
-                                        </span>
-                                    </div>
-                                    @error('bb_bulan_' . $i) <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                                </div>
-                            @endfor
-                        </div>
+                    <div class="p-8 overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 table-fixed sm:table-auto">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-24">Bulan</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Berat Badan (kg)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tinggi Badan (cm)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Lingkar Lengan (cm)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Lingkar Kepala (cm)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-100">
+                                @for($i = 1; $i <= 12; $i++)
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-gray-700">
+                                            Bulan Ke-{{ $i }}
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            <div class="relative">
+                                                <input type="number" step="0.01" name="bb_bulan_{{$i}}" 
+                                                    value="{{ old('bb_bulan_' . $i, $bayiBalita->{'bb_bulan_' . $i}) }}" placeholder="0.00" 
+                                                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                                            </div>
+                                            @error('bb_bulan_' . $i) <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            <div class="relative">
+                                                <input type="number" step="0.01" name="tb_bulan_{{$i}}" 
+                                                    value="{{ old('tb_bulan_' . $i, $bayiBalita->{'tb_bulan_' . $i}) }}" placeholder="0.00" 
+                                                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                                            </div>
+                                            @error('tb_bulan_' . $i) <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            <div class="relative">
+                                                <input type="number" step="0.01" name="lla_bulan_{{$i}}" 
+                                                    value="{{ old('lla_bulan_' . $i, $bayiBalita->{'lla_bulan_' . $i}) }}" placeholder="0.00" 
+                                                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                                            </div>
+                                            @error('lla_bulan_' . $i) <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            <div class="relative">
+                                                <input type="number" step="0.01" name="lk_bulan_{{$i}}" 
+                                                    value="{{ old('lk_bulan_' . $i, $bayiBalita->{'lk_bulan_' . $i}) }}" placeholder="0.00" 
+                                                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                                            </div>
+                                            @error('lk_bulan_' . $i) <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                                        </td>
+                                    </tr>
+                                @endfor
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
