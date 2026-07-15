@@ -101,102 +101,95 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Pemantauan Timbangan Berat Badan (Tahun 2 s.d 5) -->
+                <!-- Card 2: Pemantauan Timbangan & Pengukuran (Tahun 2 s.d 5) -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="px-8 py-5 border-b border-gray-50 bg-gray-50/30">
                         <div class="flex items-center">
                             <div class="p-2.5 bg-blue-500/10 rounded-lg mr-4">
                                 <i class="mdi mdi-scale-bathroom text-blue-600 text-xl"></i>
                             </div>
-                            <h3 class="text-lg font-bold text-gray-800">Timbangan Berat Badan (kg)</h3>
+                            <h3 class="text-lg font-bold text-gray-800">Timbangan & Pengukuran Bulanan (Tahun 2 s.d 5)</h3>
                         </div>
                     </div>
-                    <div class="p-8 space-y-8">
-                        
-                        <!-- Tahun Ke-2 -->
-                        <div>
-                            <h4 class="text-sm font-bold text-blue-600 mb-4 pb-2 border-b border-blue-50 flex items-center gap-1.5">
-                                <i class="mdi mdi-numeric-2-box"></i> Tahun Ke-2 (Bulan 13 - 24)
-                            </h4>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                @for($i = 13; $i <= 24; $i++)
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Bulan {{ $i }}</label>
-                                        <div class="relative">
-                                            <input type="number" step="0.01" name="bb_bulan_{{ $i }}" 
-                                                value="{{ old('bb_bulan_' . $i, $balita->{'bb_bulan_' . $i}) }}" placeholder="0.00" 
-                                                class="w-full pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none">
-                                            <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs font-semibold text-gray-400">kg</span>
-                                        </div>
-                                        @error('bb_bulan_' . $i) <p class="text-red-500 text-[10px] mt-0.5">{{ $message }}</p> @enderror
-                                    </div>
-                                @endfor
-                            </div>
-                        </div>
+                    <div class="p-8 overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 table-fixed sm:table-auto">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-28">Bulan</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Berat Badan (kg)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tinggi Badan (cm)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Lingkar Lengan (cm)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Lingkar Kepala (cm)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-100">
+                                @for($i = 13; $i <= 60; $i++)
+                                    @if($i == 13)
+                                        <tr class="bg-blue-50/30">
+                                            <td colspan="5" class="px-4 py-2.5 text-xs font-extrabold text-blue-700 uppercase tracking-wider">
+                                                Tahun Ke-2 (Bulan 13 - 24)
+                                            </td>
+                                        </tr>
+                                    @elseif($i == 25)
+                                        <tr class="bg-blue-50/30">
+                                            <td colspan="5" class="px-4 py-2.5 text-xs font-extrabold text-blue-700 uppercase tracking-wider">
+                                                Tahun Ke-3 (Bulan 25 - 36)
+                                            </td>
+                                        </tr>
+                                    @elseif($i == 37)
+                                        <tr class="bg-blue-50/30">
+                                            <td colspan="5" class="px-4 py-2.5 text-xs font-extrabold text-blue-700 uppercase tracking-wider">
+                                                Tahun Ke-4 (Bulan 37 - 48)
+                                            </td>
+                                        </tr>
+                                    @elseif($i == 49)
+                                        <tr class="bg-blue-50/30">
+                                            <td colspan="5" class="px-4 py-2.5 text-xs font-extrabold text-blue-700 uppercase tracking-wider">
+                                                Tahun Ke-5 (Bulan 49 - 60)
+                                            </td>
+                                        </tr>
+                                    @endif
 
-                        <!-- Tahun Ke-3 -->
-                        <div>
-                            <h4 class="text-sm font-bold text-blue-600 mb-4 pb-2 border-b border-blue-50 flex items-center gap-1.5">
-                                <i class="mdi mdi-numeric-3-box"></i> Tahun Ke-3 (Bulan 25 - 36)
-                            </h4>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                @for($i = 25; $i <= 36; $i++)
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Bulan {{ $i }}</label>
-                                        <div class="relative">
-                                            <input type="number" step="0.01" name="bb_bulan_{{ $i }}" 
-                                                value="{{ old('bb_bulan_' . $i, $balita->{'bb_bulan_' . $i}) }}" placeholder="0.00" 
-                                                class="w-full pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none">
-                                            <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs font-semibold text-gray-400">kg</span>
-                                        </div>
-                                        @error('bb_bulan_' . $i) <p class="text-red-500 text-[10px] mt-0.5">{{ $message }}</p> @enderror
-                                    </div>
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-4 py-3 whitespace-nowrap text-sm font-bold text-gray-700">
+                                            Bulan Ke-{{ $i }}
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            <div class="relative">
+                                                <input type="number" step="0.01" name="bb_bulan_{{$i}}" 
+                                                    value="{{ old('bb_bulan_' . $i, $balita->{'bb_bulan_' . $i}) }}" placeholder="0.00" 
+                                                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                                            </div>
+                                            @error('bb_bulan_' . $i) <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            <div class="relative">
+                                                <input type="number" step="0.01" name="tb_bulan_{{$i}}" 
+                                                    value="{{ old('tb_bulan_' . $i, $balita->{'tb_bulan_' . $i}) }}" placeholder="0.00" 
+                                                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                                            </div>
+                                            @error('tb_bulan_' . $i) <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            <div class="relative">
+                                                <input type="number" step="0.01" name="lla_bulan_{{$i}}" 
+                                                    value="{{ old('lla_bulan_' . $i, $balita->{'lla_bulan_' . $i}) }}" placeholder="0.00" 
+                                                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                                            </div>
+                                            @error('lla_bulan_' . $i) <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            <div class="relative">
+                                                <input type="number" step="0.01" name="lk_bulan_{{$i}}" 
+                                                    value="{{ old('lk_bulan_' . $i, $balita->{'lk_bulan_' . $i}) }}" placeholder="0.00" 
+                                                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                                            </div>
+                                            @error('lk_bulan_' . $i) <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                                        </td>
+                                    </tr>
                                 @endfor
-                            </div>
-                        </div>
-
-                        <!-- Tahun Ke-4 -->
-                        <div>
-                            <h4 class="text-sm font-bold text-blue-600 mb-4 pb-2 border-b border-blue-50 flex items-center gap-1.5">
-                                <i class="mdi mdi-numeric-4-box"></i> Tahun Ke-4 (Bulan 37 - 48)
-                            </h4>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                @for($i = 37; $i <= 48; $i++)
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Bulan {{ $i }}</label>
-                                        <div class="relative">
-                                            <input type="number" step="0.01" name="bb_bulan_{{ $i }}" 
-                                                value="{{ old('bb_bulan_' . $i, $balita->{'bb_bulan_' . $i}) }}" placeholder="0.00" 
-                                                class="w-full pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none">
-                                            <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs font-semibold text-gray-400">kg</span>
-                                        </div>
-                                        @error('bb_bulan_' . $i) <p class="text-red-500 text-[10px] mt-0.5">{{ $message }}</p> @enderror
-                                    </div>
-                                @endfor
-                            </div>
-                        </div>
-
-                        <!-- Tahun Ke-5 -->
-                        <div>
-                            <h4 class="text-sm font-bold text-blue-600 mb-4 pb-2 border-b border-blue-50 flex items-center gap-1.5">
-                                <i class="mdi mdi-numeric-5-box"></i> Tahun Ke-5 (Bulan 49 - 60)
-                            </h4>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                @for($i = 49; $i <= 60; $i++)
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Bulan {{ $i }}</label>
-                                        <div class="relative">
-                                            <input type="number" step="0.01" name="bb_bulan_{{ $i }}" 
-                                                value="{{ old('bb_bulan_' . $i, $balita->{'bb_bulan_' . $i}) }}" placeholder="0.00" 
-                                                class="w-full pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none">
-                                            <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs font-semibold text-gray-400">kg</span>
-                                        </div>
-                                        @error('bb_bulan_' . $i) <p class="text-red-500 text-[10px] mt-0.5">{{ $message }}</p> @enderror
-                                    </div>
-                                @endfor
-                            </div>
-                        </div>
-
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

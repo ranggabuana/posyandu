@@ -156,6 +156,9 @@ class BalitaController extends Controller
 
         for ($i = 13; $i <= 60; $i++) {
             $rules["bb_bulan_{$i}"] = 'nullable|numeric|min:0|max:100';
+            $rules["tb_bulan_{$i}"] = 'nullable|numeric|min:0|max:200';
+            $rules["lla_bulan_{$i}"] = 'nullable|numeric|min:0|max:100';
+            $rules["lk_bulan_{$i}"] = 'nullable|numeric|min:0|max:100';
         }
 
         $validated = $request->validate($rules);
