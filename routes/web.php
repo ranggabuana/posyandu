@@ -20,12 +20,15 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::middleware(['auth'])->group(function () {
     Route::get('/sync-asmara', [\App\Http\Controllers\SyncAsmaraController::class, 'sync'])->name('sync-asmara');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-    // Modules
     Route::get('posyandus/export', [\App\Http\Controllers\PosyanduController::class, 'export'])->name('posyandus.export');
     Route::get('posyandus/rws', [\App\Http\Controllers\PosyanduController::class, 'getRws'])->name('posyandus.rws');
     Route::resource('posyandus', \App\Http\Controllers\PosyanduController::class);
+    Route::get('kaders/get-penduduks', [\App\Http\Controllers\KaderController::class, 'getPenduduks'])->name('kaders.get-penduduks');
+    Route::resource('kaders', \App\Http\Controllers\KaderController::class);
 
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->names([
         'index' => 'admin.users.index',

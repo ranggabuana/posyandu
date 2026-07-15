@@ -27,6 +27,11 @@ class Posyandu extends Model
         return $this->hasMany(User::class);
     }
 
+    public function kaders()
+    {
+        return $this->hasMany(Kader::class);
+    }
+
     public function galeries()
     {
         return $this->hasMany(Galeri::class);

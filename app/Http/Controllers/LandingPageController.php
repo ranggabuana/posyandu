@@ -31,7 +31,9 @@ class LandingPageController extends Controller
 
         $beritas = Berita::latest()->take(3)->get();
         $galeries = Galeri::latest()->take(4)->get();
-        $posyandus = Posyandu::orderBy('nama')->get();
+        $posyandus = Posyandu::withCount(['kaders as kaders_count' => function($query) {
+            $query->where('status_aktif', true);
+        }])->orderBy('nama')->get();
         $jadwals = \App\Models\Jadwal::all(); // Provide schedules to landing view
         $tims = \App\Models\Tim::all(); // Provide team to landing view
 

@@ -14,7 +14,7 @@ class PosyanduController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Posyandu::query()->with('users');
+        $query = Posyandu::query()->with('users')->withCount('kaders');
         
         if ($request->search) {
             $query->where(function($q) use ($request) {
@@ -50,7 +50,6 @@ class PosyanduController extends Controller
             'rw_diampu.*' => 'string',
             'jadwal_rutin' => 'nullable|string|max:255',
             'lokasi_koordinat' => 'nullable|string|max:255',
-            'jumlah_kader' => 'nullable|integer|min:0',
             'bangunan' => 'nullable|string|max:100',
             'punya_timbangan_dacin' => 'nullable|boolean',
             'punya_timbangan_digital' => 'nullable|boolean',
@@ -71,7 +70,6 @@ class PosyanduController extends Controller
             'rw_diampu' => $validated['rw_diampu'],
             'jadwal_rutin' => $validated['jadwal_rutin'],
             'lokasi_koordinat' => $validated['lokasi_koordinat'],
-            'jumlah_kader' => $validated['jumlah_kader'] ?? 0,
             'bangunan' => $validated['bangunan'],
             'punya_timbangan_dacin' => $request->has('punya_timbangan_dacin'),
             'punya_timbangan_digital' => $request->has('punya_timbangan_digital'),
@@ -126,7 +124,6 @@ class PosyanduController extends Controller
             'rw_diampu.*' => 'string',
             'jadwal_rutin' => 'nullable|string|max:255',
             'lokasi_koordinat' => 'nullable|string|max:255',
-            'jumlah_kader' => 'nullable|integer|min:0',
             'bangunan' => 'nullable|string|max:100',
             'punya_timbangan_dacin' => 'nullable|boolean',
             'punya_timbangan_digital' => 'nullable|boolean',
@@ -147,7 +144,6 @@ class PosyanduController extends Controller
             'rw_diampu' => $validated['rw_diampu'],
             'jadwal_rutin' => $validated['jadwal_rutin'],
             'lokasi_koordinat' => $validated['lokasi_koordinat'],
-            'jumlah_kader' => $validated['jumlah_kader'] ?? 0,
             'bangunan' => $validated['bangunan'],
             'punya_timbangan_dacin' => $request->has('punya_timbangan_dacin'),
             'punya_timbangan_digital' => $request->has('punya_timbangan_digital'),

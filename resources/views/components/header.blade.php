@@ -134,23 +134,26 @@
                     <p class="text-xs text-gray-500 truncate">
                         {{ Auth::user()->email ?? 'email@example.com' }}</p>
                 </div>
-                <a href="#"
+                <a href="{{ route('profile.edit') }}"
                     class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors duration-200">
                     <i class="mdi mdi-account-outline text-blue-500 text-lg mr-3"></i>
-                    <span>Profile</span>
+                    <span>Profil Saya</span>
                 </a>
-                <a href="#"
-                    class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors duration-200">
-                    <i class="mdi mdi-cog-outline text-blue-500 text-lg mr-3"></i>
-                    <span>Settings</span>
-                </a>
-                <a href="#"
-                    class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors duration-200">
-                    <i class="mdi mdi-email-outline text-blue-500 text-lg mr-3"></i>
-                    <span>Messages</span>
-                    <span
-                        class="ml-auto bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full">3</span>
-                </a>
+                @if(auth()->user()->hasRole('admin'))
+                    <a href="{{ route('pengaturans.index') }}"
+                        class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                        <i class="mdi mdi-cog-outline text-blue-500 text-lg mr-3"></i>
+                        <span>Pengaturan Sistem</span>
+                    </a>
+                @endif
+                <form action="{{ route('logout') }}" method="POST" class="block w-full">
+                    @csrf
+                    <button type="submit"
+                        class="w-full flex items-center px-4 py-3 text-red-600 hover:bg-red-50 transition-colors duration-200 text-left cursor-pointer border-t border-gray-50">
+                        <i class="mdi mdi-logout text-red-500 text-lg mr-3"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
             </div>
         </div>
     </div>

@@ -180,7 +180,7 @@
         </div>
 
         <!-- Pengaturan -->
-        @php $pengaturanActive = request()->routeIs('posyandus.*', 'pengaturans.*', 'admin.users.*'); @endphp
+        @php $pengaturanActive = request()->routeIs('posyandus.*', 'kaders.*', 'pengaturans.*', 'admin.users.*'); @endphp
         <div class="relative text-left menu-group {{ $pengaturanActive ? 'open' : '' }}">
             <button onclick="this.parentElement.classList.toggle('open')"
                 class="w-full flex items-center justify-between px-6 py-3 transition-colors group menu-item text-left cursor-pointer {{ $pengaturanActive ? 'bg-blue-50/30 text-blue-600 font-semibold' : 'text-gray-700' }}">
@@ -204,6 +204,12 @@
                     <i
                         class="mdi mdi-circle text-[8px] mr-2 {{ request()->routeIs('posyandus.*') ? 'text-blue-500' : 'text-gray-400' }}"></i>
                     <span>Data Posyandu</span>
+                </a>
+                <a href="{{ route('kaders.index') }}"
+                    class="block pl-14 py-2 text-sm transition-colors flex items-center submenu-item text-left {{ request()->routeIs('kaders.*') ? 'text-blue-600 font-semibold bg-blue-50/50 border-r-4 border-blue-500' : 'text-gray-600' }}">
+                    <i
+                        class="mdi mdi-circle text-[8px] mr-2 {{ request()->routeIs('kaders.*') ? 'text-blue-500' : 'text-gray-400' }}"></i>
+                    <span>Data Kader</span>
                 </a>
                 <a href="{{ route('pengaturans.index') }}"
                     class="block pl-14 py-2 text-sm transition-colors flex items-center submenu-item text-left {{ request()->routeIs('pengaturans.*') ? 'text-blue-600 font-semibold bg-blue-50/50 border-r-4 border-blue-500' : 'text-gray-600' }}">

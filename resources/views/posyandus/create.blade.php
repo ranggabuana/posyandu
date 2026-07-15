@@ -76,7 +76,7 @@
                             @error('alamat') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-2">Jadwal Rutin</label>
                                 <input type="text" name="jadwal_rutin" value="{{ old('jadwal_rutin') }}" placeholder="Contoh: Setiap Tanggal 15"
@@ -89,13 +89,6 @@
                                 <input type="text" name="lokasi_koordinat" value="{{ old('lokasi_koordinat') }}" placeholder="-7.432, 109.213"
                                     class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
                                 @error('lokasi_koordinat') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Jumlah Kader Aktif</label>
-                                <input type="number" name="jumlah_kader" value="{{ old('jumlah_kader', 0) }}" min="0"
-                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
-                                @error('jumlah_kader') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
                             </div>
                         </div>
 

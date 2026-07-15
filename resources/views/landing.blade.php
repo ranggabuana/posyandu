@@ -401,7 +401,7 @@
             <div class="space-y-3.5 mb-6">
               <div class="flex items-center gap-2.5 text-sm" style="color: rgba(2,52,48,0.75);">
                 <span class="text-gray-400">👥</span>
-                <span><strong>{{ $posyandu->jumlah_kader ?? 0 }}</strong> Kader Aktif</span>
+                <span><strong>{{ $posyandu->kaders_count ?? 0 }}</strong> Kader Aktif</span>
               </div>
               <div class="flex items-center gap-2.5 text-sm" style="color: rgba(2,52,48,0.75);">
                 <span class="text-gray-400">📍</span>
