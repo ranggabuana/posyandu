@@ -78,6 +78,11 @@ class PendudukController extends Controller
         return redirect()->route('penduduks.index')->with('success', 'Data berhasil ditambahkan');
     }
 
+    public function show(Penduduk $penduduk)
+    {
+        return view('penduduks.show', compact('penduduk'));
+    }
+
     public function edit(Penduduk $penduduk)
     {
         return view('penduduks.edit', compact('penduduk'));

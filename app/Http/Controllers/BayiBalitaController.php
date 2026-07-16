@@ -6,6 +6,8 @@ use App\Models\BayiBalita;
 use App\Models\Penduduk;
 use App\Models\Posyandu;
 use App\Models\IbuHamil;
+use App\Models\PemeriksaanBalita;
+use App\Models\ImunisasiBalita;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\BayiBalitaExport;
@@ -20,7 +22,8 @@ class BayiBalitaController extends Controller
         $query = BayiBalita::with(['penduduk', 'posyandu'])
             ->select('bayi_balitas.*')
             ->join('penduduks', 'bayi_balitas.penduduk_id', '=', 'penduduks.id')
-            ->leftJoin('posyandus', 'bayi_balitas.posyandu_id', '=', 'posyandus.id');
+            ->leftJoin('posyandus', 'bayi_balitas.posyandu_id', '=', 'posyandus.id')
+            ->whereRaw("TIMESTAMPDIFF(MONTH, bayi_balitas.tanggal_lahir, CURDATE()) <= 12");
         
         if ($request->search) {
             $query->where(function($q) use ($request) {
@@ -53,7 +56,7 @@ class BayiBalitaController extends Controller
     public function create()
     {
         $user = auth()->user();
-        $pQuery = Penduduk::query();
+        $pQuery = Penduduk::whereRaw("TIMESTAMPDIFF(YEAR, tanggallahir, CURDATE()) <= 5");
         $iQuery = Penduduk::whereIn('id', IbuHamil::pluck('penduduk_id'));
         
         if ($user->hasRole('posyandu') && $user->posyandu) {
@@ -80,6 +83,7 @@ class BayiBalitaController extends Controller
             'bpjs' => 'nullable|boolean',
             'posyandu_id' => 'nullable|exists:posyandus,id',
             'keterangan' => 'nullable|string',
+            'status_akta' => 'nullable|in:punya,tidak punya',
         ];
 
         if ($request->input('input_manual') == '1') {
@@ -133,7 +137,7 @@ class BayiBalitaController extends Controller
 
         $bayiData = collect($validated)->only([
             'penduduk_id', 'nama_ibu', 'tanggal_lahir', 'berat_lahir', 
-            'panjang_lahir', 'goldar', 'bpjs', 'posyandu_id', 'keterangan'
+            'panjang_lahir', 'goldar', 'bpjs', 'posyandu_id', 'keterangan', 'status_akta'
         ])->toArray();
 
         BayiBalita::create($bayiData);
@@ -172,10 +176,13 @@ class BayiBalitaController extends Controller
             'bpjs' => 'nullable|boolean',
             'posyandu_id' => 'nullable|exists:posyandus,id',
             'keterangan' => 'nullable|string',
+            'status_akta' => 'nullable|in:punya,tidak punya',
         ]);
 
         $bayiBalita->update($validated);
-        return redirect()->route('bayi-balitas.index')->with('success', 'Data berhasil diubah');
+        
+        $redirectRoute = $bayiBalita->umur_bulan <= 12 ? 'bayi-balitas.index' : 'balitas.index';
+        return redirect()->route($redirectRoute)->with('success', 'Data berhasil diubah');
     }
 
     public function destroy(BayiBalita $bayiBalita)
@@ -191,32 +198,188 @@ class BayiBalitaController extends Controller
 
     public function pemeriksaan(BayiBalita $bayiBalita)
     {
-        return view('bayi-balitas.pemeriksaan', compact('bayiBalita'));
+        $pemeriksaanHistory = $bayiBalita->pemeriksaans()->orderBy('tanggal_pemeriksaan', 'desc')->get();
+        $imunisasiHistory = $bayiBalita->imunisasis()->orderBy('tanggal_pemberian', 'desc')->get();
+
+        // Daftar Imunisasi Rekomendasi
+        $rekomendasiImunisasi = [
+            'HBO < 7 Hari',
+            'HBO > 7 Hari',
+            'BCG & Polio 1',
+            'Pentavalen 1 & Polio 2',
+            'Pentavalen 2 & Polio 3',
+            'Pentavalen 3 & Polio 4',
+            'PCV 1',
+            'PCV 2',
+            'Rotavirus 1',
+            'Rotavirus 2',
+            'Rotavirus 3',
+            'Campak/MR 1',
+            'DPT-HB-Hib Booster',
+            'Campak/MR Booster',
+        ];
+
+        return view('bayi-balitas.pemeriksaan', compact('bayiBalita', 'pemeriksaanHistory', 'imunisasiHistory', 'rekomendasiImunisasi'));
     }
 
     public function updatePemeriksaan(Request $request, BayiBalita $bayiBalita)
     {
-        $rules = [
-            'imunisasi_hbo_kurang_7_hari' => 'nullable|in:L,P',
-            'imunisasi_hbo_lebih_7_hari' => 'nullable|in:L,P',
-            'imunisasi_bcg_polio1' => 'nullable|in:L,P',
-            'imunisasi_pentavalen1_polio2' => 'nullable|in:L,P',
-            'imunisasi_pentavalen2_polio3' => 'nullable|in:L,P',
-            'imunisasi_pentavalen3_polio4' => 'nullable|in:L,P',
+        $validated = $request->validate([
+            // Pemeriksaan
+            'tanggal_pemeriksaan' => 'nullable|date',
+            'umur_bulan' => 'nullable|integer|min:0|max:60',
+            'berat_badan' => 'nullable|numeric|min:0|max:100',
+            'tinggi_badan' => 'nullable|numeric|min:0|max:200',
+            'lingkar_lengan_atas' => 'nullable|numeric|min:0|max:100',
+            'lingkar_kepala' => 'nullable|numeric|min:0|max:100',
+            'asi_eksklusif' => 'nullable|in:Ya,Tidak',
+            'vitamin_a' => 'nullable|in:biru,merah,tidak',
+            'obat_cacing' => 'nullable|boolean',
+            'pmt' => 'nullable|boolean',
+            'catatan_perkembangan' => 'nullable|string',
+            
+            // Imunisasi
+            'imunisasi_nama_vaksin' => 'nullable|string|max:255',
+            'imunisasi_tanggal_pemberian' => 'nullable|date|required_with:imunisasi_nama_vaksin',
             'imunisasi_keterangan' => 'nullable|string',
-        ];
+            
+            // Administrasi
+            'status_akta' => 'nullable|in:punya,tidak punya',
+        ]);
 
-        for ($i = 1; $i <= 12; $i++) {
-            $rules["bb_bulan_{$i}"] = 'nullable|numeric|min:0|max:100';
-            $rules["tb_bulan_{$i}"] = 'nullable|numeric|min:0|max:200';
-            $rules["lla_bulan_{$i}"] = 'nullable|numeric|min:0|max:100';
-            $rules["lk_bulan_{$i}"] = 'nullable|numeric|min:0|max:100';
+        if ($request->has('status_akta')) {
+            $bayiBalita->update(['status_akta' => $request->status_akta]);
         }
 
-        $validated = $request->validate($rules);
+        // Simpan Pemeriksaan
+        if ($request->filled('tanggal_pemeriksaan') && $request->filled('umur_bulan')) {
+            $statusGizi = $this->hitungStatusGizi($bayiBalita, $request->berat_badan, $request->tinggi_badan, $request->umur_bulan);
 
-        $bayiBalita->update($validated);
+            PemeriksaanBalita::updateOrCreate(
+                [
+                    'bayi_balita_id' => $bayiBalita->id,
+                    'umur_bulan' => $request->umur_bulan,
+                ],
+                [
+                    'tanggal_pemeriksaan' => $request->tanggal_pemeriksaan,
+                    'berat_badan' => $request->berat_badan,
+                    'tinggi_badan' => $request->tinggi_badan,
+                    'lingkar_lengan_atas' => $request->lingkar_lengan_atas,
+                    'lingkar_kepala' => $request->lingkar_kepala,
+                    'asi_eksklusif' => $request->asi_eksklusif,
+                    'vitamin_a' => $request->vitamin_a,
+                    'obat_cacing' => $request->has('obat_cacing') ? true : false,
+                    'pmt' => $request->has('pmt') ? true : false,
+                    'status_gizi_bb_u' => $statusGizi['bb_u'],
+                    'status_gizi_tb_u' => $statusGizi['tb_u'],
+                    'status_gizi_bb_tb' => $statusGizi['bb_tb'],
+                    'catatan_perkembangan' => $request->catatan_perkembangan,
+                ]
+            );
+        }
 
-        return redirect()->route('bayi-balitas.index')->with('success', 'Pemeriksaan Bayi/Balita berhasil disimpan');
+        // Simpan Imunisasi
+        if ($request->filled('imunisasi_nama_vaksin')) {
+            ImunisasiBalita::create([
+                'bayi_balita_id' => $bayiBalita->id,
+                'nama_vaksin' => $request->imunisasi_nama_vaksin,
+                'tanggal_pemberian' => $request->imunisasi_tanggal_pemberian,
+                'keterangan' => $request->imunisasi_keterangan,
+            ]);
+        }
+
+        $redirectRoute = $bayiBalita->umur_bulan <= 12 ? 'bayi-balitas.index' : 'balitas.index';
+        return redirect()->route($redirectRoute)->with('success', 'Pemeriksaan berhasil disimpan');
+    }
+
+    public function destroyPemeriksaan(PemeriksaanBalita $pemeriksaan)
+    {
+        $pemeriksaan->delete();
+        return back()->with('success', 'Riwayat pemeriksaan berhasil dihapus');
+    }
+
+    public function destroyImunisasi(ImunisasiBalita $imunisasi)
+    {
+        $imunisasi->delete();
+        return back()->with('success', 'Riwayat imunisasi berhasil dihapus');
+    }
+
+    private function hitungStatusGizi($bayi, $bb, $tb, $umurBulan)
+    {
+        $status = ['bb_u' => 'Normal', 'tb_u' => 'Normal', 'bb_tb' => 'Normal'];
+        $jk = $bayi->penduduk->kelamin ?? 'laki-laki';
+
+        if ($bb && $umurBulan !== null) {
+            // BB/U approximation
+            if ($jk === 'laki-laki') {
+                $medianBB = $umurBulan <= 12 
+                    ? 3.3 + ($umurBulan * 0.58) 
+                    : 10.3 + (($umurBulan - 12) * 0.18);
+            } else {
+                $medianBB = $umurBulan <= 12 
+                    ? 3.2 + ($umurBulan * 0.55) 
+                    : 9.7 + (($umurBulan - 12) * 0.18);
+            }
+            $sdBB = $medianBB * 0.12;
+            $zBB = ($bb - $medianBB) / $sdBB;
+
+            if ($zBB < -3) {
+                $status['bb_u'] = 'Sangat Kurang';
+            } elseif ($zBB < -2) {
+                $status['bb_u'] = 'Kurang';
+            } elseif ($zBB > 2) {
+                $status['bb_u'] = 'Risiko Lebih';
+            } else {
+                $status['bb_u'] = 'Normal';
+            }
+        }
+
+        if ($tb && $umurBulan !== null) {
+            // TB/U approximation (Stunting)
+            if ($jk === 'laki-laki') {
+                if ($umurBulan <= 12) {
+                    $medianTB = 50.5 + ($umurBulan * 2.1);
+                } else {
+                    $medianTB = 75.7 + (($umurBulan - 12) * 0.65);
+                }
+            } else {
+                if ($umurBulan <= 12) {
+                    $medianTB = 49.8 + ($umurBulan * 2.1);
+                } else {
+                    $medianTB = 74.0 + (($umurBulan - 12) * 0.66);
+                }
+            }
+            $sdTB = $medianTB * 0.045;
+            $zTB = ($tb - $medianTB) / $sdTB;
+
+            if ($zTB < -3) {
+                $status['tb_u'] = 'Sangat Pendek';
+            } elseif ($zTB < -2) {
+                $status['tb_u'] = 'Pendek';
+            } else {
+                $status['tb_u'] = 'Normal';
+            }
+        }
+
+        if ($bb && $tb) {
+            // BB/TB approximation
+            $medianBBforTB = 3.1 + (($tb - 48) * 0.22);
+            if ($medianBBforTB > 0) {
+                $sdBBforTB = $medianBBforTB * 0.11;
+                $zBBTB = ($bb - $medianBBforTB) / $sdBBforTB;
+
+                if ($zBBTB < -3) {
+                    $status['bb_tb'] = 'Gizi Buruk';
+                } elseif ($zBBTB < -2) {
+                    $status['bb_tb'] = 'Gizi Kurang';
+                } elseif ($zBBTB > 2) {
+                    $status['bb_tb'] = 'Gizi Lebih';
+                } else {
+                    $status['bb_tb'] = 'Normal';
+                }
+            }
+        }
+
+        return $status;
     }
 }

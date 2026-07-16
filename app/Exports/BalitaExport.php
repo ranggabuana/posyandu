@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\Balita;
+use App\Models\BayiBalita;
 use App\Models\Posyandu;
 use App\Models\Pengaturan;
 use Maatwebsite\Excel\Concerns\FromQuery;
@@ -33,19 +33,20 @@ class BalitaExport implements FromQuery, WithHeadings, WithEvents, WithCustomSta
 
     public function query()
     {
-        $query = Balita::query()
-            ->with(['bayiBalita.penduduk', 'bayiBalita.posyandu']);
+        $query = BayiBalita::with(['penduduk', 'posyandu', 'pemeriksaans', 'imunisasis'])
+            ->whereRaw("TIMESTAMPDIFF(MONTH, tanggal_lahir, CURDATE()) > 12")
+            ->whereRaw("TIMESTAMPDIFF(MONTH, tanggal_lahir, CURDATE()) <= 60");
 
         if (!empty($this->filters['search'])) {
             $s = $this->filters['search'];
-            $query->whereHas('bayiBalita.penduduk', function($q) use ($s) {
+            $query->whereHas('penduduk', function($q) use ($s) {
                 $q->where('nama', 'like', '%' . $s . '%')
                   ->orWhere('nik', 'like', '%' . $s . '%');
             });
         }
 
         if (!empty($this->filters['dusun']) || !empty($this->filters['rw']) || !empty($this->filters['rt'])) {
-            $query->whereHas('bayiBalita.penduduk', function($q) {
+            $query->whereHas('penduduk', function($q) {
                 if (!empty($this->filters['dusun'])) $q->where('dusun', $this->filters['dusun']);
                 if (!empty($this->filters['rw'])) $q->where('rw', $this->filters['rw']);
                 if (!empty($this->filters['rt'])) $q->where('rt', $this->filters['rt']);
@@ -53,52 +54,51 @@ class BalitaExport implements FromQuery, WithHeadings, WithEvents, WithCustomSta
         }
 
         if (!empty($this->filters['posyandu_id'])) {
-            $query->whereHas('bayiBalita', function($q) {
-                $q->where('posyandu_id', $this->filters['posyandu_id']);
-            });
+            $query->where('posyandu_id', $this->filters['posyandu_id']);
         }
 
         return $query;
     }
 
-    public function map($balita): array
+    public function map($bayi): array
     {
         static $no = 0;
         $no++;
 
-        $bayi = $balita->bayiBalita;
         $penduduk = $bayi->penduduk;
+        $jk = $penduduk->kelamin == 'laki-laki' ? 'L' : 'P';
 
         $row = [
             $no,
             $penduduk->nama ?? '-',
             $bayi->tanggal_lahir ?? '-',
-            ($penduduk->kelamin == 'laki-laki' ? 'L' : 'P'),
+            $jk,
             $bayi->nama_ibu ?? '-',
-            $balita->status_akta ?? '-',
+            $bayi->status_akta ?? '-',
         ];
 
         // BB Months 13-60
         for ($i = 13; $i <= 60; $i++) {
-            $col = "bb_bulan_$i";
-            $row[] = $balita->$col ?? '';
+            $exam = $bayi->pemeriksaans->firstWhere('umur_bulan', $i);
+            $row[] = $exam ? $exam->berat_badan : '';
         }
 
-        // Vitamin A
-        $row[] = $balita->vitamin_a_18 ?? '';
-        $row[] = $balita->vitamin_a_24 ?? '';
-        $row[] = $balita->vitamin_a_30 ?? '';
-        $row[] = $balita->vitamin_a_36 ?? '';
-        $row[] = $balita->vitamin_a_42 ?? '';
-        $row[] = $balita->vitamin_a_48 ?? '';
-        $row[] = $balita->vitamin_a_54 ?? '';
-        $row[] = $balita->vitamin_a_60 ?? '';
+        // Vitamin A (18 to 60)
+        foreach ([18, 24, 30, 36, 42, 48, 54, 60] as $month) {
+            $exam = $bayi->pemeriksaans->firstWhere('umur_bulan', $month);
+            $row[] = ($exam && ($exam->vitamin_a === 'merah' || $exam->vitamin_a === 'biru')) ? 'sudah' : 'belum';
+        }
 
         // Booster
-        $row[] = $balita->booster_dpt_hb_hib ?? '';
-        $row[] = $balita->booster_campak ?? '';
+        $checkImun = function($name) use ($bayi) {
+            return $bayi->imunisasis->where('nama_vaksin', $name)->isNotEmpty();
+        };
 
-        $row[] = $balita->keterangan_balita ?? '-';
+        $row[] = $checkImun('DPT-HB-Hib Booster') ? 'sudah' : 'belum';
+        $row[] = $checkImun('Campak/MR Booster') ? 'sudah' : 'belum';
+
+        $lastExam = $bayi->pemeriksaans->whereNotNull('catatan_perkembangan')->last();
+        $row[] = $lastExam ? $lastExam->catatan_perkembangan : '-';
 
         return $row;
     }

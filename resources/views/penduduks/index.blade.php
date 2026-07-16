@@ -101,6 +101,9 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex justify-end gap-2">
+                                <a href="{{ route('penduduks.show', $item) }}" class="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors" title="Detail">
+                                    <i class="mdi mdi-eye text-xl"></i>
+                                </a>
                                 <a href="{{ route('penduduks.edit', $item) }}" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
                                     <i class="mdi mdi-pencil text-xl"></i>
                                 </a>

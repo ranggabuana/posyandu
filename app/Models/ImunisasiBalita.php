@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Balita extends Model
+class ImunisasiBalita extends Model
 {
+    protected $table = 'imunisasi_balitas';
     protected $guarded = [];
 
     public function bayiBalita()

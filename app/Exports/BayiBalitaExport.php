@@ -33,7 +33,8 @@ class BayiBalitaExport implements FromQuery, WithHeadings, WithEvents, WithCusto
 
     public function query()
     {
-        $query = BayiBalita::with(['penduduk', 'posyandu']);
+        $query = BayiBalita::with(['penduduk', 'posyandu', 'pemeriksaans', 'imunisasis'])
+            ->whereRaw("TIMESTAMPDIFF(MONTH, tanggal_lahir, CURDATE()) <= 12");
 
         if (!empty($this->filters['search'])) {
             $s = $this->filters['search'];
@@ -64,37 +65,53 @@ class BayiBalitaExport implements FromQuery, WithHeadings, WithEvents, WithCusto
         $no++;
 
         $jk = $bayi->penduduk->kelamin == 'laki-laki' ? 'L' : 'P';
-        $isL = $jk == 'L';
-        $isP = $jk == 'P';
 
-        // Immunization helper
-        $getVal = function($val, $targetJk) use ($jk) {
-            if (!$val) return '';
-            return ($jk == $targetJk) ? 'v' : '';
+        $checkImun = function($name) use ($bayi) {
+            return $bayi->imunisasis->where('nama_vaksin', $name)->isNotEmpty();
         };
 
-        return [
+        $hbo_k7 = $checkImun('HBO < 7 Hari');
+        $hbo_l7 = $checkImun('HBO > 7 Hari');
+        $bcg_polio1 = $checkImun('BCG & Polio 1');
+        $penta1_polio2 = $checkImun('Pentavalen 1 & Polio 2');
+        $penta2_polio3 = $checkImun('Pentavalen 2 & Polio 3');
+        $penta3_polio4 = $checkImun('Pentavalen 3 & Polio 4');
+        $campak = $checkImun('Campak/MR 1');
+
+        $row = [
             $no,
             $bayi->penduduk->nama ?? '-',
             $bayi->tanggal_lahir ?? '-',
             $jk,
             $bayi->penduduk->nama_ayah ?? '-',
             $bayi->nama_ibu ?? '-',
-            // BB JAN - DES
-            $bayi->bb_bulan_1 ?? '', $bayi->bb_bulan_2 ?? '', $bayi->bb_bulan_3 ?? '',
-            $bayi->bb_bulan_4 ?? '', $bayi->bb_bulan_5 ?? '', $bayi->bb_bulan_6 ?? '',
-            $bayi->bb_bulan_7 ?? '', $bayi->bb_bulan_8 ?? '', $bayi->bb_bulan_9 ?? '',
-            $bayi->bb_bulan_10 ?? '', $bayi->bb_bulan_11 ?? '', $bayi->bb_bulan_12 ?? '',
-            // IMUNISASI
-            $getVal($bayi->imunisasi_hbo_kurang_7_hari, 'L'), $getVal($bayi->imunisasi_hbo_kurang_7_hari, 'P'),
-            $getVal($bayi->imunisasi_hbo_lebih_7_hari, 'L'), $getVal($bayi->imunisasi_hbo_lebih_7_hari, 'P'),
-            $getVal($bayi->imunisasi_bcg_polio1, 'L'), $getVal($bayi->imunisasi_bcg_polio1, 'P'),
-            $getVal($bayi->imunisasi_pentavalen1_polio2, 'L'), $getVal($bayi->imunisasi_pentavalen1_polio2, 'P'),
-            $getVal($bayi->imunisasi_pentavalen2_polio3, 'L'), $getVal($bayi->imunisasi_pentavalen2_polio3, 'P'),
-            $getVal($bayi->imunisasi_pentavalen3_polio4, 'L'), $getVal($bayi->imunisasi_pentavalen3_polio4, 'P'),
-            $getVal($bayi->imunisasi_campak, 'L'), $getVal($bayi->imunisasi_campak, 'P'),
-            $bayi->keterangan ?? '-',
         ];
+
+        // BB Months 1-12
+        for ($i = 1; $i <= 12; $i++) {
+            $exam = $bayi->pemeriksaans->firstWhere('umur_bulan', $i);
+            $row[] = $exam ? $exam->berat_badan : '';
+        }
+
+        // IMUNISASI
+        $row[] = ($jk == 'L' && $hbo_k7) ? 'v' : '';
+        $row[] = ($jk == 'P' && $hbo_k7) ? 'v' : '';
+        $row[] = ($jk == 'L' && $hbo_l7) ? 'v' : '';
+        $row[] = ($jk == 'P' && $hbo_l7) ? 'v' : '';
+        $row[] = ($jk == 'L' && $bcg_polio1) ? 'v' : '';
+        $row[] = ($jk == 'P' && $bcg_polio1) ? 'v' : '';
+        $row[] = ($jk == 'L' && $penta1_polio2) ? 'v' : '';
+        $row[] = ($jk == 'P' && $penta1_polio2) ? 'v' : '';
+        $row[] = ($jk == 'L' && $penta2_polio3) ? 'v' : '';
+        $row[] = ($jk == 'P' && $penta2_polio3) ? 'v' : '';
+        $row[] = ($jk == 'L' && $penta3_polio4) ? 'v' : '';
+        $row[] = ($jk == 'P' && $penta3_polio4) ? 'v' : '';
+        $row[] = ($jk == 'L' && $campak) ? 'v' : '';
+        $row[] = ($jk == 'P' && $campak) ? 'v' : '';
+        
+        $row[] = $bayi->keterangan ?? '-';
+
+        return $row;
     }
 
     public function columnFormats(): array

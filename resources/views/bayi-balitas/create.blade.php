@@ -36,7 +36,7 @@
 
                         <!-- Dropdown Pilih Penduduk (Anak) -->
                         <div class="md:col-span-2" id="div-pilih-anak">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Pilih Penduduk (Anak) <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Pilih Anak <span class="text-red-500">*</span></label>
                             <select name="penduduk_id" id="select2-anak"
                                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">
                                 <option></option>

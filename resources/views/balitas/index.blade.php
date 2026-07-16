@@ -49,7 +49,7 @@
                     :showKelamin="false"
                 />
 
-                <input type="hidden" name="sort" value="{{ request('sort', 'balitas.created_at') }}">
+                <input type="hidden" name="sort" value="{{ request('sort', 'bayi_balitas.created_at') }}">
                 <input type="hidden" name="direction" value="{{ request('direction', 'desc') }}">
             </form>
         </div>
@@ -69,16 +69,16 @@
                     @forelse($balitas as $item)
                     <tr class="hover:bg-blue-50/30 transition duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-semibold text-gray-900">{{ $item->bayiBalita->penduduk->nama }}</div>
-                            <div class="text-xs text-gray-500">NIK: {{ $item->bayiBalita->penduduk->nik }}</div>
+                            <div class="text-sm font-semibold text-gray-900">{{ $item->penduduk->nama }}</div>
+                            <div class="text-xs text-gray-500">NIK: {{ $item->penduduk->nik }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $item->status_akta == 'punya' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                 {{ ucfirst($item->status_akta) }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $item->bayiBalita->nama_ibu ?? '-' }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $item->bayiBalita->posyandu->nama ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $item->nama_ibu ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $item->posyandu->nama ?? '-' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex justify-end gap-2">
                                 <a href="{{ route('balitas.pemeriksaan', $item) }}" class="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors" title="Pemeriksaan Lebih Lanjut">

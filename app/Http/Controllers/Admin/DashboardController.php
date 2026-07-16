@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Penduduk;
 use App\Models\IbuHamil;
 use App\Models\BayiBalita;
-use App\Models\Balita;
+use App\Models\PemeriksaanBalita;
 use App\Models\Lansia;
 
 class DashboardController extends Controller
@@ -21,8 +21,10 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $totalIbuHamil = IbuHamil::count();
-        $totalBayi = BayiBalita::count();
-        $totalBalita = Balita::count();
+        $totalBayi = BayiBalita::whereRaw("TIMESTAMPDIFF(MONTH, tanggal_lahir, CURDATE()) <= 12")->count();
+        $totalBalita = BayiBalita::whereRaw("TIMESTAMPDIFF(MONTH, tanggal_lahir, CURDATE()) > 12")
+            ->whereRaw("TIMESTAMPDIFF(MONTH, tanggal_lahir, CURDATE()) <= 60")
+            ->count();
         $totalLansia = Lansia::count();
 
         // Calculate examination logs (non-null weight entries)
@@ -31,20 +33,13 @@ class DashboardController extends Controller
             $ibuHamilExamCount += IbuHamil::whereNotNull("bb_bulan_{$i}")->count();
         }
 
-        $bayiExamCount = 0;
-        for ($i = 1; $i <= 12; $i++) {
-            $bayiExamCount += BayiBalita::whereNotNull("bb_bulan_{$i}")->count();
-        }
-
-        $balitaExamCount = 0;
-        for ($i = 13; $i <= 60; $i++) {
-            $balitaExamCount += Balita::whereNotNull("bb_bulan_{$i}")->count();
-        }
+        $bayiExamCount = PemeriksaanBalita::where('umur_bulan', '<=', 12)->count();
+        $balitaExamCount = PemeriksaanBalita::where('umur_bulan', '>', 12)->where('umur_bulan', '<=', 60)->count();
 
         // Analytical Data 1: Average Baby Weights (Months 1-12)
         $avgBayiWeights = [];
         for ($i = 1; $i <= 12; $i++) {
-            $avg = BayiBalita::whereNotNull("bb_bulan_{$i}")->avg("bb_bulan_{$i}");
+            $avg = PemeriksaanBalita::where('umur_bulan', $i)->avg("berat_badan");
             $avgBayiWeights[] = $avg ? round($avg, 2) : 0;
         }
 

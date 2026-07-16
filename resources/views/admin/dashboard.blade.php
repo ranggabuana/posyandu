@@ -35,7 +35,7 @@
             </div>
             <div>
                 <p class="text-sm font-semibold text-gray-500">Bayi</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ \App\Models\BayiBalita::count() }}</h3>
+                <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ $totalBayi }}</h3>
             </div>
         </div>
 
@@ -46,7 +46,7 @@
             </div>
             <div>
                 <p class="text-sm font-semibold text-gray-500">Balita</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ \App\Models\Balita::count() }}</h3>
+                <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ $totalBalita }}</h3>
             </div>
         </div>
 

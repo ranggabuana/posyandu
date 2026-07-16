@@ -22,7 +22,7 @@ class LandingPageController extends Controller
         $stats = [
             'total_penduduk' => Penduduk::count(),
             'ibu_hamil' => IbuHamil::where('status', 'aktif')->count(),
-            'balita' => BayiBalita::count(),
+            'balita' => BayiBalita::whereRaw("TIMESTAMPDIFF(MONTH, tanggal_lahir, CURDATE()) <= 60")->count(),
             'wus' => Wus::count(),
         ];
 
