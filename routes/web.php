@@ -54,13 +54,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('bayi-balitas/export', [\App\Http\Controllers\BayiBalitaController::class, 'export'])->name('bayi-balitas.export');
     Route::get('bayi-balitas/{bayi_balita}/pemeriksaan', [\App\Http\Controllers\BayiBalitaController::class, 'pemeriksaan'])->name('bayi-balitas.pemeriksaan');
     Route::put('bayi-balitas/{bayi_balita}/pemeriksaan', [\App\Http\Controllers\BayiBalitaController::class, 'updatePemeriksaan'])->name('bayi-balitas.update-pemeriksaan');
+    Route::get('bayi-balitas/{bayi_balita}/imunisasi', [\App\Http\Controllers\BayiBalitaController::class, 'imunisasi'])->name('bayi-balitas.imunisasi');
+    Route::post('bayi-balitas/{bayi_balita}/imunisasi', [\App\Http\Controllers\BayiBalitaController::class, 'storeImunisasi'])->name('bayi-balitas.store-imunisasi');
+    Route::put('pemeriksaans/{pemeriksaan}', [\App\Http\Controllers\BayiBalitaController::class, 'updatePemeriksaanRecord'])->name('pemeriksaans.update');
     Route::delete('pemeriksaans/{pemeriksaan}', [\App\Http\Controllers\BayiBalitaController::class, 'destroyPemeriksaan'])->name('pemeriksaans.destroy');
+    Route::put('imunisasis/{imunisasi}', [\App\Http\Controllers\BayiBalitaController::class, 'updateImunisasiRecord'])->name('imunisasis.update');
     Route::delete('imunisasis/{imunisasi}', [\App\Http\Controllers\BayiBalitaController::class, 'destroyImunisasi'])->name('imunisasis.destroy');
     Route::resource('bayi-balitas', \App\Http\Controllers\BayiBalitaController::class);
 
     Route::get('balitas/export', [\App\Http\Controllers\BalitaController::class, 'export'])->name('balitas.export');
     Route::get('balitas/{balita}/pemeriksaan', [\App\Http\Controllers\BalitaController::class, 'pemeriksaan'])->name('balitas.pemeriksaan');
     Route::put('balitas/{balita}/pemeriksaan', [\App\Http\Controllers\BalitaController::class, 'updatePemeriksaan'])->name('balitas.update-pemeriksaan');
+    Route::get('balitas/{balita}/imunisasi', [\App\Http\Controllers\BalitaController::class, 'imunisasi'])->name('balitas.imunisasi');
+    Route::post('balitas/{balita}/imunisasi', [\App\Http\Controllers\BalitaController::class, 'storeImunisasi'])->name('balitas.store-imunisasi');
     Route::resource('balitas', \App\Http\Controllers\BalitaController::class);
 
     Route::get('lansias/export', [\App\Http\Controllers\LansiaController::class, 'export'])->name('lansias.export');

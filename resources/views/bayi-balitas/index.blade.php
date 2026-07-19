@@ -88,11 +88,14 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $item->tanggal_lahir }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $item->posyandu->nama ?? '-' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div class="flex justify-end gap-2">
-                                <a href="{{ route('bayi-balitas.pemeriksaan', $item) }}" class="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors" title="Pemeriksaan">
-                                    <i class="mdi mdi-clipboard-pulse text-xl"></i>
+                            <div class="flex justify-end gap-1.5">
+                                <a href="{{ route('bayi-balitas.pemeriksaan', $item) }}" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Penimbangan Bulanan">
+                                    <i class="mdi mdi-scale-bathroom text-xl"></i>
                                 </a>
-                                <a href="{{ route('bayi-balitas.edit', $item) }}" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                                <a href="{{ route('bayi-balitas.imunisasi', $item) }}" class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Catat Imunisasi">
+                                    <i class="mdi mdi-needle text-xl"></i>
+                                </a>
+                                <a href="{{ route('bayi-balitas.edit', $item) }}" class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" title="Edit">
                                     <i class="mdi mdi-pencil text-xl"></i>
                                 </a>
                                 <form action="{{ route('bayi-balitas.destroy', $item) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data ini?');">

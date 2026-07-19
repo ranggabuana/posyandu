@@ -89,14 +89,25 @@ class BalitaController extends Controller
         return Excel::download(new BalitaExport($request->all()), 'balitas.xlsx');
     }
 
-    public function pemeriksaan($id)
+    public function pemeriksaan(Request $request, $id)
     {
-        return redirect()->route('bayi-balitas.pemeriksaan', $id);
+        return redirect()->route('bayi-balitas.pemeriksaan', array_merge(['bayi_balita' => $id], $request->all()));
     }
 
     public function updatePemeriksaan(Request $request, $id)
     {
         $bayi = BayiBalita::findOrFail($id);
         return (new BayiBalitaController)->updatePemeriksaan($request, $bayi);
+    }
+
+    public function imunisasi(Request $request, $id)
+    {
+        return redirect()->route('bayi-balitas.imunisasi', array_merge(['bayi_balita' => $id], $request->all()));
+    }
+
+    public function storeImunisasi(Request $request, $id)
+    {
+        $bayi = BayiBalita::findOrFail($id);
+        return (new BayiBalitaController)->storeImunisasi($request, $bayi);
     }
 }

@@ -196,10 +196,73 @@ class BayiBalitaController extends Controller
         return Excel::download(new BayiBalitaExport($request->all()), 'bayi-balitas.xlsx');
     }
 
-    public function pemeriksaan(BayiBalita $bayiBalita)
+    public function pemeriksaan(Request $request, BayiBalita $bayiBalita)
     {
-        $pemeriksaanHistory = $bayiBalita->pemeriksaans()->orderBy('tanggal_pemeriksaan', 'desc')->get();
-        $imunisasiHistory = $bayiBalita->imunisasis()->orderBy('tanggal_pemberian', 'desc')->get();
+        $query = $bayiBalita->pemeriksaans();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('tanggal_pemeriksaan', 'like', "%{$search}%")
+                  ->orWhere('umur_bulan', 'like', "%{$search}%")
+                  ->orWhere('berat_badan', 'like', "%{$search}%")
+                  ->orWhere('tinggi_badan', 'like', "%{$search}%")
+                  ->orWhere('status_gizi_bb_u', 'like', "%{$search}%")
+                  ->orWhere('status_gizi_tb_u', 'like', "%{$search}%")
+                  ->orWhere('catatan_perkembangan', 'like', "%{$search}%")
+                  ->orWhere('vitamin_a', 'like', "%{$search}%");
+            });
+        }
+
+        $sortField = $request->get('sort', 'tanggal_pemeriksaan');
+        $sortDirection = $request->get('direction', 'desc');
+        $perPage = (int) $request->get('per_page', 5);
+
+        $allowedSorts = [
+            'tanggal_pemeriksaan',
+            'umur_bulan',
+            'berat_badan',
+            'tinggi_badan',
+            'status_gizi_bb_u',
+            'status_gizi_tb_u',
+        ];
+
+        if (in_array($sortField, $allowedSorts)) {
+            $query->orderBy($sortField, $sortDirection === 'asc' ? 'asc' : 'desc');
+        } else {
+            $query->orderBy('tanggal_pemeriksaan', 'desc');
+        }
+
+        $pemeriksaanHistory = $query->paginate($perPage)->withQueryString();
+        return view('bayi-balitas.pemeriksaan', compact('bayiBalita', 'pemeriksaanHistory'));
+    }
+
+    public function imunisasi(Request $request, BayiBalita $bayiBalita)
+    {
+        $query = $bayiBalita->imunisasis();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_vaksin', 'like', "%{$search}%")
+                  ->orWhere('tanggal_pemberian', 'like', "%{$search}%")
+                  ->orWhere('keterangan', 'like', "%{$search}%");
+            });
+        }
+
+        $sortField = $request->get('sort', 'tanggal_pemberian');
+        $sortDirection = $request->get('direction', 'desc');
+        $perPage = (int) $request->get('per_page', 5);
+
+        $allowedSorts = ['nama_vaksin', 'tanggal_pemberian', 'keterangan'];
+        if (in_array($sortField, $allowedSorts)) {
+            $query->orderBy($sortField, $sortDirection === 'asc' ? 'asc' : 'desc');
+        } else {
+            $query->orderBy('tanggal_pemberian', 'desc');
+        }
+
+        $imunisasiHistory = $query->paginate($perPage)->withQueryString();
+        $givenVaccines = $bayiBalita->imunisasis()->pluck('nama_vaksin')->toArray();
 
         // Daftar Imunisasi Rekomendasi
         $rekomendasiImunisasi = [
@@ -219,12 +282,30 @@ class BayiBalitaController extends Controller
             'Campak/MR Booster',
         ];
 
-        return view('bayi-balitas.pemeriksaan', compact('bayiBalita', 'pemeriksaanHistory', 'imunisasiHistory', 'rekomendasiImunisasi'));
+        return view('bayi-balitas.imunisasi', compact('bayiBalita', 'imunisasiHistory', 'givenVaccines', 'rekomendasiImunisasi'));
+    }
+
+    public function storeImunisasi(Request $request, BayiBalita $bayiBalita)
+    {
+        $request->validate([
+            'imunisasi_nama_vaksin' => 'required|string|max:255',
+            'imunisasi_tanggal_pemberian' => 'required|date',
+            'imunisasi_keterangan' => 'nullable|string',
+        ]);
+
+        ImunisasiBalita::create([
+            'bayi_balita_id' => $bayiBalita->id,
+            'nama_vaksin' => $request->imunisasi_nama_vaksin,
+            'tanggal_pemberian' => $request->imunisasi_tanggal_pemberian,
+            'keterangan' => $request->imunisasi_keterangan,
+        ]);
+
+        return redirect()->route('bayi-balitas.imunisasi', $bayiBalita)->with('success', 'Data imunisasi berhasil dicatat');
     }
 
     public function updatePemeriksaan(Request $request, BayiBalita $bayiBalita)
     {
-        $validated = $request->validate([
+        $request->validate([
             // Pemeriksaan
             'tanggal_pemeriksaan' => 'nullable|date',
             'umur_bulan' => 'nullable|integer|min:0|max:60',
@@ -237,11 +318,6 @@ class BayiBalitaController extends Controller
             'obat_cacing' => 'nullable|boolean',
             'pmt' => 'nullable|boolean',
             'catatan_perkembangan' => 'nullable|string',
-            
-            // Imunisasi
-            'imunisasi_nama_vaksin' => 'nullable|string|max:255',
-            'imunisasi_tanggal_pemberian' => 'nullable|date|required_with:imunisasi_nama_vaksin',
-            'imunisasi_keterangan' => 'nullable|string',
             
             // Administrasi
             'status_akta' => 'nullable|in:punya,tidak punya',
@@ -278,24 +354,69 @@ class BayiBalitaController extends Controller
             );
         }
 
-        // Simpan Imunisasi
-        if ($request->filled('imunisasi_nama_vaksin')) {
-            ImunisasiBalita::create([
-                'bayi_balita_id' => $bayiBalita->id,
-                'nama_vaksin' => $request->imunisasi_nama_vaksin,
-                'tanggal_pemberian' => $request->imunisasi_tanggal_pemberian,
-                'keterangan' => $request->imunisasi_keterangan,
-            ]);
-        }
+        return redirect()->route('bayi-balitas.pemeriksaan', $bayiBalita)->with('success', 'Hasil penimbangan berhasil disimpan');
+    }
 
-        $redirectRoute = $bayiBalita->umur_bulan <= 12 ? 'bayi-balitas.index' : 'balitas.index';
-        return redirect()->route($redirectRoute)->with('success', 'Pemeriksaan berhasil disimpan');
+    public function updatePemeriksaanRecord(Request $request, PemeriksaanBalita $pemeriksaan)
+    {
+        $request->validate([
+            'tanggal_pemeriksaan' => 'required|date',
+            'umur_bulan' => 'required|integer|min:0|max:60',
+            'berat_badan' => 'required|numeric|min:0|max:100',
+            'tinggi_badan' => 'required|numeric|min:0|max:200',
+            'lingkar_lengan_atas' => 'nullable|numeric|min:0|max:100',
+            'lingkar_kepala' => 'nullable|numeric|min:0|max:100',
+            'asi_eksklusif' => 'nullable|in:Ya,Tidak',
+            'vitamin_a' => 'nullable|in:biru,merah,tidak',
+            'catatan_perkembangan' => 'nullable|string',
+        ]);
+
+        $bayiBalita = $pemeriksaan->bayiBalita;
+        $statusGizi = $this->hitungStatusGizi($bayiBalita, $request->berat_badan, $request->tinggi_badan, $request->umur_bulan);
+
+        $pemeriksaan->update([
+            'tanggal_pemeriksaan' => $request->tanggal_pemeriksaan,
+            'umur_bulan' => $request->umur_bulan,
+            'berat_badan' => $request->berat_badan,
+            'tinggi_badan' => $request->tinggi_badan,
+            'lingkar_lengan_atas' => $request->lingkar_lengan_atas,
+            'lingkar_kepala' => $request->lingkar_kepala,
+            'asi_eksklusif' => $request->asi_eksklusif ?? 'Tidak',
+            'vitamin_a' => $request->vitamin_a ?? 'tidak',
+            'obat_cacing' => $request->has('obat_cacing') ? true : false,
+            'pmt' => $request->has('pmt') ? true : false,
+            'status_gizi_bb_u' => $statusGizi['bb_u'],
+            'status_gizi_tb_u' => $statusGizi['tb_u'],
+            'status_gizi_bb_tb' => $statusGizi['bb_tb'],
+            'catatan_perkembangan' => $request->catatan_perkembangan,
+        ]);
+
+        return redirect()->route('bayi-balitas.pemeriksaan', $bayiBalita)->with('success', 'Riwayat penimbangan berhasil diperbarui');
     }
 
     public function destroyPemeriksaan(PemeriksaanBalita $pemeriksaan)
     {
         $pemeriksaan->delete();
         return back()->with('success', 'Riwayat pemeriksaan berhasil dihapus');
+    }
+
+    public function updateImunisasiRecord(Request $request, ImunisasiBalita $imunisasi)
+    {
+        $request->validate([
+            'imunisasi_nama_vaksin' => 'required|string|max:255',
+            'imunisasi_tanggal_pemberian' => 'required|date',
+            'imunisasi_keterangan' => 'nullable|string|max:255',
+        ]);
+
+        $bayiBalita = $imunisasi->bayiBalita;
+
+        $imunisasi->update([
+            'nama_vaksin' => $request->imunisasi_nama_vaksin,
+            'tanggal_pemberian' => $request->imunisasi_tanggal_pemberian,
+            'keterangan' => $request->imunisasi_keterangan,
+        ]);
+
+        return redirect()->route('bayi-balitas.imunisasi', $bayiBalita)->with('success', 'Riwayat imunisasi berhasil diperbarui');
     }
 
     public function destroyImunisasi(ImunisasiBalita $imunisasi)
