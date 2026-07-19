@@ -1,3 +1,8 @@
+@props([
+    'title' => 'Dashboard',
+    'breadcrumbs' => []
+])
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -254,7 +259,7 @@
     <!-- Main Content -->
     <div id="main-content" class="flex-1 ml-0 lg:ml-64 transition-all duration-300">
         <!-- Header -->
-        <x-header />
+        <x-header :breadcrumbs="$breadcrumbs" />
 
         <!-- Dashboard Content -->
         <main class="p-6">

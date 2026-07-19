@@ -1,3 +1,7 @@
+@props([
+    'breadcrumbs' => []
+])
+
 <header class="bg-white shadow-md py-4 px-6 flex justify-between items-center">
     <div class="flex items-center">
         <button id="sidebar-toggle-btn" class="mr-4 text-gray-500 lg:hidden">
@@ -7,36 +11,82 @@
             <i class="mdi mdi-chevron-left text-xl"></i>
         </button>
 
-        <!-- Breadcrumb -->
-        <nav aria-label="Breadcrumb" class="ml-4 breadcrumb-nav">
-            <ol class="flex items-center space-x-2 text-sm">
+        <!-- Dynamic Top Nav Breadcrumb -->
+        <nav aria-label="Breadcrumb" class="ml-1 sm:ml-4 breadcrumb-nav">
+            <ol class="flex items-center space-x-1 sm:space-x-1.5 text-xs sm:text-sm">
                 <li>
-                    <a href="{{ route('dashboard') }}"
-                        class="text-blue-600 hover:text-blue-800 transition-colors">
-                        Home
+                    <a href="{{ route('dashboard') }}" class="text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1 font-semibold">
+                        <i class="mdi mdi-home text-sm"></i>
+                        <span>Beranda</span>
                     </a>
                 </li>
-                <li class="flex items-center">
-                    <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                    <a href="{{ route('dashboard') }}"
-                        class="text-blue-600 hover:text-blue-800 transition-colors">
-                        Dashboard
-                    </a>
-                </li>
-                <li class="flex items-center">
-                    <svg class="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                    <span class="text-gray-500 font-medium">
-                        @yield('page-title', 'Beranda')
-                    </span>
-                </li>
+                
+                @php
+                    $crumbs = $breadcrumbs;
+                    // Auto fallback if crumbs empty and not on dashboard
+                    if (empty($crumbs) && Route::currentRouteName() !== 'dashboard') {
+                        $routeName = Route::currentRouteName();
+                        $routeLabel = match($routeName) {
+                            'penduduks.index' => 'Data Penduduk',
+                            'penduduks.create' => 'Tambah Penduduk',
+                            'penduduks.edit' => 'Edit Penduduk',
+                            'ibus.index' => 'Data Ibu',
+                            'ibu-hamils.index' => 'Data Ibu Hamil',
+                            'ibu-hamils.pemeriksaan' => 'Pemeriksaan Ibu Hamil',
+                            'bayi-balitas.index' => 'Data Bayi (0-12m)',
+                            'balitas.index' => 'Data Balita (13-60m)',
+                            'bayi-balitas.pemeriksaan' => 'Pemeriksaan Balita',
+                            'remajas.index' => 'Data Remaja',
+                            'remajas.pemeriksaan' => 'Pemeriksaan Remaja',
+                            'lansias.index' => 'Data Lansia',
+                            'lansias.pemeriksaan' => 'Pemeriksaan Lansia',
+                            'wuses.index' => 'Data WUS',
+                            'puses.index' => 'Data PUS',
+                            'posyandus.index' => 'Data Posyandu',
+                            'kaders.index' => 'Data Kader',
+                            'tims.index' => 'Tim Posyandu',
+                            'jadwals.index' => 'Jadwal Pelayanan',
+                            'beritas.index' => 'Berita & Artikel',
+                            'galeries.index' => 'Galeri Foto',
+                            'buku-tamus.index' => 'Buku Tamu',
+                            'laporan-masyarakats.index' => 'Laporan Warga',
+                            'pengaturans.index' => 'Pengaturan Sistem',
+                            'profile.edit' => 'Profil Saya',
+                            default => Str::title(str_replace(['.', '-'], ' ', $routeName ?? 'Detail'))
+                        };
+
+                        if (in_array($routeName, ['penduduks.index', 'penduduks.create', 'penduduks.edit', 'ibus.index'])) {
+                            $crumbs = ['Data Kependudukan' => null, $routeLabel => null];
+                        } elseif (in_array($routeName, ['ibu-hamils.index', 'bayi-balitas.index', 'balitas.index', 'remajas.index', 'lansias.index', 'wuses.index', 'puses.index', 'ibu-hamils.pemeriksaan', 'bayi-balitas.pemeriksaan', 'remajas.pemeriksaan', 'lansias.pemeriksaan'])) {
+                            $crumbs = ['Data Kesehatan' => null, $routeLabel => null];
+                        } elseif (in_array($routeName, ['posyandus.index', 'kaders.index', 'tims.index', 'jadwals.index', 'beritas.index', 'galeries.index'])) {
+                            $crumbs = ['Pengelolaan Posyandu' => null, $routeLabel => null];
+                        } elseif (in_array($routeName, ['buku-tamus.index', 'laporan-masyarakats.index'])) {
+                            $crumbs = ['Interaksi Warga' => null, $routeLabel => null];
+                        } else {
+                            $crumbs = [$routeLabel => null];
+                        }
+                    }
+                @endphp
+
+                @if(is_array($crumbs) && count($crumbs) > 0)
+                    @foreach($crumbs as $label => $link)
+                        <li class="flex items-center">
+                            <svg class="w-3.5 h-3.5 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            @if($link)
+                                <a href="{{ $link }}" class="text-blue-600 hover:text-blue-800 transition-colors font-medium">
+                                    {{ $label }}
+                                </a>
+                            @else
+                                <span class="text-gray-700 font-semibold">
+                                    {{ $label }}
+                                </span>
+                            @endif
+                        </li>
+                    @endforeach
+                @endif
             </ol>
         </nav>
     </div>
