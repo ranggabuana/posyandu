@@ -75,6 +75,7 @@
                             </div>
                         </th>
                         @endforeach
+                        <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -90,6 +91,14 @@
                             <div class="text-[10px] text-gray-500">RW {{ $item->rw ?? '00' }} / RT {{ $item->rt ?? '00' }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 uppercase">{{ substr($item->kelamin, 0, 1) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                            <a href="{{ route('lansias.pemeriksaan', $item->id) }}" 
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs"
+                                title="Kelola Pemeriksaan Kesehatan Lansia">
+                                <i class="mdi mdi-heart-pulse text-base text-red-500"></i>
+                                <span>Pemeriksaan</span>
+                            </a>
+                        </td>
                     </tr>
                     @empty
                     <tr>

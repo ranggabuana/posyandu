@@ -70,6 +70,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('balitas', \App\Http\Controllers\BalitaController::class);
 
     Route::get('lansias/export', [\App\Http\Controllers\LansiaController::class, 'export'])->name('lansias.export');
+    Route::get('lansias/{lansia}/pemeriksaan', [\App\Http\Controllers\LansiaController::class, 'pemeriksaan'])->name('lansias.pemeriksaan');
+    Route::post('lansias/{lansia}/pemeriksaan', [\App\Http\Controllers\LansiaController::class, 'storePemeriksaan'])->name('lansias.store-pemeriksaan');
+    Route::put('pemeriksaan-lansias/{pemeriksaan}', [\App\Http\Controllers\LansiaController::class, 'updatePemeriksaanRecord'])->name('pemeriksaan-lansias.update');
+    Route::delete('pemeriksaan-lansias/{pemeriksaan}', [\App\Http\Controllers\LansiaController::class, 'destroyPemeriksaan'])->name('pemeriksaan-lansias.destroy');
     Route::resource('lansias', \App\Http\Controllers\LansiaController::class);
 
     Route::get('wuses/export', [\App\Http\Controllers\WusController::class, 'export'])->name('wuses.export');

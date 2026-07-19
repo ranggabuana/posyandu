@@ -195,24 +195,6 @@
                 </div>
             </div>
 
-            <!-- Quick Link: Kelola Imunisasi -->
-            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100 shadow-sm flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center gap-3 mb-2">
-                        <div class="p-2.5 bg-green-600 text-white rounded-xl shadow-sm">
-                            <i class="mdi mdi-needle text-xl"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-900">Kelola Imunisasi</h4>
-                            <p class="text-xs text-gray-500">Pemberian Vaksin Anak</p>
-                        </div>
-                    </div>
-                    <p class="text-xs text-gray-600 mb-4 mt-2">Ingin mencatat vaksinasi baru atau melihat riwayat imunisasi anak ini?</p>
-                </div>
-                <a href="{{ route('bayi-balitas.imunisasi', $bayiBalita) }}" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-xl transition shadow-lg shadow-green-500/15">
-                    <i class="mdi mdi-needle"></i> Buka Halaman Imunisasi
-                </a>
-            </div>
         </div>
     </div>
 
@@ -256,6 +238,55 @@
                     </div>
                 </form>
             </div>
+
+            <!-- Banner Information Standar WHO (Sleek & Professional) -->
+            <div class="px-8 py-4 bg-gradient-to-r from-purple-50/80 via-indigo-50/40 to-blue-50/50 border-b border-purple-100/80">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 bg-purple-600 text-white rounded-xl shadow-xs">
+                            <i class="mdi mdi-calculator-variant text-base"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-extrabold text-gray-900 text-sm tracking-tight">Standar Perhitungan Antropometri (WHO)</h4>
+                            <p class="text-xs text-gray-500">Kalkulasi Z-score otomatis berdasarkan Jenis Kelamin & Umur Bulan anak</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 self-start md:self-auto">
+                        <button type="button" onclick="openAntropometriDetailModal()" 
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-xs text-xs font-bold transition">
+                            <i class="mdi mdi-information-outline text-sm"></i> Detail Rumus & Cara Hitung
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Grid Legend Badges -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-purple-100/60">
+                    <!-- Status Gizi BB/U -->
+                    <div class="bg-white/90 p-2.5 rounded-xl border border-purple-100/70 flex flex-wrap items-center justify-between gap-2 text-xs shadow-2xs">
+                        <span class="font-bold text-gray-700 flex items-center gap-1.5">
+                            <i class="mdi mdi-weight text-purple-600"></i> Status Gizi (BB/U)
+                        </span>
+                        <div class="flex items-center gap-1 text-[11px] font-semibold">
+                            <span class="px-2 py-0.5 bg-red-50 text-red-700 rounded-md border border-red-100" title="Z-Score < -3 SD">Sangat Kurang</span>
+                            <span class="px-2 py-0.5 bg-orange-50 text-orange-700 rounded-md border border-orange-100" title="-3 s.d -2 SD">Kurang</span>
+                            <span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-md border border-green-100" title="-2 s.d +2 SD">Normal</span>
+                        </div>
+                    </div>
+
+                    <!-- Stunting TB/U -->
+                    <div class="bg-white/90 p-2.5 rounded-xl border border-purple-100/70 flex flex-wrap items-center justify-between gap-2 text-xs shadow-2xs">
+                        <span class="font-bold text-gray-700 flex items-center gap-1.5">
+                            <i class="mdi mdi-ruler-square text-purple-600"></i> Stunting (TB/U)
+                        </span>
+                        <div class="flex items-center gap-1 text-[11px] font-semibold">
+                            <span class="px-2 py-0.5 bg-red-50 text-red-700 rounded-md border border-red-100" title="Z-Score < -3 SD">Sangat Pendek</span>
+                            <span class="px-2 py-0.5 bg-orange-50 text-orange-700 rounded-md border border-orange-100" title="-3 s.d -2 SD">Pendek</span>
+                            <span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-md border border-green-100" title="-2 s.d +2 SD">Normal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50/50">
@@ -302,25 +333,35 @@
 
                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors group"
                                 onclick="updateHistorySort('status_gizi_bb_u')">
-                                <div class="flex items-center gap-1">
-                                    Status Gizi (BB/U)
-                                    @if(request('sort') == 'status_gizi_bb_u')
-                                        <i class="mdi mdi-arrow-{{ request('direction') == 'asc' ? 'up' : 'down' }} text-purple-600"></i>
-                                    @else
-                                        <i class="mdi mdi-arrow-up-down text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                                    @endif
+                                <div>
+                                    <div class="flex items-center gap-1">
+                                        <span>Status Gizi (BB/U)</span>
+                                        @if(request('sort') == 'status_gizi_bb_u')
+                                            <i class="mdi mdi-arrow-{{ request('direction') == 'asc' ? 'up' : 'down' }} text-purple-600"></i>
+                                        @else
+                                            <i class="mdi mdi-arrow-up-down text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                        @endif
+                                    </div>
+                                    <div class="text-[10px] text-purple-600/80 font-normal font-mono normal-case tracking-tight mt-0.5">
+                                        Z = (BB - Median) &divide; SD
+                                    </div>
                                 </div>
                             </th>
 
                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors group"
                                 onclick="updateHistorySort('status_gizi_tb_u')">
-                                <div class="flex items-center gap-1">
-                                    Stunting (TB/U)
-                                    @if(request('sort') == 'status_gizi_tb_u')
-                                        <i class="mdi mdi-arrow-{{ request('direction') == 'asc' ? 'up' : 'down' }} text-purple-600"></i>
-                                    @else
-                                        <i class="mdi mdi-arrow-up-down text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                                    @endif
+                                <div>
+                                    <div class="flex items-center gap-1">
+                                        <span>Stunting (TB/U)</span>
+                                        @if(request('sort') == 'status_gizi_tb_u')
+                                            <i class="mdi mdi-arrow-{{ request('direction') == 'asc' ? 'up' : 'down' }} text-purple-600"></i>
+                                        @else
+                                            <i class="mdi mdi-arrow-up-down text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                        @endif
+                                    </div>
+                                    <div class="text-[10px] text-purple-600/80 font-normal font-mono normal-case tracking-tight mt-0.5">
+                                        Z = (TB - Median) &divide; SD
+                                    </div>
                                 </div>
                             </th>
 
@@ -344,16 +385,30 @@
                                     {{ $exam->lingkar_lengan_atas ?? '-' }} cm / {{ $exam->lingkar_kepala ?? '-' }} cm
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2.5 py-1 text-xs font-bold rounded-full 
-                                        {{ $exam->status_gizi_bb_u == 'Normal' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200' }}">
-                                        {{ $exam->status_gizi_bb_u ?? 'Normal' }}
-                                    </span>
+                                    <div class="flex flex-col items-start gap-1">
+                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full 
+                                            {{ $exam->status_gizi_bb_u == 'Normal' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200' }}">
+                                            {{ $exam->status_gizi_bb_u ?? 'Normal' }}
+                                        </span>
+                                        @if($exam->z_score_bb_u !== null)
+                                            <span class="text-[11px] font-mono font-bold text-gray-600 bg-gray-50 px-2 py-0.5 rounded border border-gray-200" title="Nilai Z-Score Standar WHO untuk Berat Badan / Umur">
+                                                Z: {{ $exam->z_score_bb_u > 0 ? '+'.$exam->z_score_bb_u : $exam->z_score_bb_u }} SD
+                                            </span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2.5 py-1 text-xs font-bold rounded-full 
-                                        {{ $exam->status_gizi_tb_u == 'Normal' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200' }}">
-                                        {{ $exam->status_gizi_tb_u ?? 'Normal' }}
-                                    </span>
+                                    <div class="flex flex-col items-start gap-1">
+                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full 
+                                            {{ $exam->status_gizi_tb_u == 'Normal' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200' }}">
+                                            {{ $exam->status_gizi_tb_u ?? 'Normal' }}
+                                        </span>
+                                        @if($exam->z_score_tb_u !== null)
+                                            <span class="text-[11px] font-mono font-bold text-gray-600 bg-gray-50 px-2 py-0.5 rounded border border-gray-200" title="Nilai Z-Score Standar WHO untuk Tinggi Badan / Umur (Stunting)">
+                                                Z: {{ $exam->z_score_tb_u > 0 ? '+'.$exam->z_score_tb_u : $exam->z_score_tb_u }} SD
+                                            </span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 text-xs text-gray-600 space-y-1">
                                     @if($exam->vitamin_a && $exam->vitamin_a !== 'tidak')
@@ -406,6 +461,19 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Formula Summary Bar at Bottom of Table -->
+            <div class="px-6 py-3 bg-purple-50/60 border-t border-purple-100/80 flex flex-wrap items-center justify-between gap-2 text-xs text-purple-950">
+                <div class="flex items-center gap-1.5 font-bold">
+                    <i class="mdi mdi-calculator text-purple-600 text-sm"></i>
+                    <span>Rumus Perhitungan Kolom Tabel:</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 font-mono text-[11px]">
+                    <span class="bg-white px-2.5 py-1 rounded-lg border border-purple-200 shadow-2xs">Status Gizi (BB/U): <strong class="text-purple-700">Z = (BB Hasil - Median BB WHO) &divide; SD</strong></span>
+                    <span class="bg-white px-2.5 py-1 rounded-lg border border-purple-200 shadow-2xs">Stunting (TB/U): <strong class="text-purple-700">Z = (TB Hasil - Median TB WHO) &divide; SD</strong></span>
+                </div>
+            </div>
+
             <div class="p-4 border-t border-gray-100 bg-gray-50/30">
                 {{ $pemeriksaanHistory->links() }}
             </div>
@@ -542,7 +610,165 @@
         </div>
     </div>
 
+    <!-- Modal Detail Rumus & Metodologi Antropometri WHO -->
+    <div id="antropometri-detail-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="closeAntropometriDetailModal()"></div>
+
+        <!-- Modal Container -->
+        <div class="flex min-h-screen items-center justify-center p-4 text-center">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-3xl border border-gray-100">
+                <!-- Header -->
+                <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-indigo-50 flex justify-between items-center">
+                    <div class="flex items-center">
+                        <div class="p-2.5 bg-purple-600 text-white rounded-xl mr-3 shadow-xs">
+                            <i class="mdi mdi-calculator-variant text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">Panduan & Detail Rumus Perhitungan Antropometri (WHO Standar)</h3>
+                            <p class="text-xs text-purple-700 font-medium">Sistem Klasifikasi Status Gizi (BB/U) dan Stunting (TB/U)</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="closeAntropometriDetailModal()" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="mdi mdi-close text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6 space-y-6 text-sm text-gray-700 max-h-[75vh] overflow-y-auto">
+                    
+                    <!-- 1. Formulasi Matematika Z-Score -->
+                    <div class="p-4 bg-purple-50/60 rounded-2xl border border-purple-100 space-y-3">
+                        <div class="flex items-center gap-2 text-purple-900 font-bold text-base">
+                            <i class="mdi mdi-function-variant text-purple-600 text-xl"></i>
+                            <h4>1. Rumus Utama Z-Score (Antropometri WHO)</h4>
+                        </div>
+                        <div class="p-4 bg-white rounded-xl border border-purple-200 text-center font-mono text-base font-bold text-purple-900 shadow-2xs">
+                            Z-Score = (Nilai Pengukuran Anak - Median Standar WHO) / Standar Deviasi (SD)
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-600 pt-1">
+                            <div class="p-2.5 bg-white rounded-lg border border-purple-100">
+                                <span class="font-bold text-gray-800 block mb-0.5">Nilai Pengukuran:</span>
+                                Hasil timbang Berat Badan (kg) atau ukur Tinggi/Panjang Badan (cm).
+                            </div>
+                            <div class="p-2.5 bg-white rounded-lg border border-purple-100">
+                                <span class="font-bold text-gray-800 block mb-0.5">Median Standar WHO:</span>
+                                Rata-rata populasi acuan normal WHO berdasarkan umur & jenis kelamin.
+                            </div>
+                            <div class="p-2.5 bg-white rounded-lg border border-purple-100">
+                                <span class="font-bold text-gray-800 block mb-0.5">Standar Deviasi (SD):</span>
+                                Sebaran deviasi simpangan baku WHO untuk kelompok umur anak.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Tabel Klasifikasi & Kriteria Z-Score -->
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-gray-900 flex items-center gap-2 text-base">
+                            <i class="mdi mdi-format-list-bulleted-type text-purple-600"></i>
+                            2. Kriteria Klasifikasi Nilai Z-Score (Permenkes RI / WHO)
+                        </h4>
+                        
+                        <div class="overflow-hidden border border-gray-200 rounded-xl shadow-2xs">
+                            <table class="min-w-full divide-y divide-gray-200 text-xs">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left font-bold text-gray-700">Indikator</th>
+                                        <th class="px-4 py-3 text-left font-bold text-gray-700">Rentang Z-Score</th>
+                                        <th class="px-4 py-3 text-left font-bold text-gray-700">Kategori Kemenkes / WHO</th>
+                                        <th class="px-4 py-3 text-left font-bold text-gray-700">Keterangan Diagnosa</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-150">
+                                    <!-- Stunting -->
+                                    <tr class="bg-purple-50/30">
+                                        <td rowspan="3" class="px-4 py-3 font-bold text-purple-900 align-top border-r border-gray-200">
+                                            Stunting<br><span class="text-[11px] font-normal text-purple-700">(Tinggi Badan / Umur - TB/U)</span>
+                                        </td>
+                                        <td class="px-4 py-2 font-mono font-bold text-red-700">&lt; -3.0 SD</td>
+                                        <td class="px-4 py-2 font-bold text-red-700">Sangat Pendek</td>
+                                        <td class="px-4 py-2 text-gray-600">Gagal tumbuh kronis tingkat berat (Severely Stunted)</td>
+                                    </tr>
+                                    <tr class="bg-purple-50/30">
+                                        <td class="px-4 py-2 font-mono font-bold text-orange-700">-3.0 SD s.d. -2.0 SD</td>
+                                        <td class="px-4 py-2 font-bold text-orange-700">Pendek (Stunting)</td>
+                                        <td class="px-4 py-2 text-gray-600">Terindikasi Stunting / Gizi kronis (Stunted)</td>
+                                    </tr>
+                                    <tr class="bg-purple-50/30">
+                                        <td class="px-4 py-2 font-mono font-bold text-green-700">-2.0 SD s.d. +2.0 SD</td>
+                                        <td class="px-4 py-2 font-bold text-green-700">Normal</td>
+                                        <td class="px-4 py-2 text-gray-600">Pertumbuhan tinggi badan optimal sesuai usia</td>
+                                    </tr>
+
+                                    <!-- Status Gizi BB/U -->
+                                    <tr>
+                                        <td rowspan="3" class="px-4 py-3 font-bold text-blue-900 align-top border-r border-gray-200">
+                                            Status Gizi<br><span class="text-[11px] font-normal text-blue-700">(Berat Badan / Umur - BB/U)</span>
+                                        </td>
+                                        <td class="px-4 py-2 font-mono font-bold text-red-700">&lt; -3.0 SD</td>
+                                        <td class="px-4 py-2 font-bold text-red-700">Sangat Kurang</td>
+                                        <td class="px-4 py-2 text-gray-600">Berat badan sangat kurang (Severely Underweight)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-2 font-mono font-bold text-orange-700">-3.0 SD s.d. -2.0 SD</td>
+                                        <td class="px-4 py-2 font-bold text-orange-700">Kurang</td>
+                                        <td class="px-4 py-2 text-gray-600">Berat badan kurang (Underweight)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-2 font-mono font-bold text-green-700">-2.0 SD s.d. +2.0 SD</td>
+                                        <td class="px-4 py-2 font-bold text-green-700">Normal</td>
+                                        <td class="px-4 py-2 text-gray-600">Berat badan sehat & proporsional</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 3. Simulasi & Contoh Perhitungan Nyata -->
+                    <div class="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="font-bold text-gray-900 flex items-center gap-2 text-base">
+                            <i class="mdi mdi-lightbulb-on text-amber-500"></i>
+                            3. Contoh Kasus Perhitungan Stunting Anak
+                        </h4>
+                        <div class="bg-white p-3.5 rounded-xl border border-gray-200 text-xs space-y-2">
+                            <p class="font-semibold text-gray-800">
+                                Skenario: Anak Laki-Laki, Umur 12 Bulan, Hasil Ukur Tinggi Badan (TB) = 68.0 Cm.
+                            </p>
+                            <ul class="list-disc pl-5 space-y-1 text-gray-600">
+                                <li>Tabel Baku WHO Laki-Laki 12 Bulan: <strong>Median TB = 75.7 Cm</strong>, <strong>SD = 3.4 Cm</strong>.</li>
+                                <li>Hitung Selisih: <code class="bg-gray-100 px-1.5 py-0.5 rounded font-mono">68.0 - 75.7 = -7.7 Cm</code></li>
+                                <li>Kalkulasi Z-Score: <code class="bg-gray-100 px-1.5 py-0.5 rounded font-mono">-7.7 &divide; 3.4 = -2.26 SD</code></li>
+                            </ul>
+                            <div class="p-2.5 bg-orange-50 border border-orange-200 rounded-lg text-orange-800 font-bold flex items-center gap-2 mt-2">
+                                <i class="mdi mdi-alert-circle text-orange-600 text-base"></i>
+                                <span>Hasil Diagnosa: Nilai -2.26 SD berada di rentang -3.0 s.d. -2.0 SD &rarr; Terdiagnosa "Pendek (Stunting)"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-3 rounded-b-2xl">
+                    <span class="text-xs text-gray-500">Sumber Referensi: <strong>Permenkes RI No. 2 Tahun 2020 tentang Standar Antropometri Anak</strong></span>
+                    <button type="button" onclick="closeAntropometriDetailModal()"
+                        class="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+                        Tutup Panduan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function openAntropometriDetailModal() {
+            document.getElementById('antropometri-detail-modal').classList.remove('hidden');
+        }
+
+        function closeAntropometriDetailModal() {
+            document.getElementById('antropometri-detail-modal').classList.add('hidden');
+        }
+
         function openEditExamModal(exam) {
             const form = document.getElementById('edit-exam-form');
             form.action = `/pemeriksaans/${exam.id}`;

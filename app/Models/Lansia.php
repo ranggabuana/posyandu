@@ -17,4 +17,9 @@ class Lansia extends Model
     {
         return $this->belongsTo(Posyandu::class);
     }
+
+    public function pemeriksaans()
+    {
+        return $this->hasMany(PemeriksaanLansia::class, 'lansia_id');
+    }
 }
