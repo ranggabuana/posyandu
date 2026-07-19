@@ -1,605 +1,757 @@
-<x-layout title="Dashboard">
+<x-layout title="Dashboard SIP Posyandu">
     <x-page-header 
         title="Beranda SIP Posyandu"
-        subtitle="Selamat datang kembali di Panel Admin Sistem Informasi Posyandu Desa Banjar"
+        subtitle="Panel Kontrol & Analisis Rekam Medis Pelayanan Kesehatan Terpadu Desa Banjar"
         icon="mdi-home"
         :breadcrumbs="[]"
-    />
+    >
+        <a href="{{ route('sync-asmara') }}" onclick="confirmSync(event, this.href)" 
+            class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-xs font-bold transition shadow-2xs">
+            <i class="mdi mdi-cloud-sync text-sm"></i>
+            <span>Sinkronkan Data OpenSID</span>
+        </a>
+    </x-page-header>
 
-    @php
-        $remajaMin = \App\Models\Pengaturan::where('key', 'remaja_umur_min')->value('value') ?? 10;
-        $remajaMax = \App\Models\Pengaturan::where('key', 'remaja_umur_max')->value('value') ?? 18;
-        $totalRemaja = \App\Models\Penduduk::whereRaw("TIMESTAMPDIFF(YEAR, tanggallahir, CURDATE()) BETWEEN ? AND ?", [$remajaMin, $remajaMax])->count();
-    @endphp
+    <!-- Section 1: Ringkasan Populasi Lintas Siklus Hidup -->
+    <div class="mb-8">
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+            <i class="mdi mdi-account-group-outline text-base text-blue-600"></i>
+            Populasi Lintas Siklus Hidup (Life Course Approach)
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+            <!-- Penduduk -->
+            <a href="{{ route('penduduks.index') }}" class="bg-white p-3.5 rounded-2xl shadow-2xs border border-gray-100 hover:border-blue-300 hover:shadow-md transition group">
+                <div class="flex items-center justify-between">
+                    <div class="p-2 bg-blue-50 text-blue-600 rounded-xl group-hover:scale-110 transition">
+                        <i class="mdi mdi-account-group text-base"></i>
+                    </div>
+                    <span class="text-[10px] text-gray-400 font-mono bg-gray-50 px-1.5 py-0.5 rounded-full border border-gray-100">Semua Warga</span>
+                </div>
+                <h4 class="text-lg font-bold text-gray-900 mt-2">{{ number_format($totalPenduduk) }}</h4>
+                <p class="text-[11px] text-gray-500 font-medium truncate">Total Penduduk Desa</p>
+            </a>
 
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
-        <!-- Card: Penduduk -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-3 hover:shadow-md transition duration-200">
-            <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
-                <i class="mdi mdi-account-group text-2xl"></i>
+            <!-- Ibu Hamil -->
+            <a href="{{ route('ibu-hamils.index') }}" class="bg-white p-3.5 rounded-2xl shadow-2xs border border-gray-100 hover:border-pink-300 hover:shadow-md transition group">
+                <div class="flex items-center justify-between">
+                    <div class="p-2 bg-pink-50 text-pink-600 rounded-xl group-hover:scale-110 transition">
+                        <i class="mdi mdi-human-pregnant text-base"></i>
+                    </div>
+                    <span class="text-[10px] text-pink-600 font-bold bg-pink-50 px-1.5 py-0.5 rounded-full border border-pink-100">Bumil</span>
+                </div>
+                <h4 class="text-lg font-bold text-gray-900 mt-2">{{ number_format($totalIbuHamil) }}</h4>
+                <p class="text-[11px] text-gray-500 font-medium truncate">Ibu Hamil Terdata</p>
+            </a>
+
+            <!-- Bayi -->
+            <a href="{{ route('bayi-balitas.index') }}" class="bg-white p-3.5 rounded-2xl shadow-2xs border border-gray-100 hover:border-purple-300 hover:shadow-md transition group">
+                <div class="flex items-center justify-between">
+                    <div class="p-2 bg-purple-50 text-purple-600 rounded-xl group-hover:scale-110 transition">
+                        <i class="mdi mdi-baby-face-outline text-base"></i>
+                    </div>
+                    <span class="text-[10px] text-purple-600 font-bold bg-purple-50 px-1.5 py-0.5 rounded-full border border-purple-100">0-12 Bln</span>
+                </div>
+                <h4 class="text-lg font-bold text-gray-900 mt-2">{{ number_format($totalBayi) }}</h4>
+                <p class="text-[11px] text-gray-500 font-medium truncate">Bayi Usia 0-12 Bulan</p>
+            </a>
+
+            <!-- Balita -->
+            <a href="{{ route('balitas.index') }}" class="bg-white p-3.5 rounded-2xl shadow-2xs border border-gray-100 hover:border-indigo-300 hover:shadow-md transition group">
+                <div class="flex items-center justify-between">
+                    <div class="p-2 bg-indigo-50 text-indigo-600 rounded-xl group-hover:scale-110 transition">
+                        <i class="mdi mdi-baby text-base"></i>
+                    </div>
+                    <span class="text-[10px] text-indigo-600 font-bold bg-indigo-50 px-1.5 py-0.5 rounded-full border border-indigo-100">13-60 Bln</span>
+                </div>
+                <h4 class="text-lg font-bold text-gray-900 mt-2">{{ number_format($totalBalita) }}</h4>
+                <p class="text-[11px] text-gray-500 font-medium truncate">Balita Usia 13-60 Bulan</p>
+            </a>
+
+            <!-- Remaja -->
+            <a href="{{ route('remajas.index') }}" class="bg-white p-3.5 rounded-2xl shadow-2xs border border-gray-100 hover:border-cyan-300 hover:shadow-md transition group">
+                <div class="flex items-center justify-between">
+                    <div class="p-2 bg-cyan-50 text-cyan-600 rounded-xl group-hover:scale-110 transition">
+                        <i class="mdi mdi-account-school text-base"></i>
+                    </div>
+                    <span class="text-[10px] text-cyan-600 font-bold bg-cyan-50 px-1.5 py-0.5 rounded-full border border-cyan-100">Remaja PKPR</span>
+                </div>
+                <h4 class="text-lg font-bold text-gray-900 mt-2">{{ number_format($totalRemaja) }}</h4>
+                <p class="text-[11px] text-gray-500 font-medium truncate">Remaja (10-18 Tahun)</p>
+            </a>
+
+            <!-- Lansia -->
+            <a href="{{ route('lansias.index') }}" class="bg-white p-3.5 rounded-2xl shadow-2xs border border-gray-100 hover:border-emerald-300 hover:shadow-md transition group">
+                <div class="flex items-center justify-between">
+                    <div class="p-2 bg-emerald-50 text-emerald-600 rounded-xl group-hover:scale-110 transition">
+                        <i class="mdi mdi-account-heart text-base"></i>
+                    </div>
+                    <span class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-full border border-emerald-100">Lansia PTM</span>
+                </div>
+                <h4 class="text-lg font-bold text-gray-900 mt-2">{{ number_format($totalLansia) }}</h4>
+                <p class="text-[11px] text-gray-500 font-medium truncate">Lanjut Usia (>=60 Thn)</p>
+            </a>
+
+            <!-- WUS -->
+            <a href="{{ route('wuses.index') }}" class="bg-white p-3.5 rounded-2xl shadow-2xs border border-gray-100 hover:border-rose-300 hover:shadow-md transition group">
+                <div class="flex items-center justify-between">
+                    <div class="p-2 bg-rose-50 text-rose-600 rounded-xl group-hover:scale-110 transition">
+                        <i class="mdi mdi-human-female text-base"></i>
+                    </div>
+                    <span class="text-[10px] text-rose-600 font-bold bg-rose-50 px-1.5 py-0.5 rounded-full border border-rose-100">WUS</span>
+                </div>
+                <h4 class="text-lg font-bold text-gray-900 mt-2">{{ number_format($totalWus) }}</h4>
+                <p class="text-[11px] text-gray-500 font-medium truncate">Wanita Subur (15-49 Thn)</p>
+            </a>
+
+            <!-- PUS -->
+            <a href="{{ route('puses.index') }}" class="bg-white p-3.5 rounded-2xl shadow-2xs border border-gray-100 hover:border-amber-300 hover:shadow-md transition group">
+                <div class="flex items-center justify-between">
+                    <div class="p-2 bg-amber-50 text-amber-600 rounded-xl group-hover:scale-110 transition">
+                        <i class="mdi mdi-heart text-base"></i>
+                    </div>
+                    <span class="text-[10px] text-amber-600 font-bold bg-amber-50 px-1.5 py-0.5 rounded-full border border-amber-100">PUS</span>
+                </div>
+                <h4 class="text-lg font-bold text-gray-900 mt-2">{{ number_format($totalPus) }}</h4>
+                <p class="text-[11px] text-gray-500 font-medium truncate">Pasangan Usia Subur</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Section 2: Ringkasan Hasil Skrining Kesehatan Masing-Masing Kelompok -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Card 1: Deteksi Stunting & Gizi Balita (WHO Standard) -->
+        <div class="bg-gradient-to-br from-white to-blue-50/40 p-6 rounded-3xl shadow-sm border border-blue-100">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-xs">
+                        <i class="mdi mdi-chart-line text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">Status Stunting & Gizi Balita</h4>
+                        <p class="text-[11px] text-gray-500">Standar WHO & Permenkes RI</p>
+                    </div>
+                </div>
+                <a href="{{ route('balitas.index') }}" class="text-blue-600 hover:text-blue-800 text-xs font-bold">Detail &rarr;</a>
             </div>
-            <div>
-                <p class="text-xs font-semibold text-gray-500">Penduduk</p>
-                <h3 class="text-xl font-bold text-gray-900 mt-0.5">{{ \App\Models\Penduduk::count() }}</h3>
+
+            <div class="space-y-2.5 pt-2">
+                <div onclick="openPersonListModal('Daftar Balita Stunting / Pendek (TB/U)', {{ json_encode($listStunting) }})"
+                    class="flex items-center justify-between p-3 bg-white rounded-2xl border border-red-100 shadow-2xs cursor-pointer hover:bg-red-50/50 hover:border-red-300 transition-all group">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500 group-hover:scale-125 transition"></div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-red-700">Stunting / Pendek (TB/U)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-extrabold text-xs text-red-600 px-2 py-0.5 bg-red-50 rounded-full border border-red-200">
+                            {{ $stuntingCount }} Anak
+                        </span>
+                        <i class="mdi mdi-chevron-right text-gray-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition"></i>
+                    </div>
+                </div>
+
+                <div onclick="openPersonListModal('Daftar Balita Gizi Kurang (BB/U)', {{ json_encode($listGiziKurang) }})"
+                    class="flex items-center justify-between p-3 bg-white rounded-2xl border border-amber-100 shadow-2xs cursor-pointer hover:bg-amber-50/50 hover:border-amber-300 transition-all group">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-amber-500 group-hover:scale-125 transition"></div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-amber-800">Gizi Kurang (BB/U)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-extrabold text-xs text-amber-700 px-2 py-0.5 bg-amber-50 rounded-full border border-amber-200">
+                            {{ $giziKurangCount }} Anak
+                        </span>
+                        <i class="mdi mdi-chevron-right text-gray-400 group-hover:text-amber-600 group-hover:translate-x-0.5 transition"></i>
+                    </div>
+                </div>
+
+                <div onclick="openPersonListModal('Daftar Balita Gizi Baik & Normal', {{ json_encode($listGiziNormal) }})"
+                    class="flex items-center justify-between p-3 bg-white rounded-2xl border border-emerald-100 shadow-2xs cursor-pointer hover:bg-emerald-50/50 hover:border-emerald-300 transition-all group">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-emerald-500 group-hover:scale-125 transition"></div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-emerald-800">Gizi Baik & Normal</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-extrabold text-xs text-emerald-700 px-2 py-0.5 bg-emerald-50 rounded-full border border-emerald-200">
+                            {{ $giziNormalCount }} Anak
+                        </span>
+                        <i class="mdi mdi-chevron-right text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition"></i>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Card: Ibu Hamil -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-3 hover:shadow-md transition duration-200">
-            <div class="p-3 bg-pink-50 text-pink-600 rounded-xl">
-                <i class="mdi mdi-face-woman text-2xl"></i>
+        <!-- Card 2: Skrining KEK & Anemia Remaja (PKPR Kemenkes) -->
+        <div class="bg-gradient-to-br from-white to-cyan-50/40 p-6 rounded-3xl shadow-sm border border-cyan-100">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-2xl bg-cyan-600 text-white flex items-center justify-center font-bold shadow-xs">
+                        <i class="mdi mdi-account-school text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">Skrining Kesehatan Remaja</h4>
+                        <p class="text-[11px] text-gray-500">Standar PKPR Kemenkes RI</p>
+                    </div>
+                </div>
+                <a href="{{ route('remajas.index') }}" class="text-cyan-600 hover:text-cyan-800 text-xs font-bold">Detail &rarr;</a>
             </div>
-            <div>
-                <p class="text-xs font-semibold text-gray-500">Ibu Hamil</p>
-                <h3 class="text-xl font-bold text-gray-900 mt-0.5">{{ \App\Models\IbuHamil::count() }}</h3>
+
+            <div class="space-y-2.5 pt-2">
+                <div onclick="openPersonListModal('Daftar Remaja Resiko KEK (LiLA < 23.5 cm)', {{ json_encode($listRemajaKek) }})"
+                    class="flex items-center justify-between p-3 bg-white rounded-2xl border border-rose-100 shadow-2xs cursor-pointer hover:bg-rose-50/50 hover:border-rose-300 transition-all group">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-rose-500 group-hover:scale-125 transition"></div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-rose-700">Resiko KEK (LiLA < 23.5 cm)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-extrabold text-xs text-rose-600 px-2 py-0.5 bg-rose-50 rounded-full border border-rose-200">
+                            {{ $remajaKekCount }} Orang
+                        </span>
+                        <i class="mdi mdi-chevron-right text-gray-400 group-hover:text-rose-600 group-hover:translate-x-0.5 transition"></i>
+                    </div>
+                </div>
+
+                <div onclick="openPersonListModal('Daftar Remaja Terindikasi Anemia (HB)', {{ json_encode($listRemajaAnemia) }})"
+                    class="flex items-center justify-between p-3 bg-white rounded-2xl border border-red-100 shadow-2xs cursor-pointer hover:bg-red-50/50 hover:border-red-300 transition-all group">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500 group-hover:scale-125 transition"></div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-red-700">Terindikasi Anemia (HB)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-extrabold text-xs text-red-600 px-2 py-0.5 bg-red-50 rounded-full border border-red-200">
+                            {{ $remajaAnemiaCount }} Orang
+                        </span>
+                        <i class="mdi mdi-chevron-right text-gray-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition"></i>
+                    </div>
+                </div>
+
+                <div onclick="openPersonListModal('Daftar Remaja Penerima Tablet Tambah Darah (TTD)', {{ json_encode($listRemajaTtd) }})"
+                    class="flex items-center justify-between p-3 bg-white rounded-2xl border border-blue-100 shadow-2xs cursor-pointer hover:bg-blue-50/50 hover:border-blue-300 transition-all group">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-blue-500 group-hover:scale-125 transition"></div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-blue-700">Penerima Tablet TTD</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-extrabold text-xs text-blue-700 px-2 py-0.5 bg-blue-50 rounded-full border border-blue-200">
+                            {{ $remajaTtdCount }} Remaja
+                        </span>
+                        <i class="mdi mdi-chevron-right text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition"></i>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Card: Bayi -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-3 hover:shadow-md transition duration-200">
-            <div class="p-3 bg-purple-50 text-purple-600 rounded-xl">
-                <i class="mdi mdi-baby-carriage text-2xl"></i>
+        <!-- Card 3: Skrining Penyakit Tidak Menular Lansia (PTM) -->
+        <div class="bg-gradient-to-br from-white to-emerald-50/40 p-6 rounded-3xl shadow-sm border border-emerald-100">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-xs">
+                        <i class="mdi mdi-heart-pulse text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">Skrining Kesehatan Lansia</h4>
+                        <p class="text-[11px] text-gray-500">Standar PTM Kemenkes RI</p>
+                    </div>
+                </div>
+                <a href="{{ route('lansias.index') }}" class="text-emerald-600 hover:text-emerald-800 text-xs font-bold">Detail &rarr;</a>
             </div>
-            <div>
-                <p class="text-xs font-semibold text-gray-500">Bayi</p>
-                <h3 class="text-xl font-bold text-gray-900 mt-0.5">{{ $totalBayi }}</h3>
-            </div>
-        </div>
 
-        <!-- Card: Balita -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-3 hover:shadow-md transition duration-200">
-            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
-                <i class="mdi mdi-human-child text-2xl"></i>
-            </div>
-            <div>
-                <p class="text-xs font-semibold text-gray-500">Balita</p>
-                <h3 class="text-xl font-bold text-gray-900 mt-0.5">{{ $totalBalita }}</h3>
-            </div>
-        </div>
+            <div class="space-y-2.5 pt-2">
+                <div onclick="openPersonListModal('Daftar Lansia Hipertensi (Tensi >= 140)', {{ json_encode($listLansiaHipertensi) }})"
+                    class="flex items-center justify-between p-3 bg-white rounded-2xl border border-red-100 shadow-2xs cursor-pointer hover:bg-red-50/50 hover:border-red-300 transition-all group">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500 group-hover:scale-125 transition"></div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-red-700">Hipertensi (Tensi >= 140)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-extrabold text-xs text-red-600 px-2 py-0.5 bg-red-50 rounded-full border border-red-200">
+                            {{ $lansiaHipertensiCount }} Lansia
+                        </span>
+                        <i class="mdi mdi-chevron-right text-gray-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition"></i>
+                    </div>
+                </div>
 
-        <!-- Card: Remaja -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-3 hover:shadow-md transition duration-200">
-            <div class="p-3 bg-cyan-50 text-cyan-600 rounded-xl">
-                <i class="mdi mdi-account-school text-2xl"></i>
-            </div>
-            <div>
-                <p class="text-xs font-semibold text-gray-500">Remaja</p>
-                <h3 class="text-xl font-bold text-gray-900 mt-0.5">{{ $totalRemaja }}</h3>
-            </div>
-        </div>
+                <div onclick="openPersonListModal('Daftar Lansia Resiko Diabetes / Gula Darah Tinggi', {{ json_encode($listLansiaDiabetes) }})"
+                    class="flex items-center justify-between p-3 bg-white rounded-2xl border border-amber-100 shadow-2xs cursor-pointer hover:bg-amber-50/50 hover:border-amber-300 transition-all group">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-amber-500 group-hover:scale-125 transition"></div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-amber-800">Resiko Diabetes / Gula</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-extrabold text-xs text-amber-700 px-2 py-0.5 bg-amber-50 rounded-full border border-amber-200">
+                            {{ $lansiaDiabetesCount }} Lansia
+                        </span>
+                        <i class="mdi mdi-chevron-right text-gray-400 group-hover:text-amber-600 group-hover:translate-x-0.5 transition"></i>
+                    </div>
+                </div>
 
-        <!-- Card: Lansia -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-3 hover:shadow-md transition duration-200">
-            <div class="p-3 bg-green-50 text-green-600 rounded-xl">
-                <i class="mdi mdi-account-star text-2xl"></i>
-            </div>
-            <div>
-                <p class="text-xs font-semibold text-gray-500">Lansia</p>
-                <h3 class="text-xl font-bold text-gray-900 mt-0.5">{{ \App\Models\Lansia::count() }}</h3>
+                <div onclick="openPersonListModal('Daftar Lansia Kolesterol Tinggi', {{ json_encode($listLansiaKolesterol) }})"
+                    class="flex items-center justify-between p-3 bg-white rounded-2xl border border-purple-100 shadow-2xs cursor-pointer hover:bg-purple-50/50 hover:border-purple-300 transition-all group">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-purple-500 group-hover:scale-125 transition"></div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-purple-800">Kolesterol Tinggi</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-extrabold text-xs text-purple-700 px-2 py-0.5 bg-purple-50 rounded-full border border-purple-200">
+                            {{ $lansiaKolesterolCount }} Lansia
+                        </span>
+                        <i class="mdi mdi-chevron-right text-gray-400 group-hover:text-purple-600 group-hover:translate-x-0.5 transition"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Charts Section -->
+    <!-- Section 3: Grafik Analisis Real-Time -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <!-- Chart 1: Pemeriksaan Keaktifan -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 lg:col-span-2">
+        <!-- Chart 1: Total Rekam Pemeriksaan Lintas Usia -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 lg:col-span-2">
             <div class="flex justify-between items-center mb-6">
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
                         <i class="mdi mdi-chart-bar text-lg"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-800">Statistik Keaktifan & Pemeriksaan Bulanan</h3>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-sm">Volume Rekam Pemeriksaan Kesehatan</h3>
+                        <p class="text-xs text-gray-500">Total rekam medis terdaftar per kategori sasaran</p>
+                    </div>
                 </div>
             </div>
-            <div class="h-[300px]">
-                <canvas id="pemeriksaanChart"></canvas>
+            <div class="h-64 relative">
+                <canvas id="examVolumeChart"></canvas>
             </div>
         </div>
 
-        <!-- Chart 2: Distribusi Sasaran -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-            <div class="flex justify-between items-center mb-6">
+        <!-- Chart 2: Faktor Resiko Ibu Hamil -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+            <div class="flex justify-between items-center mb-4">
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-pink-50 flex items-center justify-center text-pink-600">
-                        <i class="mdi mdi-chart-donut text-lg"></i>
+                    <div class="w-8 h-8 rounded-xl bg-pink-50 flex items-center justify-center text-pink-600">
+                        <i class="mdi mdi-chart-pie text-lg"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-800">Distribusi Sasaran Posyandu</h3>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-sm">Faktor Risiko Ibu Hamil</h3>
+                        <p class="text-xs text-gray-500">Deteksi dini kehamilan</p>
+                    </div>
                 </div>
             </div>
-            <div class="h-[300px] relative flex items-center justify-center">
-                <canvas id="distribusiSasaranChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <!-- Analytics Row 2 -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <!-- Chart 3: Kurva Pertumbuhan Rata-Rata Bayi -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
-                        <i class="mdi mdi-chart-line text-lg"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800">Kurva Tumbuh Kembang (Rata-rata BB Bayi 1-12 Bulan)</h3>
-                </div>
-            </div>
-            <div class="h-[300px]">
-                <canvas id="growthCurveChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Chart 4: Analisis Faktor Resiko Ibu Hamil -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center text-red-600">
-                        <i class="mdi mdi-shield-alert text-lg"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800">Faktor Resiko Terdeteksi (Ibu Hamil)</h3>
-                </div>
-            </div>
-            <div class="h-[300px] relative flex items-center justify-center">
+            <div class="h-64 relative">
                 <canvas id="riskFactorChart"></canvas>
             </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Card: Laporan Terbaru -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 lg:col-span-2">
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600">
+    <!-- Section 4: Akses Cepat & Operasional Posyandu -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+        <!-- Left: Quick Actions -->
+        <div class="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
+            <h3 class="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <i class="mdi mdi-lightning-bolt text-amber-500 text-lg"></i>
+                Akses Cepat Pelayanan & Rekam Medis
+            </h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                <a href="{{ route('bayi-balitas.index') }}" class="p-3.5 bg-blue-50/60 hover:bg-blue-50 text-blue-700 rounded-2xl border border-blue-100 text-center transition flex flex-col items-center gap-2 group">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold group-hover:scale-110 transition shadow-2xs">
+                        <i class="mdi mdi-scale-bathroom text-lg"></i>
+                    </div>
+                    <span class="text-xs font-bold leading-snug">Pemeriksaan Balita</span>
+                </a>
+
+                <a href="{{ route('ibu-hamils.index') }}" class="p-3.5 bg-pink-50/60 hover:bg-pink-50 text-pink-700 rounded-2xl border border-pink-100 text-center transition flex flex-col items-center gap-2 group">
+                    <div class="w-10 h-10 rounded-xl bg-pink-600 text-white flex items-center justify-center font-bold group-hover:scale-110 transition shadow-2xs">
+                        <i class="mdi mdi-human-pregnant text-lg"></i>
+                    </div>
+                    <span class="text-xs font-bold leading-snug">Pemeriksaan Bumil</span>
+                </a>
+
+                <a href="{{ route('remajas.index') }}" class="p-3.5 bg-cyan-50/60 hover:bg-cyan-50 text-cyan-700 rounded-2xl border border-cyan-100 text-center transition flex flex-col items-center gap-2 group">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-600 text-white flex items-center justify-center font-bold group-hover:scale-110 transition shadow-2xs">
+                        <i class="mdi mdi-heart-pulse text-lg"></i>
+                    </div>
+                    <span class="text-xs font-bold leading-snug">Skrining Remaja</span>
+                </a>
+
+                <a href="{{ route('lansias.index') }}" class="p-3.5 bg-emerald-50/60 hover:bg-emerald-50 text-emerald-700 rounded-2xl border border-emerald-100 text-center transition flex flex-col items-center gap-2 group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold group-hover:scale-110 transition shadow-2xs">
+                        <i class="mdi mdi-account-heart text-lg"></i>
+                    </div>
+                    <span class="text-xs font-bold leading-snug">Skrining Lansia</span>
+                </a>
+
+                <a href="{{ route('laporan-masyarakats.index') }}" class="p-3.5 bg-purple-50/60 hover:bg-purple-50 text-purple-700 rounded-2xl border border-purple-100 text-center transition flex flex-col items-center gap-2 group">
+                    <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold group-hover:scale-110 transition shadow-2xs">
                         <i class="mdi mdi-message-alert text-lg"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-800">Laporan Masyarakat Terbaru</h3>
-                </div>
-                <a href="{{ route('laporan-masyarakats.index') }}" class="text-xs font-bold text-teal-600 hover:text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
-                    Lihat Semua
-                    <i class="mdi mdi-arrow-right text-xs"></i>
+                    <span class="text-xs font-bold leading-snug">Laporan Warga</span>
                 </a>
-            </div>
-            <div class="space-y-4">
-                @forelse(\App\Models\LaporanMasyarakat::latest()->take(5)->get() as $laporan)
-                    @php
-                        $avatarGradients = [
-                            'bg-gradient-to-br from-teal-400 to-emerald-500 text-white',
-                            'bg-gradient-to-br from-blue-400 to-indigo-500 text-white',
-                            'bg-gradient-to-br from-pink-400 to-rose-500 text-white',
-                            'bg-gradient-to-br from-purple-400 to-indigo-500 text-white',
-                            'bg-gradient-to-br from-amber-400 to-orange-500 text-white',
-                        ];
-                        $avatarClass = $avatarGradients[crc32($laporan->nama_pelapor) % count($avatarGradients)];
-                        
-                        $kategoriConfig = [
-                            'pelayanan' => ['label' => 'Pelayanan', 'color' => 'bg-indigo-50 text-indigo-700 border-indigo-100', 'icon' => 'mdi-face-agent'],
-                            'infrastruktur' => ['label' => 'Infrastruktur', 'color' => 'bg-blue-50 text-blue-700 border-blue-100', 'icon' => 'mdi-office-building'],
-                            'kesehatan' => ['label' => 'Kesehatan', 'color' => 'bg-teal-50 text-teal-700 border-teal-100', 'icon' => 'mdi-medical-bag'],
-                            'lainnya' => ['label' => 'Lainnya', 'color' => 'bg-gray-50 text-gray-700 border-gray-100', 'icon' => 'mdi-folder-information'],
-                        ];
-                        $kat = $kategoriConfig[strtolower($laporan->kategori ?? 'lainnya')] ?? $kategoriConfig['lainnya'];
 
-                        $statusConfig = [
-                            'baru' => [
-                                'label' => 'Baru',
-                                'color' => 'bg-blue-50 text-blue-700 border-blue-100',
-                                'icon' => 'mdi-clock-outline',
-                                'pulse' => true
-                            ],
-                            'diproses' => [
-                                'label' => 'Diproses',
-                                'color' => 'bg-amber-50 text-amber-700 border-amber-100',
-                                'icon' => 'mdi-progress-wrench',
-                                'pulse' => false
-                            ],
-                            'selesai' => [
-                                'label' => 'Selesai',
-                                'color' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-                                'icon' => 'mdi-check-circle-outline',
-                                'pulse' => false
-                            ],
-                            'ditolak' => [
-                                'label' => 'Ditolak',
-                                'color' => 'bg-rose-50 text-rose-700 border-rose-100',
-                                'icon' => 'mdi-close-circle-outline',
-                                'pulse' => false
-                            ],
-                        ];
-                        $stat = $statusConfig[$laporan->status] ?? $statusConfig['baru'];
-                    @endphp
-                    <a href="{{ route('laporan-masyarakats.edit', $laporan) }}" class="flex items-start justify-between p-4 rounded-xl border border-gray-100 bg-white hover:bg-gray-50/70 hover:shadow-md hover:border-teal-100 transition-all duration-300 group cursor-pointer">
-                        <div class="flex items-start gap-4 flex-1 min-w-0">
-                            <!-- Avatar -->
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 shadow-sm {{ $avatarClass }}">
-                                {{ strtoupper(substr($laporan->nama_pelapor, 0, 1)) }}
-                            </div>
-                            
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    <h4 class="text-sm font-bold text-gray-900 group-hover:text-teal-600 transition-colors">{{ $laporan->nama_pelapor }}</h4>
-                                    <span class="px-2 py-0.5 text-[10px] font-semibold border rounded-md flex items-center gap-1 {{ $kat['color'] }}">
-                                        <i class="mdi {{ $kat['icon'] }} text-xs"></i>
-                                        {{ $kat['label'] }}
-                                    </span>
-                                </div>
-                                
-                                <p class="text-xs text-gray-600 mt-1.5 line-clamp-2 leading-relaxed">
-                                    {{ $laporan->isi_laporan }}
-                                </p>
-                                
-                                <div class="flex items-center gap-3 mt-2 text-[10px] text-gray-400 font-medium">
-                                    <span class="flex items-center gap-1">
-                                        <i class="mdi mdi-calendar-clock text-xs"></i>
-                                        {{ $laporan->created_at->diffForHumans() }}
-                                    </span>
-                                    @if($laporan->no_telepon)
-                                        <span class="text-gray-200">•</span>
-                                        <span class="flex items-center gap-1 text-gray-500 bg-gray-50 px-2 py-0.5 rounded border border-gray-100">
-                                            <i class="mdi mdi-phone text-xs text-emerald-500"></i>
-                                            {{ $laporan->no_telepon }}
-                                        </span>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Status Badge -->
-                        <div class="shrink-0 pl-4 flex flex-col items-end gap-1">
-                            <span class="px-2.5 py-1 text-[11px] font-bold border rounded-full flex items-center gap-1 {{ $stat['color'] }}">
-                                @if($stat['pulse'])
-                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-                                @endif
-                                <i class="mdi {{ $stat['icon'] }} text-xs"></i>
-                                {{ $stat['label'] }}
-                            </span>
-                            <span class="text-[9px] text-teal-600 group-hover:text-teal-700 transition-colors font-semibold flex items-center gap-0.5 mt-1 opacity-0 group-hover:opacity-100 duration-300">
-                                Tindak Lanjut <i class="mdi mdi-chevron-right text-xs"></i>
-                            </span>
-                        </div>
-                    </a>
-                @empty
-                    <div class="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
-                            <i class="mdi mdi-message-off text-2xl text-gray-400"></i>
-                        </div>
-                        <p class="text-sm font-medium text-gray-500">Belum ada laporan dari masyarakat</p>
-                        <p class="text-xs text-gray-400 mt-1">Aduan yang dikirim oleh masyarakat akan muncul di sini.</p>
+                <a href="{{ route('sync-asmara') }}" onclick="confirmSync(event, this.href)" class="p-3.5 bg-emerald-50/60 hover:bg-emerald-50 text-emerald-700 rounded-2xl border border-emerald-100 text-center transition flex flex-col items-center gap-2 group">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold group-hover:scale-110 transition shadow-2xs">
+                        <i class="mdi mdi-cloud-sync text-lg"></i>
                     </div>
-                @endforelse
+                    <span class="text-xs font-bold leading-snug">Sync OpenSID</span>
+                </a>
             </div>
         </div>
 
-        <!-- Card: Info Posyandu -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-            <div class="flex items-center gap-2 mb-6">
-                <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
-                    <i class="mdi mdi-chart-line text-lg"></i>
+        <!-- Right: Status Operasional Posyandu & Interaksi -->
+        <div class="lg:col-span-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between">
+            <div>
+                <h3 class="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="mdi mdi-hospital-building text-blue-600 text-lg"></i>
+                    Operasional & Interaksi Publik
+                </h3>
+                <div class="space-y-3 text-xs">
+                    <div class="flex justify-between items-center p-2.5 bg-gray-50 rounded-xl">
+                        <span class="text-gray-600">Unit Posyandu Desa:</span>
+                        <span class="font-bold text-gray-900">{{ number_format($totalPosyandu) }} Unit RW</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2.5 bg-gray-50 rounded-xl">
+                        <span class="text-gray-600">Kader Kesehatan Aktif:</span>
+                        <span class="font-bold text-gray-900">{{ number_format($totalKader) }} Orang</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2.5 bg-gray-50 rounded-xl">
+                        <span class="text-gray-600">Buku Tamu Kunjungan:</span>
+                        <span class="font-bold text-gray-900">{{ number_format($totalBukuTamu) }} Tamu</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2.5 bg-gray-50 rounded-xl">
+                        <span class="text-gray-600">Aduan & Laporan Warga:</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-bold text-gray-900">{{ number_format($totalLaporan) }}</span>
+                            @if($laporanPending > 0)
+                                <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full font-bold text-[10px]">
+                                    {{ $laporanPending }} Perlu Proses
+                                </span>
+                            @endif
+                        </div>
+                    </div>
                 </div>
-                <h3 class="text-lg font-bold text-gray-800">Ringkasan Posyandu</h3>
             </div>
-            <div class="space-y-4">
-                <div class="flex justify-between items-center py-2.5 border-b border-gray-100">
-                    <span class="text-sm text-gray-500 font-medium flex items-center gap-2">
-                        <i class="mdi mdi-home-heart text-blue-500"></i> Total Posyandu
-                    </span>
-                    <span class="text-sm font-bold text-gray-900 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-100">{{ \App\Models\Posyandu::count() }}</span>
+
+            <div class="mt-4 pt-4 border-t border-gray-100 text-[11px] text-gray-400 flex items-center justify-between">
+                <span>Posyandu Melati Sehat Desa Banjar</span>
+                <span class="font-mono text-emerald-600 font-bold">Online</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5: Activity Feed - Rekam Pemeriksaan Terbaru -->
+    <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100">
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-100">
+            <div>
+                <h3 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                    <i class="mdi mdi-clock-outline text-blue-600 text-lg"></i>
+                    Aktivitas Pemeriksaan Kesehatan Terbaru
+                </h3>
+                <p class="text-xs text-gray-500">Log entry hasil timbangan & skrining kesehatan terkini</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Balita Feed -->
+            <div class="bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
+                <h4 class="text-xs font-bold text-gray-700 mb-3 flex items-center justify-between">
+                    <span class="flex items-center gap-1.5"><i class="mdi mdi-baby text-blue-600"></i> Balita Terbaru</span>
+                    <a href="{{ route('balitas.index') }}" class="text-[11px] text-blue-600 hover:underline">Semua</a>
+                </h4>
+                <div class="space-y-2 text-xs">
+                    @forelse($recentBalitaExams as $item)
+                        <div class="p-2.5 bg-white rounded-xl border border-gray-100 shadow-2xs">
+                            <div class="flex justify-between font-bold text-gray-900">
+                                <span>{{ $item->bayiBalita->penduduk->nama ?? 'Balita' }}</span>
+                                <span class="text-[10px] text-gray-400 font-mono">{{ \Carbon\Carbon::parse($item->tanggal_pemeriksaan)->format('d/m/Y') }}</span>
+                            </div>
+                            <div class="text-[11px] text-gray-500 mt-0.5">
+                                BB: {{ $item->berat_badan }}kg | TB: {{ $item->tinggi_badan }}cm ({{ $item->umur_bulan }} Bln)
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-xs text-gray-400 italic py-2">Belum ada riwayat terbaru.</p>
+                    @endforelse
                 </div>
-                <div class="flex justify-between items-center py-2.5 border-b border-gray-100">
-                    <span class="text-sm text-gray-500 font-medium flex items-center gap-2">
-                        <i class="mdi mdi-book-open-outline text-purple-500"></i> Total Buku Tamu
-                    </span>
-                    <span class="text-sm font-bold text-gray-900 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-100">{{ \App\Models\BukuTamu::count() }}</span>
+            </div>
+
+            <!-- Remaja Feed -->
+            <div class="bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
+                <h4 class="text-xs font-bold text-gray-700 mb-3 flex items-center justify-between">
+                    <span class="flex items-center gap-1.5"><i class="mdi mdi-account-school text-cyan-600"></i> Remaja Terbaru</span>
+                    <a href="{{ route('remajas.index') }}" class="text-[11px] text-cyan-600 hover:underline">Semua</a>
+                </h4>
+                <div class="space-y-2 text-xs">
+                    @forelse($recentRemajaExams as $item)
+                        <div class="p-2.5 bg-white rounded-xl border border-gray-100 shadow-2xs">
+                            <div class="flex justify-between font-bold text-gray-900">
+                                <span>{{ $item->remaja->penduduk->nama ?? 'Remaja' }}</span>
+                                <span class="text-[10px] text-gray-400 font-mono">{{ \Carbon\Carbon::parse($item->tanggal_pemeriksaan)->format('d/m/Y') }}</span>
+                            </div>
+                            <div class="text-[11px] text-gray-500 mt-0.5">
+                                LiLA: {{ $item->lila ?? '-' }}cm | HB: {{ $item->hemoglobin ?? '-' }}g/dL | TTD: {{ $item->pemberian_ttd }}
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-xs text-gray-400 italic py-2">Belum ada riwayat terbaru.</p>
+                    @endforelse
                 </div>
-                <div class="flex justify-between items-center py-2.5 border-b border-gray-100">
-                    <span class="text-sm text-gray-500 font-medium flex items-center gap-2">
-                        <i class="mdi mdi-newspaper text-indigo-500"></i> Total Berita
-                    </span>
-                    <span class="text-sm font-bold text-gray-900 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-100">{{ \App\Models\Berita::count() }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2.5">
-                    <span class="text-sm text-gray-500 font-medium flex items-center gap-2">
-                        <i class="mdi mdi-image-multiple text-pink-500"></i> Total Galeri
-                    </span>
-                    <span class="text-sm font-bold text-gray-900 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-100">{{ \App\Models\Galeri::count() }}</span>
+            </div>
+
+            <!-- Lansia Feed -->
+            <div class="bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
+                <h4 class="text-xs font-bold text-gray-700 mb-3 flex items-center justify-between">
+                    <span class="flex items-center gap-1.5"><i class="mdi mdi-account-heart text-emerald-600"></i> Lansia Terbaru</span>
+                    <a href="{{ route('lansias.index') }}" class="text-[11px] text-emerald-600 hover:underline">Semua</a>
+                </h4>
+                <div class="space-y-2 text-xs">
+                    @forelse($recentLansiaExams as $item)
+                        <div class="p-2.5 bg-white rounded-xl border border-gray-100 shadow-2xs">
+                            <div class="flex justify-between font-bold text-gray-900">
+                                <span>{{ $item->lansia->penduduk->nama ?? 'Lansia' }}</span>
+                                <span class="text-[10px] text-gray-400 font-mono">{{ \Carbon\Carbon::parse($item->tanggal_pemeriksaan)->format('d/m/Y') }}</span>
+                            </div>
+                            <div class="text-[11px] text-gray-500 mt-0.5">
+                                Tensi: {{ $item->tensi_sistolik ? $item->tensi_sistolik.'/'.$item->tensi_diastolik : '-' }} | Gula: {{ $item->gula_darah ?? '-' }}mg/dL
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-xs text-gray-400 italic py-2">Belum ada riwayat terbaru.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal Detail List Individu / Pasien -->
+    <div id="person-detail-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-2xl relative max-h-[85vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                        <i class="mdi mdi-account-search text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 id="person-modal-title" class="text-base font-bold text-gray-900">Daftar Individu</h3>
+                        <p class="text-xs text-gray-500">Daftar warga berdasarkan kriteria skrining kesehatan</p>
+                    </div>
+                </div>
+                <button onclick="closePersonListModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="mdi mdi-close text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Filter Search Bar in Modal -->
+            <div class="mt-4 mb-3 relative">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                    <i class="mdi mdi-magnify text-lg"></i>
+                </span>
+                <input type="text" id="person-modal-search" placeholder="Cari nama, NIK, atau wilayah..." onkeyup="filterPersonModalList()"
+                    class="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:border-blue-500 outline-none">
+            </div>
+
+            <!-- Modal Table Body -->
+            <div class="overflow-y-auto flex-1 border border-gray-100 rounded-2xl">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="sticky top-0 bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th class="py-3 px-4 font-bold text-gray-600 uppercase">Nama & NIK</th>
+                            <th class="py-3 px-4 font-bold text-gray-600 uppercase">Usia / Wilayah</th>
+                            <th class="py-3 px-4 font-bold text-gray-600 uppercase">Hasil / Status Medis</th>
+                            <th class="py-3 px-4 font-bold text-gray-600 uppercase text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="person-modal-tbody" class="divide-y divide-gray-100 bg-white">
+                        <!-- Dynamic Rows Insertion -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center text-xs">
+                <span id="person-modal-count" class="text-gray-500 font-medium">Total: 0 orang</span>
+                <button onclick="closePersonListModal()" class="px-5 py-2 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Shared premium styles & fonts
-            Chart.defaults.font.family = "'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif";
-            Chart.defaults.color = "#64748b"; // Slate 500
+        let currentModalData = [];
 
-            const tooltipStyle = {
-                backgroundColor: '#0f172a', // Slate 900
-                titleColor: '#ffffff',
-                bodyColor: '#f1f5f9',
-                titleFont: { size: 13, weight: '700' },
-                bodyFont: { size: 12 },
-                padding: 12,
-                cornerRadius: 10,
-                boxPadding: 8,
-                borderColor: 'rgba(255, 255, 255, 0.1)',
-                borderWidth: 1,
-                shadowColor: 'rgba(0, 0, 0, 0.15)',
-                shadowBlur: 10
-            };
+        function openPersonListModal(title, listData) {
+            document.getElementById('person-modal-title').textContent = title;
+            document.getElementById('person-modal-search').value = '';
+            currentModalData = listData || [];
+            renderPersonModalTable(currentModalData);
+            document.getElementById('person-detail-modal').classList.remove('hidden');
+        }
 
-            // 1. Pemeriksaan Chart (Bar Chart)
-            const pemeriksaanCtx = document.getElementById('pemeriksaanChart')?.getContext('2d');
-            if (pemeriksaanCtx) {
-                new Chart(pemeriksaanCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Ibu Hamil', 'Bayi', 'Balita'],
-                        datasets: [
-                            {
-                                label: 'Total Terdaftar',
-                                data: [{{ $totalIbuHamil }}, {{ $totalBayi }}, {{ $totalBalita }}],
-                                backgroundColor: 'rgba(79, 70, 229, 0.85)', // indigo-600
-                                borderColor: '#4f46e5',
-                                borderWidth: 0,
-                                borderRadius: 8,
-                                borderSkipped: false,
-                                maxBarThickness: 32
-                            },
-                            {
-                                label: 'Total Pemeriksaan (Log Berat Badan)',
-                                data: [{{ $ibuHamilExamCount }}, {{ $bayiExamCount }}, {{ $balitaExamCount }}],
-                                backgroundColor: 'rgba(13, 148, 136, 0.85)', // teal-600
-                                borderColor: '#0d9488',
-                                borderWidth: 0,
-                                borderRadius: 8,
-                                borderSkipped: false,
-                                maxBarThickness: 32
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                                align: 'end',
-                                labels: {
-                                    boxWidth: 10,
-                                    boxHeight: 10,
-                                    usePointStyle: true,
-                                    pointStyle: 'circle',
-                                    padding: 20,
-                                    font: {
-                                        size: 12,
-                                        weight: '600'
-                                    }
-                                }
-                            },
-                            tooltip: tooltipStyle
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                border: { display: false },
-                                grid: {
-                                    color: 'rgba(226, 232, 240, 0.6)',
-                                    borderDash: [5, 5]
-                                },
-                                ticks: {
-                                    padding: 8,
-                                    font: { size: 11, weight: '500' }
-                                }
-                            },
-                            x: {
-                                border: { display: false },
-                                grid: { display: false },
-                                ticks: {
-                                    padding: 8,
-                                    font: { size: 12, weight: '600' }
-                                }
-                            }
-                        }
-                    }
-                });
+        function closePersonListModal() {
+            document.getElementById('person-detail-modal').classList.add('hidden');
+        }
+
+        function filterPersonModalList() {
+            const query = document.getElementById('person-modal-search').value.toLowerCase();
+            const filtered = currentModalData.filter(item => 
+                (item.nama && item.nama.toLowerCase().includes(query)) ||
+                (item.nik && item.nik.toLowerCase().includes(query)) ||
+                (item.wilayah && item.wilayah.toLowerCase().includes(query)) ||
+                (item.detail && item.detail.toLowerCase().includes(query))
+            );
+            renderPersonModalTable(filtered);
+        }
+
+        function renderPersonModalTable(data) {
+            const tbody = document.getElementById('person-modal-tbody');
+            document.getElementById('person-modal-count').textContent = `Total: ${data.length} orang`;
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="py-8 text-center text-gray-400">
+                            <i class="mdi mdi-account-search-outline text-4xl block mb-2"></i>
+                            Tidak ada data individu yang tercatat dalam kriteria ini.
+                        </td>
+                    </tr>
+                `;
+                return;
             }
 
-            // 2. Distribusi Sasaran Chart (Doughnut Chart with Center Text)
-            const distribusiCtx = document.getElementById('distribusiSasaranChart')?.getContext('2d');
-            if (distribusiCtx) {
-                new Chart(distribusiCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Ibu Hamil', 'Bayi', 'Balita', 'Lansia'],
-                        datasets: [{
-                            data: [{{ $totalIbuHamil }}, {{ $totalBayi }}, {{ $totalBalita }}, {{ $totalLansia }}],
-                            backgroundColor: [
-                                '#db2777', // pink-600
-                                '#8b5cf6', // purple-500
-                                '#4f46e5', // indigo-600
-                                '#0d9488'  // teal-600
-                            ],
-                            borderWidth: 3,
-                            borderColor: '#ffffff',
-                            hoverOffset: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        cutout: '78%',
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    boxWidth: 8,
-                                    boxHeight: 8,
-                                    usePointStyle: true,
-                                    pointStyle: 'circle',
-                                    padding: 16,
-                                    font: {
-                                        size: 11,
-                                        weight: '600'
-                                    }
-                                }
-                            },
-                            tooltip: tooltipStyle
-                        }
-                    },
-                    plugins: [{
-                        id: 'centerText',
-                        afterDraw(chart) {
-                            const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
-                            ctx.save();
-                            
-                            // Draw number
-                            ctx.font = "bold 26px 'Plus Jakarta Sans', 'Inter', sans-serif";
-                            ctx.fillStyle = '#0f172a'; // slate-900
-                            ctx.textAlign = 'center';
-                            ctx.textBaseline = 'middle';
-                            const total = {{ $totalIbuHamil + $totalBayi + $totalBalita + $totalLansia }};
-                            ctx.fillText(total, left + width / 2, top + height / 2 - 8);
-                            
-                            // Draw label
-                            ctx.font = "600 10px 'Plus Jakarta Sans', 'Inter', sans-serif";
-                            ctx.fillStyle = '#94a3b8'; // slate-400
-                            ctx.fillText('TOTAL SASARAN', left + width / 2, top + height / 2 + 16);
-                            
-                            ctx.restore();
-                        }
+            let html = '';
+            data.forEach(item => {
+                html += `
+                    <tr class="hover:bg-blue-50/20 transition-colors">
+                        <td class="py-3 px-4 whitespace-nowrap">
+                            <div class="font-bold text-gray-900">${item.nama}</div>
+                            <div class="text-[10px] text-gray-400 font-mono">NIK: ${item.nik}</div>
+                        </td>
+                        <td class="py-3 px-4 whitespace-nowrap">
+                            <div class="font-semibold text-gray-800">${item.umur}</div>
+                            <div class="text-[10px] text-gray-500">${item.wilayah}</div>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="inline-block px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-100 rounded-xl text-[11px] font-bold">
+                                ${item.detail}
+                            </span>
+                            <div class="text-[10px] text-gray-400 mt-0.5">Tgl Periksa: ${item.tanggal}</div>
+                        </td>
+                        <td class="py-3 px-4 text-center whitespace-nowrap">
+                            <a href="${item.link}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition shadow-2xs">
+                                <i class="mdi mdi-heart-pulse"></i>
+                                <span>Pemeriksaan</span>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chart 1: Rekam Pemeriksaan Lintas Usia
+            const ctx1 = document.getElementById('examVolumeChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Ibu Hamil', 'Bayi (0-12m)', 'Balita (13-60m)', 'Remaja (PKPR)', 'Lansia (PTM)'],
+                    datasets: [{
+                        label: 'Total Rekam Medis Terdaftar',
+                        data: [
+                            {{ $ibuHamilExamCount }}, 
+                            {{ $bayiExamCount }}, 
+                            {{ $balitaExamCount }}, 
+                            {{ $remajaExamCount }}, 
+                            {{ $lansiaExamCount }}
+                        ],
+                        backgroundColor: [
+                            'rgba(236, 72, 153, 0.85)',
+                            'rgba(168, 85, 247, 0.85)',
+                            'rgba(99, 102, 241, 0.85)',
+                            'rgba(6, 182, 212, 0.85)',
+                            'rgba(16, 185, 129, 0.85)'
+                        ],
+                        borderRadius: 12,
+                        maxBarThickness: 45
                     }]
-                });
-            }
-
-            // 3. Kurva Tumbuh Kembang Bayi (Line Chart with Gradient Fill)
-            const growthCurveCtx = document.getElementById('growthCurveChart')?.getContext('2d');
-            if (growthCurveCtx) {
-                // Create elegant gradient
-                const gradient = growthCurveCtx.createLinearGradient(0, 0, 0, 280);
-                gradient.addColorStop(0, 'rgba(79, 70, 229, 0.2)');
-                gradient.addColorStop(1, 'rgba(79, 70, 229, 0.0)');
-
-                new Chart(growthCurveCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Bulan 1', 'Bulan 2', 'Bulan 3', 'Bulan 4', 'Bulan 5', 'Bulan 6', 'Bulan 7', 'Bulan 8', 'Bulan 9', 'Bulan 10', 'Bulan 11', 'Bulan 12'],
-                        datasets: [{
-                            label: 'Rata-rata Berat Badan (kg)',
-                            data: {!! json_encode($avgBayiWeights) !!},
-                            borderColor: '#4f46e5', // indigo-600
-                            backgroundColor: gradient,
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.38,
-                            pointBackgroundColor: '#ffffff',
-                            pointBorderColor: '#4f46e5',
-                            pointBorderWidth: 3,
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
-                            pointHoverBackgroundColor: '#4f46e5',
-                            pointHoverBorderColor: '#ffffff',
-                            pointHoverBorderWidth: 2
-                        }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: tooltipStyle
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.04)' }
                         },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                border: { display: false },
-                                grid: {
-                                    color: 'rgba(226, 232, 240, 0.6)',
-                                    borderDash: [5, 5]
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Berat Badan (kg)',
-                                    font: { size: 11, weight: '600' }
-                                },
-                                ticks: {
-                                    font: { size: 11 }
-                                }
-                            },
-                            x: {
-                                border: { display: false },
-                                grid: { display: false },
-                                ticks: {
-                                    font: { size: 11, weight: '500' }
-                                }
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Faktor Risiko Ibu Hamil
+            const ctx2 = document.getElementById('riskFactorChart').getContext('2d');
+            const riskData = @json($riskFactors);
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(riskData),
+                    datasets: [{
+                        data: Object.values(riskData),
+                        backgroundColor: [
+                            '#ef4444',
+                            '#f97316',
+                            '#f59e0b',
+                            '#ec4899',
+                            '#8b5cf6',
+                            '#10b981'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 10,
+                                font: { size: 10 }
                             }
                         }
                     }
-                });
-            }
-
-            // 4. Faktor Resiko Ibu Hamil (Horizontal Bar Chart)
-            const riskFactorCtx = document.getElementById('riskFactorChart')?.getContext('2d');
-            if (riskFactorCtx) {
-                new Chart(riskFactorCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: {!! json_encode(array_keys($riskFactors)) !!},
-                        datasets: [{
-                            label: 'Jumlah Ibu Hamil',
-                            data: {!! json_encode(array_values($riskFactors)) !!},
-                            backgroundColor: [
-                                'rgba(239, 68, 68, 0.85)',   // Red
-                                'rgba(249, 115, 22, 0.85)',  // Orange
-                                'rgba(245, 158, 11, 0.85)',  // Amber
-                                'rgba(139, 92, 246, 0.85)',  // Violet
-                                'rgba(79, 70, 229, 0.85)',   // Indigo
-                                'rgba(13, 148, 136, 0.85)'   // Teal
-                            ],
-                            borderColor: 'transparent',
-                            borderWidth: 0,
-                            borderRadius: 6,
-                            borderSkipped: false,
-                            maxBarThickness: 16
-                        }]
-                    },
-                    options: {
-                        indexAxis: 'y',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: tooltipStyle
-                        },
-                        scales: {
-                            x: {
-                                beginAtZero: true,
-                                border: { display: false },
-                                grid: {
-                                    color: 'rgba(226, 232, 240, 0.6)',
-                                    borderDash: [5, 5]
-                                },
-                                ticks: {
-                                    stepSize: 1,
-                                    precision: 0,
-                                    font: { size: 11 }
-                                }
-                            },
-                            y: {
-                                border: { display: false },
-                                grid: { display: false },
-                                ticks: {
-                                    font: { size: 11, weight: '600' }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
+                }
+            });
         });
+
+        function confirmSync(event, url) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Konfirmasi Sinkronisasi',
+                text: 'Sinkronisasi penduduk dari OpenSID akan dilakukan. Proses ini memakan waktu sekitar 1 hingga 3 menit.',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Sinkronkan!',
+                cancelButtonText: 'Batal',
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    Swal.fire({
+                        title: 'Sedang Menyinkronkan...',
+                        text: 'Mohon jangan tutup halaman ini.',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                            window.location.href = url;
+                        }
+                    });
+                }
+            });
+        }
     </script>
     @endpush
 </x-layout>
