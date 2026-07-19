@@ -1,63 +1,82 @@
 <x-layout title="Dashboard">
-    <div class="mb-8">
-        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Dashboard</h2>
-        <p class="text-gray-500 mt-1">Selamat datang kembali di Panel Admin Sistem Informasi Posyandu.</p>
-    </div>
+    <x-page-header 
+        title="Beranda SIP Posyandu"
+        subtitle="Selamat datang kembali di Panel Admin Sistem Informasi Posyandu Desa Banjar"
+        icon="mdi-home"
+        :breadcrumbs="[]"
+    />
+
+    @php
+        $remajaMin = \App\Models\Pengaturan::where('key', 'remaja_umur_min')->value('value') ?? 10;
+        $remajaMax = \App\Models\Pengaturan::where('key', 'remaja_umur_max')->value('value') ?? 18;
+        $totalRemaja = \App\Models\Penduduk::whereRaw("TIMESTAMPDIFF(YEAR, tanggallahir, CURDATE()) BETWEEN ? AND ?", [$remajaMin, $remajaMax])->count();
+    @endphp
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
         <!-- Card: Penduduk -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-4 hover:shadow-md transition duration-200">
-            <div class="p-4 bg-blue-50 text-blue-600 rounded-xl">
-                <i class="mdi mdi-account-group text-3xl"></i>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-3 hover:shadow-md transition duration-200">
+            <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                <i class="mdi mdi-account-group text-2xl"></i>
             </div>
             <div>
-                <p class="text-sm font-semibold text-gray-500">Total Penduduk</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ \App\Models\Penduduk::count() }}</h3>
+                <p class="text-xs font-semibold text-gray-500">Penduduk</p>
+                <h3 class="text-xl font-bold text-gray-900 mt-0.5">{{ \App\Models\Penduduk::count() }}</h3>
             </div>
         </div>
 
         <!-- Card: Ibu Hamil -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-4 hover:shadow-md transition duration-200">
-            <div class="p-4 bg-pink-50 text-pink-600 rounded-xl">
-                <i class="mdi mdi-face-woman text-3xl"></i>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-3 hover:shadow-md transition duration-200">
+            <div class="p-3 bg-pink-50 text-pink-600 rounded-xl">
+                <i class="mdi mdi-face-woman text-2xl"></i>
             </div>
             <div>
-                <p class="text-sm font-semibold text-gray-500">Ibu Hamil</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ \App\Models\IbuHamil::count() }}</h3>
+                <p class="text-xs font-semibold text-gray-500">Ibu Hamil</p>
+                <h3 class="text-xl font-bold text-gray-900 mt-0.5">{{ \App\Models\IbuHamil::count() }}</h3>
             </div>
         </div>
 
         <!-- Card: Bayi -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-4 hover:shadow-md transition duration-200">
-            <div class="p-4 bg-purple-50 text-purple-600 rounded-xl">
-                <i class="mdi mdi-baby-carriage text-3xl"></i>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-3 hover:shadow-md transition duration-200">
+            <div class="p-3 bg-purple-50 text-purple-600 rounded-xl">
+                <i class="mdi mdi-baby-carriage text-2xl"></i>
             </div>
             <div>
-                <p class="text-sm font-semibold text-gray-500">Bayi</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ $totalBayi }}</h3>
+                <p class="text-xs font-semibold text-gray-500">Bayi</p>
+                <h3 class="text-xl font-bold text-gray-900 mt-0.5">{{ $totalBayi }}</h3>
             </div>
         </div>
 
         <!-- Card: Balita -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-4 hover:shadow-md transition duration-200">
-            <div class="p-4 bg-indigo-50 text-indigo-600 rounded-xl">
-                <i class="mdi mdi-human-child text-3xl"></i>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-3 hover:shadow-md transition duration-200">
+            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+                <i class="mdi mdi-human-child text-2xl"></i>
             </div>
             <div>
-                <p class="text-sm font-semibold text-gray-500">Balita</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ $totalBalita }}</h3>
+                <p class="text-xs font-semibold text-gray-500">Balita</p>
+                <h3 class="text-xl font-bold text-gray-900 mt-0.5">{{ $totalBalita }}</h3>
+            </div>
+        </div>
+
+        <!-- Card: Remaja -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-3 hover:shadow-md transition duration-200">
+            <div class="p-3 bg-cyan-50 text-cyan-600 rounded-xl">
+                <i class="mdi mdi-account-school text-2xl"></i>
+            </div>
+            <div>
+                <p class="text-xs font-semibold text-gray-500">Remaja</p>
+                <h3 class="text-xl font-bold text-gray-900 mt-0.5">{{ $totalRemaja }}</h3>
             </div>
         </div>
 
         <!-- Card: Lansia -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-4 hover:shadow-md transition duration-200">
-            <div class="p-4 bg-green-50 text-green-600 rounded-xl">
-                <i class="mdi mdi-account-star text-3xl"></i>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-3 hover:shadow-md transition duration-200">
+            <div class="p-3 bg-green-50 text-green-600 rounded-xl">
+                <i class="mdi mdi-account-star text-2xl"></i>
             </div>
             <div>
-                <p class="text-sm font-semibold text-gray-500">Lansia</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ \App\Models\Lansia::count() }}</h3>
+                <p class="text-xs font-semibold text-gray-500">Lansia</p>
+                <h3 class="text-xl font-bold text-gray-900 mt-0.5">{{ \App\Models\Lansia::count() }}</h3>
             </div>
         </div>
     </div>

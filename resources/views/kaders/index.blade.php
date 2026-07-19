@@ -1,12 +1,17 @@
 <x-layout title="Data Kader Posyandu">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Daftar Kader Posyandu</h2>
-        <div class="flex space-x-2">
-            <a href="{{ route('kaders.create', ['posyandu_id' => request('posyandu_id')]) }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2">
-                <i class="mdi mdi-plus"></i> Tambah Kader
-            </a>
-        </div>
-    </div>
+    <x-page-header 
+        title="Daftar Kader Posyandu"
+        subtitle="Kelola petugas dan kader posyandu pelayanan kesehatan di Desa Banjar"
+        icon="mdi-account-star"
+        :breadcrumbs="[
+            'Pengaturan' => null,
+            'Data Kader' => null
+        ]"
+    >
+        <a href="{{ route('kaders.create', ['posyandu_id' => request('posyandu_id')]) }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+            <i class="mdi mdi-plus text-sm"></i> <span>Tambah Kader</span>
+        </a>
+    </x-page-header>
 
     @if(session('success'))
     <div class="mb-4 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-r-xl text-sm flex items-center shadow-sm">

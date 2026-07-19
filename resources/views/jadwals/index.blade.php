@@ -1,15 +1,20 @@
 <x-layout title="Jadwal Pelayanan">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Jadwal Pelayanan</h2>
-        <div class="flex space-x-2">
-            <a href="{{ route('jadwals.export') }}" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2">
-                <i class="mdi mdi-file-excel"></i> Export Excel
-            </a>
-            <a href="{{ route('jadwals.create') }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2">
-                <i class="mdi mdi-plus"></i> Tambah Jadwal
-            </a>
-        </div>
-    </div>
+    <x-page-header 
+        title="Jadwal Pelayanan Posyandu"
+        subtitle="Kelola jadwal kegiatan dan agenda pelayanan kesehatan rutin"
+        icon="mdi-calendar-clock"
+        :breadcrumbs="[
+            'Konten' => null,
+            'Jadwal Pelayanan' => null
+        ]"
+    >
+        <a href="{{ route('jadwals.export') }}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+            <i class="mdi mdi-file-excel text-sm"></i> <span>Export Excel</span>
+        </a>
+        <a href="{{ route('jadwals.create') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+            <i class="mdi mdi-plus text-sm"></i> <span>Tambah Jadwal</span>
+        </a>
+    </x-page-header>
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-4 border-b border-gray-200 bg-gray-50/50">

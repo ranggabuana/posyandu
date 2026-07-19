@@ -1,22 +1,21 @@
-
-<x-layout title="Data Lansia">
+<x-layout title="Data Remaja">
     <x-page-header 
-        title="Data Lansia"
-        subtitle="Daftar penduduk lansia dengan usia minimal {{ $minAge }} tahun"
-        icon="mdi-account-heart"
+        title="Data Remaja"
+        subtitle="Daftar pemantauan penduduk remaja usia {{ $minAge }} hingga {{ $maxAge }} tahun (Posyandu Remaja)"
+        icon="mdi-account-school"
         :breadcrumbs="[
             'Data Kesehatan' => null,
-            'Data Lansia' => null
+            'Data Remaja' => null
         ]"
     >
-        <a id="export-excel" href="{{ route('lansias.export') }}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+        <a id="export-excel" href="{{ route('remajas.export') }}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
             <i class="mdi mdi-file-excel text-sm"></i> <span>Export Excel</span>
         </a>
     </x-page-header>
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
         <div class="p-6">
-            <form id="filter-form" action="{{ route('lansias.index') }}" method="GET" class="space-y-4">
+            <form id="filter-form" action="{{ route('remajas.index') }}" method="GET" class="space-y-4">
                 <div class="flex flex-col md:flex-row justify-between gap-4 mb-4">
                     <div class="relative flex-1 min-w-[300px]">
                         <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
@@ -38,7 +37,7 @@
                 </div>
 
                 <x-hierarchical-filter 
-                    :route="route('lansias.index')" 
+                    :route="route('remajas.index')" 
                     :dusuns="$dusuns" 
                     :rws="$rws" 
                     :rts="$rts" 
@@ -58,9 +57,10 @@
                             $columns = [
                                 'nama' => 'Nama',
                                 'nik' => 'NIK',
+                                'kelamin' => 'Jenis Kelamin',
                                 'umur' => 'Umur',
                                 'dusun' => 'Wilayah',
-                                'kelamin' => 'L/P',
+                                'telepon' => 'Telepon',
                             ];
                         @endphp
 
@@ -77,27 +77,34 @@
                             </div>
                         </th>
                         @endforeach
-                        <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
+                        <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse($lansias as $item)
+                    @forelse($remajas as $item)
                     <tr class="hover:bg-blue-50/30 transition duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-semibold text-gray-900">{{ $item->nama }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-mono">{{ $item->nik }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $item->umur }} Tahun</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @php
+                                $isLaki = in_array(strtolower($item->kelamin ?? ''), ['laki-laki', 'l']);
+                            @endphp
+                            <span class="px-2.5 py-0.5 font-bold text-[11px] rounded-full border inline-flex items-center gap-1 {{ $isLaki ? 'bg-blue-50 text-blue-700 border-blue-100' : 'bg-pink-50 text-pink-700 border-pink-100' }}">
+                                {{ $isLaki ? 'Laki-Laki' : 'Perempuan' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-semibold">{{ $item->umur }} Tahun</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-xs text-gray-900">{{ $item->dusun ?? '-' }}</div>
                             <div class="text-[10px] text-gray-500">RW {{ $item->rw ?? '00' }} / RT {{ $item->rt ?? '00' }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 uppercase">{{ substr($item->kelamin, 0, 1) }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                            <a href="{{ route('lansias.pemeriksaan', $item->id) }}" 
-                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs"
-                                title="Kelola Pemeriksaan Kesehatan Lansia">
-                                <i class="mdi mdi-heart-pulse text-base text-red-500"></i>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $item->telepon ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
+                            <a href="{{ route('remajas.pemeriksaan', $item->id) }}" 
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-xl text-xs font-semibold transition-all duration-200 border border-blue-100 shadow-2xs">
+                                <i class="mdi mdi-heart-pulse text-sm"></i>
                                 <span>Pemeriksaan</span>
                             </a>
                         </td>
@@ -107,7 +114,7 @@
                         <td colspan="100" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center">
                                 <i class="mdi mdi-database-off text-6xl text-gray-200"></i>
-                                <p class="mt-2 text-gray-500">Tidak ada data lansia ditemukan</p>
+                                <p class="mt-2 text-sm text-gray-500 font-medium">Tidak ada data remaja yang ditemukan</p>
                             </div>
                         </td>
                     </tr>
@@ -115,71 +122,30 @@
                 </tbody>
             </table>
         </div>
-        <div class="p-4 border-t border-gray-200 bg-gray-50/30">
-            {{ $lansias->links() }}
+
+        @if($remajas->hasPages())
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+            {{ $remajas->links() }}
         </div>
+        @endif
     </div>
 
+    @push('scripts')
     <script>
         function updateSort(field) {
-            const form = document.getElementById('filter-form');
-            const currentField = form.sort.value;
-            const currentDirection = form.direction.value;
-
-            if (currentField === field) {
-                form.direction.value = currentDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                form.sort.value = field;
-                form.direction.value = 'asc';
+            const currentSort = "{{ request('sort', 'nama') }}";
+            const currentDirection = "{{ request('direction', 'asc') }}";
+            
+            let newDirection = 'asc';
+            if (currentSort === field) {
+                newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
             }
+            
+            const form = document.getElementById('filter-form');
+            form.querySelector('input[name="sort"]').value = field;
+            form.querySelector('input[name="direction"]').value = newDirection;
             form.submit();
         }
-
-        let searchTimeout;
-        document.getElementById('search-input').addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                document.getElementById('filter-form').submit();
-            }, 500);
-        });
-
-        // Export loading animation
-        const exportBtn = document.getElementById('export-excel');
-        if (exportBtn) {
-            exportBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const btn = this;
-                const originalContent = btn.innerHTML;
-                
-                // Show loading state
-                btn.classList.add('opacity-75', 'cursor-wait');
-                btn.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> <span>Memproses...</span>';
-                btn.style.pointerEvents = 'none';
-
-                // Get filter values from the form
-                const form = document.getElementById('filter-form');
-                const formData = new FormData(form);
-                const params = new URLSearchParams();
-                
-                // Collect all non-empty values
-                for (const [key, value] of formData.entries()) {
-                    if (value && value !== '') params.append(key, value);
-                }
-                
-                // Construct export URL with current filters
-                const baseUrl = btn.getAttribute('href').split('?')[0];
-                const exportUrl = baseUrl + "?" + params.toString();
-                
-                // Start download
-                window.location.href = exportUrl;
-                
-                // Reset button after a delay
-                setTimeout(() => {
-                    btn.classList.remove('opacity-75', 'cursor-wait');
-                    btn.innerHTML = originalContent;
-                    btn.style.pointerEvents = 'auto';
-                }, 5000);
-            });
-        }
     </script>
+    @endpush
 </x-layout>

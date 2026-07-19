@@ -1,28 +1,20 @@
 <x-layout>
     <x-slot:title>Pemeriksaan Kesehatan Lansia - Posyandu Banjar</x-slot:title>
 
-    <!-- Header & Breadcrumbs -->
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <div class="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                <a href="{{ route('dashboard') }}" class="hover:text-blue-600">Dashboard</a>
-                <i class="mdi mdi-chevron-right text-gray-400"></i>
-                <a href="{{ route('lansias.index') }}" class="hover:text-blue-600">Data Lansia</a>
-                <i class="mdi mdi-chevron-right text-gray-400"></i>
-                <span class="text-gray-900 font-semibold">Pemeriksaan Kesehatan</span>
-            </div>
-            <h1 class="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-                <i class="mdi mdi-heart-pulse text-red-500 text-3xl"></i>
-                Pemeriksaan Kesehatan Lansia
-            </h1>
-        </div>
-
-        <a href="{{ route('lansias.index') }}"
-            class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition shadow-2xs text-xs self-start sm:self-auto">
-            <i class="mdi mdi-arrow-left"></i>
-            Kembali ke Daftar Lansia
+    <x-page-header 
+        title="Pemeriksaan Kesehatan Lansia"
+        subtitle="Catat hasil pemeriksaan & rekam medis lansia"
+        icon="mdi-heart-pulse"
+        :breadcrumbs="[
+            'Data Kesehatan' => null,
+            'Data Lansia' => route('lansias.index'),
+            'Pemeriksaan' => null
+        ]"
+    >
+        <a href="{{ route('lansias.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold transition-all shadow-2xs">
+            <i class="mdi mdi-arrow-left text-sm"></i> Kembali
         </a>
-    </div>
+    </x-page-header>
 
     <!-- Alert Success -->
     @if(session('success'))

@@ -1,13 +1,18 @@
 <x-layout title="Pemeriksaan Ibu Hamil">
-    <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-            <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Pemeriksaan Ibu Hamil</h2>
-            <p class="text-gray-500 mt-1">Catat hasil pemeriksaan untuk Ibu <strong>{{ $ibuHamil->penduduk->nama }}</strong> (NIK: {{ $ibuHamil->penduduk->nik }}).</p>
-        </div>
-        <a href="{{ route('ibu-hamils.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl shadow-sm hover:bg-gray-50 transition-all">
-            <i class="mdi mdi-arrow-left mr-2"></i> Kembali
+    <x-page-header 
+        title="Pemeriksaan Ibu Hamil"
+        subtitle="Catat hasil pemeriksaan untuk Ibu <strong>{{ $ibuHamil->penduduk->nama }}</strong> (NIK: {{ $ibuHamil->penduduk->nik }})"
+        icon="mdi-human-pregnant"
+        :breadcrumbs="[
+            'Data Kesehatan' => null,
+            'Ibu Hamil' => route('ibu-hamils.index'),
+            'Pemeriksaan' => null
+        ]"
+    >
+        <a href="{{ route('ibu-hamils.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold transition-all shadow-2xs">
+            <i class="mdi mdi-arrow-left text-sm"></i> Kembali
         </a>
-    </div>
+    </x-page-header>
 
     <form action="{{ route('ibu-hamils.update-pemeriksaan', $ibuHamil) }}" method="POST">
         @csrf

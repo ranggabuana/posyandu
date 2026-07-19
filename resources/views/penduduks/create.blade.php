@@ -1,14 +1,19 @@
 
 <x-layout title="Tambah Penduduk">
-    <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-            <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Tambah Data Penduduk</h2>
-            <p class="text-gray-500 mt-1">Lengkapi informasi penduduk di bawah ini dengan benar.</p>
-        </div>
-        <a href="{{ route('penduduks.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl shadow-sm hover:bg-gray-50 transition-all">
-            <i class="mdi mdi-arrow-left mr-2"></i> Kembali
+    <x-page-header 
+        title="Tambah Data Penduduk"
+        subtitle="Lengkapi informasi kependudukan warga di bawah ini dengan benar"
+        icon="mdi-account-plus"
+        :breadcrumbs="[
+            'Kependudukan' => null,
+            'Semua Penduduk' => route('penduduks.index'),
+            'Tambah Data' => null
+        ]"
+    >
+        <a href="{{ route('penduduks.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold transition-all shadow-2xs">
+            <i class="mdi mdi-arrow-left text-sm"></i> Kembali
         </a>
-    </div>
+    </x-page-header>
 
     <form action="{{ route('penduduks.store') }}" method="POST">
         @csrf

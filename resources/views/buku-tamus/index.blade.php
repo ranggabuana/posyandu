@@ -1,16 +1,21 @@
 
 <x-layout title="Buku Tamu">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Buku Tamu</h2>
-        <div class="flex space-x-2">
-            <button type="button" onclick="openExportModal()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2">
-                <i class="mdi mdi-file-excel"></i> Export Excel
-            </button>
-            <a href="{{ route('buku-tamus.create') }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2">
-                <i class="mdi mdi-plus"></i> Tambah Data
-            </a>
-        </div>
-    </div>
+    <x-page-header 
+        title="Buku Tamu Kunjungan"
+        subtitle="Daftar rekapitulasi kehadiran tamu & dinas kesehatan di Posyandu"
+        icon="mdi-book-open-page-variant"
+        :breadcrumbs="[
+            'Interaksi' => null,
+            'Buku Tamu' => null
+        ]"
+    >
+        <button type="button" onclick="openExportModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+            <i class="mdi mdi-file-excel text-sm"></i> <span>Export Excel</span>
+        </button>
+        <a href="{{ route('buku-tamus.create') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+            <i class="mdi mdi-plus text-sm"></i> <span>Tambah Tamu</span>
+        </a>
+    </x-page-header>
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-4 border-b border-gray-200 bg-gray-50/50">

@@ -1,13 +1,21 @@
 <x-layout title="Pemeriksaan Bayi & Balita">
-    <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-            <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Pemeriksaan Bayi & Balita</h2>
-            <p class="text-gray-500 mt-1">Catat dan lihat riwayat tumbuh kembang untuk <strong>{{ $bayiBalita->penduduk->nama }}</strong> (NIK: {{ $bayiBalita->penduduk->nik }}).</p>
-        </div>
-        <a href="{{ $bayiBalita->umur_bulan <= 12 ? route('bayi-balitas.index') : route('balitas.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl shadow-sm hover:bg-gray-50 transition-all">
-            <i class="mdi mdi-arrow-left mr-2"></i> Kembali
+    <x-page-header 
+        title="Pemeriksaan Bayi & Balita"
+        subtitle="Catat dan lihat riwayat tumbuh kembang untuk <strong>{{ $bayiBalita->penduduk->nama }}</strong> (NIK: {{ $bayiBalita->penduduk->nik }})"
+        icon="mdi-scale-bathroom"
+        :breadcrumbs="[
+            'Data Kesehatan' => null,
+            ($bayiBalita->umur_bulan <= 12 ? 'Data Bayi' : 'Data Balita') => ($bayiBalita->umur_bulan <= 12 ? route('bayi-balitas.index') : route('balitas.index')),
+            'Pemeriksaan' => null
+        ]"
+    >
+        <a href="{{ route('bayi-balitas.imunisasi', $bayiBalita) }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 rounded-xl text-xs font-bold transition-all shadow-2xs">
+            <i class="mdi mdi-needle text-sm"></i> Ke Imunisasi
         </a>
-    </div>
+        <a href="{{ $bayiBalita->umur_bulan <= 12 ? route('bayi-balitas.index') : route('balitas.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold transition-all shadow-2xs">
+            <i class="mdi mdi-arrow-left text-sm"></i> Kembali
+        </a>
+    </x-page-header>
 
     <!-- Alert Success/Error -->
     @if(session('success'))

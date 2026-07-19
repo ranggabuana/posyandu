@@ -1,16 +1,18 @@
 
 <x-layout title="Data Ibu">
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-800">Data Ibu</h2>
-            <p class="text-sm text-gray-500">Daftar penduduk perempuan dengan status sudah menikah.</p>
-        </div>
-        <div class="flex space-x-2">
-            <a href="{{ route('ibus.export') }}" id="export-excel" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2 shadow-sm">
-                <i class="mdi mdi-file-excel"></i> <span>Export Excel</span>
-            </a>
-        </div>
-    </div>
+    <x-page-header 
+        title="Data Ibu"
+        subtitle="Daftar penduduk perempuan dengan status pernah atau sudah menikah"
+        icon="mdi-human-female"
+        :breadcrumbs="[
+            'Kependudukan' => null,
+            'Data Ibu' => null
+        ]"
+    >
+        <a id="export-excel" href="{{ route('ibus.export') }}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+            <i class="mdi mdi-file-excel text-sm"></i> <span>Export Excel</span>
+        </a>
+    </x-page-header>
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
         <div class="p-6">

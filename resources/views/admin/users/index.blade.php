@@ -1,10 +1,17 @@
 <x-layout title="Daftar Admin">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Manajemen Admin</h2>
-        <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2">
-            <i class="mdi mdi-plus"></i> Tambah Admin
+    <x-page-header 
+        title="Manajemen User Admin"
+        subtitle="Kelola akun pengguna admin dan hak akses sistem posyandu"
+        icon="mdi-account-key"
+        :breadcrumbs="[
+            'Pengaturan' => null,
+            'Data User Admin' => null
+        ]"
+    >
+        <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+            <i class="mdi mdi-plus text-sm"></i> <span>Tambah Admin</span>
         </a>
-    </div>
+    </x-page-header>
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-4 border-b border-gray-200 bg-gray-50/50">

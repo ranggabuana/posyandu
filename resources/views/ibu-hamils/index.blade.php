@@ -1,16 +1,21 @@
 
 <x-layout title="Data Ibu Hamil">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Data Ibu Hamil</h2>
-        <div class="flex space-x-2">
-            <a id="export-excel" href="{{ route('ibu-hamils.export') }}" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2">
-                <i class="mdi mdi-file-excel"></i> <span>Export Excel</span>
-            </a>
-            <a href="{{ route('ibu-hamils.create') }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2">
-                <i class="mdi mdi-plus"></i> Tambah Data
-            </a>
-        </div>
-    </div>
+    <x-page-header 
+        title="Data Ibu Hamil"
+        subtitle="Daftar pemantauan kesehatan & riwayat kehamilan ibu"
+        icon="mdi-human-pregnant"
+        :breadcrumbs="[
+            'Data Kesehatan' => null,
+            'Ibu Hamil' => null
+        ]"
+    >
+        <a id="export-excel" href="{{ route('ibu-hamils.export') }}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+            <i class="mdi mdi-file-excel text-sm"></i> <span>Export Excel</span>
+        </a>
+        <a href="{{ route('ibu-hamils.create') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+            <i class="mdi mdi-plus text-sm"></i> <span>Tambah Ibu Hamil</span>
+        </a>
+    </x-page-header>
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-4 border-b border-gray-200 bg-gray-50/50">

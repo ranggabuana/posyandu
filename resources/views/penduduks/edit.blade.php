@@ -1,14 +1,19 @@
 
 <x-layout title="Edit Penduduk">
-    <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-            <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Edit Data Penduduk</h2>
-            <p class="text-gray-500 mt-1">Perbarui informasi penduduk di bawah ini.</p>
-        </div>
-        <a href="{{ route('penduduks.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl shadow-sm hover:bg-gray-50 transition-all">
-            <i class="mdi mdi-arrow-left mr-2"></i> Kembali
+    <x-page-header 
+        title="Edit Data Penduduk"
+        subtitle="Perbarui informasi kependudukan untuk <strong>{{ $penduduk->nama }}</strong> (NIK: {{ $penduduk->nik }})"
+        icon="mdi-account-edit"
+        :breadcrumbs="[
+            'Kependudukan' => null,
+            'Semua Penduduk' => route('penduduks.index'),
+            'Edit Data' => null
+        ]"
+    >
+        <a href="{{ route('penduduks.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold transition-all shadow-2xs">
+            <i class="mdi mdi-arrow-left text-sm"></i> Kembali
         </a>
-    </div>
+    </x-page-header>
 
     <form action="{{ route('penduduks.update', $penduduk) }}" method="POST">
         @csrf

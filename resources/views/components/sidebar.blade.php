@@ -57,7 +57,7 @@
         </div>
 
         <!-- Data Kesehatan -->
-        @php $kesehatanActive = request()->routeIs('ibu-hamils.*', 'bayi-balitas.*', 'balitas.*', 'lansias.*', 'wuses.*', 'puses.*'); @endphp
+        @php $kesehatanActive = request()->routeIs('ibu-hamils.*', 'bayi-balitas.*', 'balitas.*', 'remajas.*', 'lansias.*', 'wuses.*', 'puses.*'); @endphp
         <div class="relative text-left menu-group {{ $kesehatanActive ? 'open' : '' }}">
             <button onclick="this.parentElement.classList.toggle('open')"
                 class="w-full flex items-center justify-between px-6 py-3 transition-colors group menu-item text-left cursor-pointer {{ $kesehatanActive ? 'bg-blue-50/30 text-blue-600 font-semibold' : 'text-gray-700' }}">
@@ -87,6 +87,12 @@
                     <i
                         class="mdi mdi-circle text-[8px] mr-2 {{ request()->routeIs('balitas.*') ? 'text-blue-500' : 'text-gray-400' }}"></i>
                     <span>Balita</span>
+                </a>
+                <a href="{{ route('remajas.index') }}"
+                    class="block pl-14 py-2 text-sm transition-colors flex items-center submenu-item text-left {{ request()->routeIs('remajas.*') ? 'text-blue-600 font-semibold bg-blue-50/50 border-r-4 border-blue-500' : 'text-gray-600' }}">
+                    <i
+                        class="mdi mdi-circle text-[8px] mr-2 {{ request()->routeIs('remajas.*') ? 'text-blue-500' : 'text-gray-400' }}"></i>
+                    <span>Remaja</span>
                 </a>
                 <a href="{{ route('lansias.index') }}"
                     class="block pl-14 py-2 text-sm transition-colors flex items-center submenu-item text-left {{ request()->routeIs('lansias.*') ? 'text-blue-600 font-semibold bg-blue-50/50 border-r-4 border-blue-500' : 'text-gray-600' }}">

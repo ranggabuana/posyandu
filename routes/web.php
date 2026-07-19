@@ -76,6 +76,13 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('pemeriksaan-lansias/{pemeriksaan}', [\App\Http\Controllers\LansiaController::class, 'destroyPemeriksaan'])->name('pemeriksaan-lansias.destroy');
     Route::resource('lansias', \App\Http\Controllers\LansiaController::class);
 
+    Route::get('remajas/export', [\App\Http\Controllers\RemajaController::class, 'export'])->name('remajas.export');
+    Route::get('remajas/{remaja}/pemeriksaan', [\App\Http\Controllers\RemajaController::class, 'pemeriksaan'])->name('remajas.pemeriksaan');
+    Route::post('remajas/{remaja}/pemeriksaan', [\App\Http\Controllers\RemajaController::class, 'storePemeriksaan'])->name('remajas.store-pemeriksaan');
+    Route::put('pemeriksaan-remajas/{pemeriksaan}', [\App\Http\Controllers\RemajaController::class, 'updatePemeriksaanRecord'])->name('pemeriksaan-remajas.update');
+    Route::delete('pemeriksaan-remajas/{pemeriksaan}', [\App\Http\Controllers\RemajaController::class, 'destroyPemeriksaan'])->name('pemeriksaan-remajas.destroy');
+    Route::resource('remajas', \App\Http\Controllers\RemajaController::class);
+
     Route::get('wuses/export', [\App\Http\Controllers\WusController::class, 'export'])->name('wuses.export');
     Route::resource('wuses', \App\Http\Controllers\WusController::class);
 

@@ -14,6 +14,8 @@ class PengaturanSeeder extends Seeder
     {
         $pengaturans = [
             ['key' => 'umur_lansia_min', 'value' => '60', 'label' => 'Batas Umur Minimal Lansia', 'keterangan' => 'Dalam satuan tahun'],
+            ['key' => 'remaja_umur_min', 'value' => '10', 'label' => 'Batas Umur Minimal Remaja', 'keterangan' => 'Dalam satuan tahun'],
+            ['key' => 'remaja_umur_max', 'value' => '18', 'label' => 'Batas Umur Maksimal Remaja', 'keterangan' => 'Dalam satuan tahun'],
             ['key' => 'wus_umur_min', 'value' => '15', 'label' => 'Batas Umur Minimal WUS', 'keterangan' => 'Dalam satuan tahun'],
             ['key' => 'wus_umur_max', 'value' => '49', 'label' => 'Batas Umur Maksimal WUS', 'keterangan' => 'Dalam satuan tahun'],
             ['key' => 'pus_umur_min', 'value' => '15', 'label' => 'Batas Umur Minimal PUS', 'keterangan' => 'Dalam satuan tahun'],

@@ -1,13 +1,18 @@
 
 <x-layout title="Pengaturan">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Pengaturan</h2>
-        <div class="flex space-x-2">
-            <a href="{{ route('pengaturans.export') }}" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2">
-                <i class="mdi mdi-file-excel"></i> Export Excel
-            </a>
-        </div>
-    </div>
+    <x-page-header 
+        title="Pengaturan Sistem Posyandu"
+        subtitle="Kelola variabel konfigurasi, batas usia lansia, WUS, dan kriteria sistem"
+        icon="mdi-cog"
+        :breadcrumbs="[
+            'Pengaturan' => null,
+            'Pengaturan Sistem' => null
+        ]"
+    >
+        <a href="{{ route('pengaturans.export') }}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+            <i class="mdi mdi-file-excel text-sm"></i> <span>Export Excel</span>
+        </a>
+    </x-page-header>
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-4 border-b border-gray-200 bg-gray-50/50">

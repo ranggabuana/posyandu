@@ -1,18 +1,20 @@
 <x-layout title="Data PUS">
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-800">Data Pasangan Usia Subur (PUS)</h2>
-            <p class="text-sm text-gray-500">Daftar pasangan suami istri dengan rentang usia subur.</p>
-        </div>
-        <div class="flex space-x-2">
-            <a href="{{ route('puses.create') }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center gap-2 shadow-sm">
-                <i class="mdi mdi-plus"></i> Tambah PUS
-            </a>
-            <a id="export-excel" href="{{ route('puses.export') }}" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2 shadow-sm">
-                <i class="mdi mdi-file-excel"></i> <span>Export Excel</span>
-            </a>
-        </div>
-    </div>
+    <x-page-header 
+        title="Data Pasangan Usia Subur (PUS)"
+        subtitle="Daftar pasangan suami istri dengan rentang usia subur"
+        icon="mdi-account-group"
+        :breadcrumbs="[
+            'Data Kesehatan' => null,
+            'Data PUS' => null
+        ]"
+    >
+        <a id="export-excel" href="{{ route('puses.export') }}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+            <i class="mdi mdi-file-excel text-sm"></i> <span>Export Excel</span>
+        </a>
+        <a href="{{ route('puses.create') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+            <i class="mdi mdi-plus text-sm"></i> <span>Tambah PUS</span>
+        </a>
+    </x-page-header>
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
         <div class="p-6">
