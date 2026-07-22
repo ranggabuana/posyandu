@@ -57,7 +57,7 @@ class BayiBalitaController extends Controller
     {
         $user = auth()->user();
         $pQuery = Penduduk::whereRaw("TIMESTAMPDIFF(YEAR, tanggallahir, CURDATE()) <= 5");
-        $iQuery = Penduduk::whereIn('id', IbuHamil::pluck('penduduk_id'));
+        $iQuery = Penduduk::where('kelamin', 'perempuan')->where('status_kawin', 'kawin');
         
         if ($user->hasRole('posyandu') && $user->posyandu) {
             $rwDiampu = $user->posyandu->rw_diampu ?? [];
@@ -148,7 +148,7 @@ class BayiBalitaController extends Controller
     {
         $user = auth()->user();
         $pQuery = Penduduk::query();
-        $iQuery = Penduduk::whereIn('id', IbuHamil::pluck('penduduk_id'));
+        $iQuery = Penduduk::where('kelamin', 'perempuan')->where('status_kawin', 'kawin');
         
         if ($user->hasRole('posyandu') && $user->posyandu) {
             $rwDiampu = $user->posyandu->rw_diampu ?? [];
