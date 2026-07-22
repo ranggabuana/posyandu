@@ -618,152 +618,85 @@
         </div>
     </div>
 
-    <!-- Modal Detail Rumus & Metodologi Antropometri WHO -->
-    <div id="antropometri-detail-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
-        <!-- Backdrop -->
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="closeAntropometriDetailModal()"></div>
+    <!-- Modal Detail Rumus & Standar Antropometri WHO (Kemenkes RI) -->
+    <div id="antropometri-detail-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAntropometriDetailModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600">
+                <i class="mdi mdi-close text-xl"></i>
+            </button>
 
-        <!-- Modal Container -->
-        <div class="flex min-h-screen items-center justify-center p-4 text-center">
-            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-3xl border border-gray-100">
-                <!-- Header -->
-                <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-indigo-50 flex justify-between items-center">
-                    <div class="flex items-center">
-                        <div class="p-2.5 bg-purple-600 text-white rounded-xl mr-3 shadow-xs">
-                            <i class="mdi mdi-calculator-variant text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">Panduan & Detail Rumus Perhitungan Antropometri (WHO Standar)</h3>
-                            <p class="text-xs text-purple-700 font-medium">Sistem Klasifikasi Status Gizi (BB/U) dan Stunting (TB/U)</p>
-                        </div>
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+                    <i class="mdi mdi-calculator-variant text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-gray-900">Batas Normal & Standar Rumus Antropometri (Kemenkes RI)</h3>
+                    <p class="text-xs text-gray-500">Pedoman Standar Antropometri Anak & Kriteria WHO</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- 1. Rumus Utama Z-Score -->
+                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-1.5">
+                        <i class="mdi mdi-function-variant text-purple-600"></i> Rumus Utama Z-Score Antropometri:
+                    </h4>
+                    <div class="p-2.5 bg-white rounded-xl border border-gray-200 font-mono text-center text-purple-900 font-bold mb-2">
+                        Z-Score = (Nilai Pengukuran Anak - Median Standar WHO) / Standar Deviasi (SD)
                     </div>
-                    <button type="button" onclick="closeAntropometriDetailModal()" class="text-gray-400 hover:text-gray-600 transition">
-                        <i class="mdi mdi-close text-xl"></i>
-                    </button>
+                    <ul class="space-y-1 text-gray-600 pl-4 list-disc">
+                        <li><strong>Nilai Pengukuran</strong>: Hasil penimbangan BB (kg) atau pengukuran TB/PB (cm).</li>
+                        <li><strong>Median Standar WHO</strong>: Nilai tengah populasi acuan normal WHO sesuai umur (bulan) & jenis kelamin.</li>
+                        <li><strong>Standar Deviasi (SD)</strong>: Nilai simpangan baku WHO untuk kelompok umur anak.</li>
+                    </ul>
                 </div>
 
-                <!-- Modal Body -->
-                <div class="p-6 space-y-6 text-sm text-gray-700 max-h-[75vh] overflow-y-auto">
-                    
-                    <!-- 1. Formulasi Matematika Z-Score -->
-                    <div class="p-4 bg-purple-50/60 rounded-2xl border border-purple-100 space-y-3">
-                        <div class="flex items-center gap-2 text-purple-900 font-bold text-base">
-                            <i class="mdi mdi-function-variant text-purple-600 text-xl"></i>
-                            <h4>1. Rumus Utama Z-Score (Antropometri WHO)</h4>
-                        </div>
-                        <div class="p-4 bg-white rounded-xl border border-purple-200 text-center font-mono text-base font-bold text-purple-900 shadow-2xs">
-                            Z-Score = (Nilai Pengukuran Anak - Median Standar WHO) / Standar Deviasi (SD)
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-600 pt-1">
-                            <div class="p-2.5 bg-white rounded-lg border border-purple-100">
-                                <span class="font-bold text-gray-800 block mb-0.5">Nilai Pengukuran:</span>
-                                Hasil timbang Berat Badan (kg) atau ukur Tinggi/Panjang Badan (cm).
-                            </div>
-                            <div class="p-2.5 bg-white rounded-lg border border-purple-100">
-                                <span class="font-bold text-gray-800 block mb-0.5">Median Standar WHO:</span>
-                                Rata-rata populasi acuan normal WHO berdasarkan umur & jenis kelamin.
-                            </div>
-                            <div class="p-2.5 bg-white rounded-lg border border-purple-100">
-                                <span class="font-bold text-gray-800 block mb-0.5">Standar Deviasi (SD):</span>
-                                Sebaran deviasi simpangan baku WHO untuk kelompok umur anak.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 2. Tabel Klasifikasi & Kriteria Z-Score -->
-                    <div class="space-y-3">
-                        <h4 class="font-bold text-gray-900 flex items-center gap-2 text-base">
-                            <i class="mdi mdi-format-list-bulleted-type text-purple-600"></i>
-                            2. Kriteria Klasifikasi Nilai Z-Score (Permenkes RI / WHO)
-                        </h4>
-                        
-                        <div class="overflow-hidden border border-gray-200 rounded-xl shadow-2xs">
-                            <table class="min-w-full divide-y divide-gray-200 text-xs">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left font-bold text-gray-700">Indikator</th>
-                                        <th class="px-4 py-3 text-left font-bold text-gray-700">Rentang Z-Score</th>
-                                        <th class="px-4 py-3 text-left font-bold text-gray-700">Kategori Kemenkes / WHO</th>
-                                        <th class="px-4 py-3 text-left font-bold text-gray-700">Keterangan Diagnosa</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-150">
-                                    <!-- Stunting -->
-                                    <tr class="bg-purple-50/30">
-                                        <td rowspan="3" class="px-4 py-3 font-bold text-purple-900 align-top border-r border-gray-200">
-                                            Stunting<br><span class="text-[11px] font-normal text-purple-700">(Tinggi Badan / Umur - TB/U)</span>
-                                        </td>
-                                        <td class="px-4 py-2 font-mono font-bold text-red-700">&lt; -3.0 SD</td>
-                                        <td class="px-4 py-2 font-bold text-red-700">Sangat Pendek</td>
-                                        <td class="px-4 py-2 text-gray-600">Gagal tumbuh kronis tingkat berat (Severely Stunted)</td>
-                                    </tr>
-                                    <tr class="bg-purple-50/30">
-                                        <td class="px-4 py-2 font-mono font-bold text-orange-700">-3.0 SD s.d. -2.0 SD</td>
-                                        <td class="px-4 py-2 font-bold text-orange-700">Pendek (Stunting)</td>
-                                        <td class="px-4 py-2 text-gray-600">Terindikasi Stunting / Gizi kronis (Stunted)</td>
-                                    </tr>
-                                    <tr class="bg-purple-50/30">
-                                        <td class="px-4 py-2 font-mono font-bold text-green-700">-2.0 SD s.d. +2.0 SD</td>
-                                        <td class="px-4 py-2 font-bold text-green-700">Normal</td>
-                                        <td class="px-4 py-2 text-gray-600">Pertumbuhan tinggi badan optimal sesuai usia</td>
-                                    </tr>
-
-                                    <!-- Status Gizi BB/U -->
-                                    <tr>
-                                        <td rowspan="3" class="px-4 py-3 font-bold text-blue-900 align-top border-r border-gray-200">
-                                            Status Gizi<br><span class="text-[11px] font-normal text-blue-700">(Berat Badan / Umur - BB/U)</span>
-                                        </td>
-                                        <td class="px-4 py-2 font-mono font-bold text-red-700">&lt; -3.0 SD</td>
-                                        <td class="px-4 py-2 font-bold text-red-700">Sangat Kurang</td>
-                                        <td class="px-4 py-2 text-gray-600">Berat badan sangat kurang (Severely Underweight)</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-4 py-2 font-mono font-bold text-orange-700">-3.0 SD s.d. -2.0 SD</td>
-                                        <td class="px-4 py-2 font-bold text-orange-700">Kurang</td>
-                                        <td class="px-4 py-2 text-gray-600">Berat badan kurang (Underweight)</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-4 py-2 font-mono font-bold text-green-700">-2.0 SD s.d. +2.0 SD</td>
-                                        <td class="px-4 py-2 font-bold text-green-700">Normal</td>
-                                        <td class="px-4 py-2 text-gray-600">Berat badan sehat & proporsional</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- 3. Simulasi & Contoh Perhitungan Nyata -->
-                    <div class="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-3">
-                        <h4 class="font-bold text-gray-900 flex items-center gap-2 text-base">
-                            <i class="mdi mdi-lightbulb-on text-amber-500"></i>
-                            3. Contoh Kasus Perhitungan Stunting Anak
-                        </h4>
-                        <div class="bg-white p-3.5 rounded-xl border border-gray-200 text-xs space-y-2">
-                            <p class="font-semibold text-gray-800">
-                                Skenario: Anak Laki-Laki, Umur 12 Bulan, Hasil Ukur Tinggi Badan (TB) = 68.0 Cm.
-                            </p>
-                            <ul class="list-disc pl-5 space-y-1 text-gray-600">
-                                <li>Tabel Baku WHO Laki-Laki 12 Bulan: <strong>Median TB = 75.7 Cm</strong>, <strong>SD = 3.4 Cm</strong>.</li>
-                                <li>Hitung Selisih: <code class="bg-gray-100 px-1.5 py-0.5 rounded font-mono">68.0 - 75.7 = -7.7 Cm</code></li>
-                                <li>Kalkulasi Z-Score: <code class="bg-gray-100 px-1.5 py-0.5 rounded font-mono">-7.7 &divide; 3.4 = -2.26 SD</code></li>
-                            </ul>
-                            <div class="p-2.5 bg-orange-50 border border-orange-200 rounded-lg text-orange-800 font-bold flex items-center gap-2 mt-2">
-                                <i class="mdi mdi-alert-circle text-orange-600 text-base"></i>
-                                <span>Hasil Diagnosa: Nilai -2.26 SD berada di rentang -3.0 s.d. -2.0 SD &rarr; Terdiagnosa "Pendek (Stunting)"</span>
-                            </div>
-                        </div>
-                    </div>
-
+                <!-- 2. Klasifikasi Stunting (TB/U) -->
+                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-1.5">
+                        <i class="mdi mdi-ruler-square text-purple-600"></i> Kriteria Stunting / Panjang (Tinggi) Badan menurut Umur (TB/U):
+                    </h4>
+                    <ul class="space-y-1 text-gray-600 pl-4 list-disc">
+                        <li><strong>< -3.0 SD</strong> : Sangat Pendek (Severely Stunted)</li>
+                        <li><strong>-3.0 SD s.d. -2.0 SD</strong> : Pendek / Stunting (Stunted)</li>
+                        <li><strong>-2.0 SD s.d. +2.0 SD</strong> : Normal (Pertumbuhan Optimal)</li>
+                        <li><strong>> +2.0 SD</strong> : Tinggi</li>
+                    </ul>
                 </div>
 
-                <!-- Footer -->
-                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-3 rounded-b-2xl">
-                    <span class="text-xs text-gray-500">Sumber Referensi: <strong>Permenkes RI No. 2 Tahun 2020 tentang Standar Antropometri Anak</strong></span>
-                    <button type="button" onclick="closeAntropometriDetailModal()"
-                        class="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-md transition">
-                        Tutup Panduan
-                    </button>
+                <!-- 3. Klasifikasi Status Gizi (BB/U) -->
+                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-1.5">
+                        <i class="mdi mdi-weight text-purple-600"></i> Kriteria Status Gizi / Berat Badan menurut Umur (BB/U):
+                    </h4>
+                    <ul class="space-y-1 text-gray-600 pl-4 list-disc">
+                        <li><strong>< -3.0 SD</strong> : Berat Badan Sangat Kurang (Severely Underweight)</li>
+                        <li><strong>-3.0 SD s.d. -2.0 SD</strong> : Berat Badan Kurang (Underweight)</li>
+                        <li><strong>-2.0 SD s.d. +1.0 SD</strong> : Berat Badan Normal</li>
+                        <li><strong>> +1.0 SD</strong> : Risiko Berat Badan Lebih</li>
+                    </ul>
                 </div>
+
+                <!-- 4. Contoh Kasus -->
+                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-1.5">
+                        <i class="mdi mdi-lightbulb-on text-amber-500"></i> Contoh Simulasi Perhitungan Stunting:
+                    </h4>
+                    <p class="text-gray-700 mb-1.5">Anak Laki-Laki 12 Bulan dengan TB = 68.0 cm:</p>
+                    <ul class="space-y-1 text-gray-600 pl-4 list-disc">
+                        <li>Acuan WHO (Laki-Laki 12 Bln): Median TB = 75.7 cm, SD = 3.4 cm</li>
+                        <li>Selisih pengukuran: 68.0 - 75.7 = -7.7 cm</li>
+                        <li>Nilai Z-Score: -7.7 / 3.4 = <strong>-2.26 SD</strong></li>
+                        <li>Diagnosa: Berada pada rentang -3.0 s.d. -2.0 SD &rarr; <span class="font-bold text-orange-700">Pendek (Stunting)</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-6 flex items-center justify-between">
+                <span class="text-[11px] text-gray-400">Permenkes RI No. 2 Tahun 2020</span>
+                <button onclick="closeAntropometriDetailModal()" class="px-5 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-xl text-xs hover:bg-gray-200">
+                    Tutup
+                </button>
             </div>
         </div>
     </div>
