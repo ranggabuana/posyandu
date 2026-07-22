@@ -652,7 +652,7 @@
             new Chart(ctx1, {
                 type: 'bar',
                 data: {
-                    labels: ['Ibu Hamil', 'Bayi (0-12m)', 'Balita (13-60m)', 'Remaja (PKPR)', 'Lansia (PTM)'],
+                    labels: ['Ibu Hamil', 'Bayi (0-12 Bulan)', 'Balita (13-60 Bulan)', 'Remaja (PKPR)', 'Lansia (PTM)'],
                     datasets: [{
                         label: 'Total Rekam Medis Terdaftar',
                         data: [

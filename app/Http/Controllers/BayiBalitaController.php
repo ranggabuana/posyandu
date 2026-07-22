@@ -56,7 +56,9 @@ class BayiBalitaController extends Controller
     public function create()
     {
         $user = auth()->user();
-        $pQuery = Penduduk::whereRaw("TIMESTAMPDIFF(YEAR, tanggallahir, CURDATE()) <= 5");
+        $pQuery = Penduduk::whereNotNull('tanggallahir')
+            ->whereRaw("tanggallahir <= CURDATE()")
+            ->whereRaw("TIMESTAMPDIFF(MONTH, tanggallahir, CURDATE()) <= 60");
         $iQuery = Penduduk::where('kelamin', 'perempuan')->where('status_kawin', 'kawin');
         
         if ($user->hasRole('posyandu') && $user->posyandu) {
@@ -147,7 +149,13 @@ class BayiBalitaController extends Controller
     public function edit(BayiBalita $bayiBalita)
     {
         $user = auth()->user();
-        $pQuery = Penduduk::query();
+        $pQuery = Penduduk::where(function($q) use ($bayiBalita) {
+            $q->where(function($sq) {
+                $sq->whereNotNull('tanggallahir')
+                   ->whereRaw("tanggallahir <= CURDATE()")
+                   ->whereRaw("TIMESTAMPDIFF(MONTH, tanggallahir, CURDATE()) <= 60");
+            })->orWhere('id', $bayiBalita->penduduk_id);
+        });
         $iQuery = Penduduk::where('kelamin', 'perempuan')->where('status_kawin', 'kawin');
         
         if ($user->hasRole('posyandu') && $user->posyandu) {
@@ -158,7 +166,7 @@ class BayiBalitaController extends Controller
             }
         }
 
-        $penduduks = $pQuery->orderBy('nama')->get(['id', 'nama', 'nik']);
+        $penduduks = $pQuery->orderBy('nama')->get(['id', 'nama', 'nik', 'tanggallahir']);
         $ibus = $iQuery->orderBy('nama')->get(['id', 'nama', 'nik']);
         $posyandus = Posyandu::orderBy('nama')->get();
         return view('bayi-balitas.edit', compact('bayiBalita', 'penduduks', 'ibus', 'posyandus'));

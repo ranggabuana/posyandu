@@ -41,8 +41,12 @@
                                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">
                                 <option></option>
                                 @foreach($penduduks as $penduduk)
+                                    @php
+                                        $ageMonths = $penduduk->tanggallahir ? \Carbon\Carbon::parse($penduduk->tanggallahir)->diffInMonths(\Carbon\Carbon::now()) : '-';
+                                        $ageYears = $penduduk->tanggallahir ? \Carbon\Carbon::parse($penduduk->tanggallahir)->age : '-';
+                                    @endphp
                                     <option value="{{ $penduduk->id }}" data-tanggallahir="{{ $penduduk->tanggallahir }}" {{ old('penduduk_id') == $penduduk->id ? 'selected' : '' }}>
-                                        {{ $penduduk->nama }} ({{ $penduduk->nik }})
+                                        {{ $penduduk->nama }} (NIK: {{ $penduduk->nik }} - {{ $ageMonths }} Bln / {{ $ageYears }} Thn)
                                     </option>
                                 @endforeach
                             </select>
