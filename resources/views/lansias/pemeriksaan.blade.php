@@ -11,6 +11,11 @@
             'Pemeriksaan' => null
         ]"
     >
+        <button type="button" onclick="openLansiaRefModal()" 
+            class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 font-semibold rounded-xl transition text-xs shadow-2xs">
+            <i class="mdi mdi-information-outline text-sm"></i>
+            Detail Standar Medis Kemenkes RI
+        </button>
         <a href="{{ route('lansias.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold transition-all shadow-2xs">
             <i class="mdi mdi-arrow-left text-sm"></i> Kembali
         </a>
@@ -183,7 +188,7 @@
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-8">
         
         <!-- Banner Standar Parameter Kemenkes RI di Atas Tabel -->
-        <div class="px-6 py-3.5 bg-gradient-to-r from-red-50 via-pink-50/50 to-amber-50/40 border-b border-red-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="px-6 py-3.5 bg-gradient-to-r from-red-50 via-pink-50/50 to-amber-50/40 border-b border-red-100 flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">
                 <div class="p-2 bg-red-600 text-white rounded-xl shadow-xs">
                     <i class="mdi mdi-heart-pulse text-lg"></i>
@@ -193,11 +198,6 @@
                     <p class="text-[11px] text-gray-500">Kalkulasi otomatis status Hipertensi, Diabetes, Kolesterol, Asam Urat & IMT</p>
                 </div>
             </div>
-            <button type="button" onclick="openLansiaRefModal()" 
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-xs text-xs font-bold transition self-start sm:self-auto">
-                <i class="mdi mdi-information-outline text-sm"></i>
-                <span>Detail Standar Medis</span>
-            </button>
         </div>
 
         <!-- Table Control Toolbar -->
@@ -443,101 +443,71 @@
         </div>
     </div>
 
-    <!-- Modal Detail Standar & Panduan Skrining Lansia -->
-    <div id="lansia-ref-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="closeLansiaRefModal()"></div>
-        <div class="flex min-h-screen items-center justify-center p-4">
-            <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-3xl border border-gray-100">
-                <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-red-50 to-pink-50 flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2.5 bg-red-600 text-white rounded-xl shadow-xs">
-                            <i class="mdi mdi-shield-check text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-base font-bold text-gray-900">Batas Normal & Standar Diagnosa Skrining Lansia</h3>
-                            <p class="text-xs text-red-700 font-medium">Acuan Resmi Posyandu Lansia & PTM Kementerian Kesehatan RI</p>
-                        </div>
-                    </div>
-                    <button type="button" onclick="closeLansiaRefModal()" class="text-gray-400 hover:text-gray-600">
-                        <i class="mdi mdi-close text-xl"></i>
-                    </button>
+    <!-- Modal Detail Standar Medis Lansia (Kemenkes RI) -->
+    <div id="lansia-ref-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeLansiaRefModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600">
+                <i class="mdi mdi-close text-xl"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center font-bold">
+                    <i class="mdi mdi-medical-bag text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-gray-900">Batas Normal & Standar Skrining Lansia (Kemenkes RI)</h3>
+                    <p class="text-xs text-gray-500">Pedoman Pelayanan Kesehatan Lansia & PTM</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Tekanan Darah -->
+                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-1.5">
+                        <i class="mdi mdi-heart-pulse text-red-500"></i> Tekanan Darah (Tensi Lansia):
+                    </h4>
+                    <ul class="space-y-1 text-gray-600 pl-4 list-disc">
+                        <li><strong>< 120 / 80 mmHg</strong> : Normal</li>
+                        <li><strong>120-139 / 80-89 mmHg</strong> : Pre-Hipertensi</li>
+                        <li><strong>140-159 / 90-99 mmHg</strong> : Hipertensi Derajat 1</li>
+                        <li><strong>>= 160 / >= 100 mmHg</strong> : Hipertensi Derajat 2</li>
+                    </ul>
                 </div>
 
-                <div class="p-6 space-y-5 text-xs text-gray-700 max-h-[75vh] overflow-y-auto">
-                    <!-- Tabel Acuan Paramater Medis -->
-                    <div class="overflow-hidden border border-gray-200 rounded-2xl shadow-2xs">
-                        <table class="min-w-full divide-y divide-gray-200 text-xs">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-3 text-left font-bold text-gray-700">Parameter Skrining</th>
-                                    <th class="px-4 py-3 text-left font-bold text-gray-700">Rentang Normal</th>
-                                    <th class="px-4 py-3 text-left font-bold text-gray-700">Kategori Risiko / Diagnosa</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-150">
-                                <tr>
-                                    <td class="px-4 py-3 font-bold text-gray-900">Tekanan Darah (Tensi)</td>
-                                    <td class="px-4 py-3 font-mono font-bold text-green-700">&lt; 120/80 mmHg</td>
-                                    <td class="px-4 py-3 text-gray-600">
-                                        • Normal: &lt;120/80 mmHg<br>
-                                        • Prehipertensi: 120-139 / 80-89 mmHg<br>
-                                        • Hipertensi D1: 140-159 / 90-99 mmHg<br>
-                                        • Hipertensi D2: &ge;160 / &ge;100 mmHg
-                                    </td>
-                                </tr>
-                                <tr class="bg-red-50/20">
-                                    <td class="px-4 py-3 font-bold text-gray-900">Gula Darah (Sewaktu)</td>
-                                    <td class="px-4 py-3 font-mono font-bold text-green-700">&lt; 140 mg/dL</td>
-                                    <td class="px-4 py-3 text-gray-600">
-                                        • Normal: &lt;140 mg/dL<br>
-                                        • Toleransi Terganggu: 140-199 mg/dL<br>
-                                        • Diabetes Melitus: &ge;200 mg/dL
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3 font-bold text-gray-900">Kolesterol Total</td>
-                                    <td class="px-4 py-3 font-mono font-bold text-green-700">&lt; 200 mg/dL</td>
-                                    <td class="px-4 py-3 text-gray-600">
-                                        • Normal: &lt;200 mg/dL<br>
-                                        • Batas Tinggi: 200-239 mg/dL<br>
-                                        • Tinggi: &ge;240 mg/dL
-                                    </td>
-                                </tr>
-                                <tr class="bg-red-50/20">
-                                    <td class="px-4 py-3 font-bold text-gray-900">Asam Urat</td>
-                                    <td class="px-4 py-3 font-mono font-bold text-green-700">L &le; 7.0 / P &le; 6.0 mg/dL</td>
-                                    <td class="px-4 py-3 text-gray-600">
-                                        • Normal: Laki &le;7.0 mg/dL, Perempuan &le;6.0 mg/dL<br>
-                                        • Tinggi: Laki &gt;7.0 mg/dL, Perempuan &gt;6.0 mg/dL
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3 font-bold text-gray-900">IMT (BB / TB²)</td>
-                                    <td class="px-4 py-3 font-mono font-bold text-green-700">18.5 - 25.0</td>
-                                    <td class="px-4 py-3 text-gray-600">
-                                        • Kurus: &lt;18.5<br>
-                                        • Normal: 18.5 - 25.0<br>
-                                        • Gemuk (Overweight): 25.1 - 27.0<br>
-                                        • Obesitas: &gt;27.0
-                                    </td>
-                                </tr>
-                                <tr class="bg-red-50/20">
-                                    <td class="px-4 py-3 font-bold text-gray-900">Lingkar Perut (Obesitas Sentral)</td>
-                                    <td class="px-4 py-3 font-mono font-bold text-green-700">L &le; 90 / P &le; 80 cm</td>
-                                    <td class="px-4 py-3 text-gray-600">
-                                        • Normal: Laki-laki &le;90 cm, Perempuan &le;80 cm<br>
-                                        • Obesitas Sentral: Laki-laki &gt;90 cm, Perempuan &gt;80 cm
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <!-- Gula Darah, Kolesterol & Asam Urat -->
+                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-1.5">
+                        <i class="mdi mdi-water-percent text-red-500"></i> Skrining Gula Darah, Kolesterol & Asam Urat:
+                    </h4>
+                    <ul class="space-y-1 text-gray-600 pl-4 list-disc">
+                        <li><strong>Gula Darah Sewaktu < 140 mg/dL</strong> : Normal</li>
+                        <li><strong>Gula Darah Sewaktu 140-199 mg/dL</strong> : Toleransi Terganggu</li>
+                        <li><strong>Gula Darah Sewaktu >= 200 mg/dL</strong> : Diabetes Melitus</li>
+                        <li><strong>Kolesterol Total < 200 mg/dL</strong> : Normal (Batas Tinggi: 200-239, Tinggi: >= 240)</li>
+                        <li><strong>Asam Urat</strong> : Laki-Laki <= 7.0 mg/dL | Perempuan <= 6.0 mg/dL</li>
+                    </ul>
                 </div>
 
-                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center rounded-b-3xl">
-                    <span class="text-[11px] text-gray-500">Sumber: Buku Panduan Posyandu Lansia & PTM Kemenkes RI</span>
-                    <button type="button" onclick="closeLansiaRefModal()" class="px-5 py-2 bg-red-600 text-white font-bold text-xs rounded-xl shadow-md">Tutup</button>
+                <!-- IMT & Obesitas Sentral -->
+                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-1.5">
+                        <i class="mdi mdi-scale text-red-500"></i> Indeks Massa Tubuh (IMT) & Lingkar Perut:
+                    </h4>
+                    <ul class="space-y-1 text-gray-600 pl-4 list-disc">
+                        <li><strong>< 18.5</strong> : Kurus</li>
+                        <li><strong>18.5 - 25.0</strong> : Normal</li>
+                        <li><strong>25.1 - 27.0</strong> : Gemuk (Kelebihan BB)</li>
+                        <li><strong>> 27.0</strong> : Obesitas</li>
+                        <li><strong>Lingkar Perut (Obesitas Sentral)</strong> : Laki-Laki > 90 cm | Perempuan > 80 cm</li>
+                    </ul>
                 </div>
+            </div>
+
+            <div class="mt-6 flex items-center justify-between">
+                <span class="text-[11px] text-gray-400">Buku Panduan Posyandu Lansia & PTM Kemenkes RI</span>
+                <button onclick="closeLansiaRefModal()" class="px-5 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-xl text-xs hover:bg-gray-200">
+                    Tutup
+                </button>
             </div>
         </div>
     </div>

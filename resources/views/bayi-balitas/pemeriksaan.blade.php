@@ -9,9 +9,11 @@
             'Pemeriksaan' => null
         ]"
     >
-        <a href="{{ route('bayi-balitas.imunisasi', $bayiBalita) }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 rounded-xl text-xs font-bold transition-all shadow-2xs">
-            <i class="mdi mdi-needle text-sm"></i> Ke Imunisasi
-        </a>
+        <button type="button" onclick="openAntropometriDetailModal()" 
+            class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 font-semibold rounded-xl transition text-xs shadow-2xs">
+            <i class="mdi mdi-information-outline text-sm"></i>
+            Detail Rumus & Cara Hitung
+        </button>
         <a href="{{ $bayiBalita->umur_bulan <= 12 ? route('bayi-balitas.index') : route('balitas.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold transition-all shadow-2xs">
             <i class="mdi mdi-arrow-left text-sm"></i> Kembali
         </a>
@@ -249,21 +251,13 @@
 
             <!-- Banner Information Standar WHO (Sleek & Professional) -->
             <div class="px-8 py-4 bg-gradient-to-r from-purple-50/80 via-indigo-50/40 to-blue-50/50 border-b border-purple-100/80">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
-                    <div class="flex items-center gap-2.5">
-                        <div class="p-2 bg-purple-600 text-white rounded-xl shadow-xs">
-                            <i class="mdi mdi-calculator-variant text-base"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-extrabold text-gray-900 text-sm tracking-tight">Standar Perhitungan Antropometri (WHO)</h4>
-                            <p class="text-xs text-gray-500">Kalkulasi Z-score otomatis berdasarkan Jenis Kelamin & Umur Bulan anak</p>
-                        </div>
+                <div class="flex items-center gap-2.5 mb-3">
+                    <div class="p-2 bg-purple-600 text-white rounded-xl shadow-xs">
+                        <i class="mdi mdi-calculator-variant text-base"></i>
                     </div>
-                    <div class="flex items-center gap-2 self-start md:self-auto">
-                        <button type="button" onclick="openAntropometriDetailModal()" 
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-xs text-xs font-bold transition">
-                            <i class="mdi mdi-information-outline text-sm"></i> Detail Rumus & Cara Hitung
-                        </button>
+                    <div>
+                        <h4 class="font-extrabold text-gray-900 text-sm tracking-tight">Standar Perhitungan Antropometri (WHO)</h4>
+                        <p class="text-xs text-gray-500">Kalkulasi Z-score otomatis berdasarkan Jenis Kelamin & Umur Bulan anak</p>
                     </div>
                 </div>
 
