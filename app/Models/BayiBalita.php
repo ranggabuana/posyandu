@@ -37,4 +37,15 @@ class BayiBalita extends Model
         }
         return Carbon::parse($this->tanggal_lahir)->diffInMonths(Carbon::now());
     }
+
+    public function getLatestPemeriksaanAttribute()
+    {
+        return $this->pemeriksaans()->orderBy('tanggal_pemeriksaan', 'desc')->orderBy('id', 'desc')->first();
+    }
+
+    public function getIs2tAttribute()
+    {
+        $latest = $this->latest_pemeriksaan;
+        return $latest ? $latest->is_2t : false;
+    }
 }

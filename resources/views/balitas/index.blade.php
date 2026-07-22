@@ -74,7 +74,14 @@
                     @forelse($balitas as $item)
                     <tr class="hover:bg-blue-50/30 transition duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-semibold text-gray-900">{{ $item->penduduk->nama }}</div>
+                            <div class="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
+                                <span>{{ $item->penduduk->nama }}</span>
+                                @if($item->is_2t)
+                                    <span class="px-2 py-0.5 bg-red-100 text-red-800 border border-red-200 font-bold rounded-md text-[10px] flex items-center gap-1" title="Peringatan: 2 Kali Tidak Naik BB (Perlu Rujukan)">
+                                        <i class="mdi mdi-alert-circle text-xs text-red-600"></i> 2T
+                                    </span>
+                                @endif
+                            </div>
                             <div class="text-xs text-gray-500">NIK: {{ $item->penduduk->nik }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">

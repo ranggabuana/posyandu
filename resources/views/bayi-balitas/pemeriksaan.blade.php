@@ -148,6 +148,15 @@
         <div class="lg:col-span-4 space-y-8">
             <!-- Profil Ringkas -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                @if($bayiBalita->is_2t)
+                    <div class="p-4 bg-red-50 border-b border-red-100 text-xs text-red-800 font-bold flex items-start gap-2.5">
+                        <i class="mdi mdi-alert-decagram text-red-600 text-lg flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <div class="font-extrabold text-red-900 uppercase tracking-tight">PERINGATAN 2T (2x Tidak Naik BB)</div>
+                            <p class="text-[11px] text-red-700 mt-0.5 leading-snug font-normal">Berat badan anak tidak naik 2 bulan berturut-turut. Segera berikan PMT Pemulihan & Rujukan Puskesmas.</p>
+                        </div>
+                    </div>
+                @endif
                 <div class="px-6 py-4 border-b border-gray-50 bg-gray-50/30">
                     <div class="flex items-center">
                         <div class="p-2 bg-blue-500/10 rounded-lg mr-3">
@@ -262,7 +271,19 @@
                 </div>
 
                 <!-- Grid Legend Badges -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-purple-100/60">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 border-t border-purple-100/60">
+                    <!-- Status Kenaikan BB (N / T / 2T) -->
+                    <div class="bg-white/90 p-2.5 rounded-xl border border-purple-100/70 flex flex-wrap items-center justify-between gap-2 text-xs shadow-2xs">
+                        <span class="font-bold text-gray-700 flex items-center gap-1.5">
+                            <i class="mdi mdi-trending-up text-purple-600"></i> Kenaikan BB
+                        </span>
+                        <div class="flex items-center gap-1 text-[11px] font-semibold">
+                            <span class="px-1.5 py-0.5 bg-green-50 text-green-700 rounded border border-green-100" title="Naik BB">N</span>
+                            <span class="px-1.5 py-0.5 bg-orange-50 text-orange-700 rounded border border-orange-100" title="Tidak Naik">T</span>
+                            <span class="px-1.5 py-0.5 bg-red-100 text-red-800 rounded border border-red-200 font-bold" title="2x Tidak Naik (Rujukan)">2T</span>
+                        </div>
+                    </div>
+
                     <!-- Status Gizi BB/U -->
                     <div class="bg-white/90 p-2.5 rounded-xl border border-purple-100/70 flex flex-wrap items-center justify-between gap-2 text-xs shadow-2xs">
                         <span class="font-bold text-gray-700 flex items-center gap-1.5">
@@ -381,7 +402,24 @@
                                     {{ $exam->umur_bulan }} Bulan
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                    {{ $exam->berat_badan ?? '-' }} kg / {{ $exam->tinggi_badan ?? '-' }} cm
+                                    <div class="font-bold text-gray-900">{{ $exam->berat_badan ?? '-' }} kg / {{ $exam->tinggi_badan ?? '-' }} cm</div>
+                                    @if($exam->status_kenaikan_bb)
+                                        <div class="mt-1 flex items-center gap-1">
+                                            @if($exam->is_2t)
+                                                <span class="px-2 py-0.5 bg-red-100 text-red-800 border border-red-200 rounded-md font-bold text-[10px] flex items-center gap-1" title="Berat badan tidak naik 2 bulan berturut-turut (Indikasi Rujukan)">
+                                                    <i class="mdi mdi-alert-circle text-xs text-red-600"></i> 2T (Rujukan)
+                                                </span>
+                                            @elseif($exam->status_kenaikan_bb === 'N')
+                                                <span class="px-2 py-0.5 bg-green-50 text-green-700 border border-green-200 rounded-md font-semibold text-[10px]" title="Berat Badan Naik dibanding bulan lalu">
+                                                    <i class="mdi mdi-trending-up text-xs"></i> N (Naik BB)
+                                                </span>
+                                            @elseif($exam->status_kenaikan_bb === 'T')
+                                                <span class="px-2 py-0.5 bg-orange-50 text-orange-700 border border-orange-200 rounded-md font-semibold text-[10px]" title="Berat Badan Tidak Naik / Turun dibanding bulan lalu">
+                                                    <i class="mdi mdi-trending-down text-xs"></i> T (Tidak Naik)
+                                                </span>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                     {{ $exam->lingkar_lengan_atas ?? '-' }} cm / {{ $exam->lingkar_kepala ?? '-' }} cm
@@ -642,6 +680,18 @@
                         <li><strong>Nilai Pengukuran</strong>: Hasil penimbangan BB (kg) atau pengukuran TB/PB (cm).</li>
                         <li><strong>Median Standar WHO</strong>: Nilai tengah populasi acuan normal WHO sesuai umur (bulan) & jenis kelamin.</li>
                         <li><strong>Standar Deviasi (SD)</strong>: Nilai simpangan baku WHO untuk kelompok umur anak.</li>
+                    </ul>
+                </div>
+
+                <!-- Indikator Kenaikan BB (N, T, dan 2T) -->
+                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-1.5">
+                        <i class="mdi mdi-trending-up text-purple-600"></i> Indikator Kenaikan BB (N, T, dan 2T Kemenkes RI):
+                    </h4>
+                    <ul class="space-y-1 text-gray-600 pl-4 list-disc">
+                        <li><strong>N (Naik)</strong> : Hasil penimbangan BB bulan ini meningkat dibanding bulan sebelumnya.</li>
+                        <li><strong>T (Tidak Naik)</strong> : Hasil penimbangan BB bulan ini tetap atau mengalami penurunan.</li>
+                        <li><strong>2T (Dua Kali Tidak Naik)</strong> : BB anak bernilai <strong>T</strong> selama <strong>2 bulan berturut-turut</strong>. Terindikasi <em>gagal tumbuh / KEK</em> dan wajib diberikan konseling gizi, PMT Pemulihan, atau rujukan ke Puskesmas.</li>
                     </ul>
                 </div>
 

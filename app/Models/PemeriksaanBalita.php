@@ -49,4 +49,37 @@ class PemeriksaanBalita extends Model
         $zTB = ($this->tinggi_badan - $medianTB) / $sdTB;
         return round($zTB, 2);
     }
+
+    public function getPreviousExamAttribute()
+    {
+        return static::where('bayi_balita_id', $this->bayi_balita_id)
+            ->where(function($q) {
+                $q->where('tanggal_pemeriksaan', '<', $this->tanggal_pemeriksaan)
+                  ->orWhere(function($sq) {
+                      $sq->where('tanggal_pemeriksaan', '=', $this->tanggal_pemeriksaan)
+                         ->where('id', '<', $this->id);
+                  });
+            })
+            ->orderBy('tanggal_pemeriksaan', 'desc')
+            ->orderBy('id', 'desc')
+            ->first();
+    }
+
+    public function getStatusKenaikanBbAttribute()
+    {
+        if (!$this->berat_badan) return null;
+        $prev = $this->previous_exam;
+        if (!$prev || !$prev->berat_badan) return 'Baru';
+        
+        return $this->berat_badan > $prev->berat_badan ? 'N' : 'T';
+    }
+
+    public function getIs2tAttribute()
+    {
+        if ($this->status_kenaikan_bb !== 'T') return false;
+        $prev1 = $this->previous_exam;
+        if (!$prev1 || !$prev1->berat_badan) return false;
+        
+        return $prev1->status_kenaikan_bb === 'T';
+    }
 }
