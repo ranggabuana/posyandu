@@ -26,6 +26,16 @@
                         </div>
                     </div>
                     <div class="p-8 space-y-6">
+                        @if(auth()->user()->hasRole('posyandu') && auth()->user()->posyandu)
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Posyandu Pengampu</label>
+                            <div class="w-full px-4 py-2.5 bg-pink-50/50 border border-pink-200 rounded-xl text-pink-800 font-semibold text-sm flex items-center gap-2">
+                                <i class="mdi mdi-office-building text-pink-600 text-lg"></i>
+                                <span>{{ auth()->user()->posyandu->nama ?? 'Posyandu Saya' }}</span>
+                            </div>
+                        </div>
+                        @endif
+
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Pilih Penduduk (Ibu) <span class="text-red-500">*</span></label>
                             <select name="penduduk_id" id="select2-penduduk"
