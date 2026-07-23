@@ -100,6 +100,16 @@
                         </div>
                     </div>
                     <div class="p-6 space-y-5">
+                        @if(auth()->user()->hasRole('posyandu') && auth()->user()->posyandu_id)
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Penulis / Posyandu</label>
+                            <div class="w-full px-4 py-2.5 bg-blue-50/50 border border-blue-200 rounded-xl text-blue-800 font-semibold text-sm flex items-center gap-2">
+                                <i class="mdi mdi-office-building text-blue-600 text-lg"></i>
+                                <span>{{ auth()->user()->posyandu->nama ?? 'Posyandu Saya' }}</span>
+                            </div>
+                        </div>
+                        @endif
+
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Kategori</label>
                             <select name="kategori" 
