@@ -27,6 +27,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('posyandus/export', [\App\Http\Controllers\PosyanduController::class, 'export'])->name('posyandus.export');
     Route::get('posyandus/rws', [\App\Http\Controllers\PosyanduController::class, 'getRws'])->name('posyandus.rws');
     Route::resource('posyandus', \App\Http\Controllers\PosyanduController::class);
+    Route::get('kaders/export', [\App\Http\Controllers\KaderController::class, 'export'])->name('kaders.export');
     Route::get('kaders/get-penduduks', [\App\Http\Controllers\KaderController::class, 'getPenduduks'])->name('kaders.get-penduduks');
     Route::resource('kaders', \App\Http\Controllers\KaderController::class);
 

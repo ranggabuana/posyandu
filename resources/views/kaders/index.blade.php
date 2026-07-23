@@ -8,6 +8,15 @@
             'Data Kader' => null
         ]"
     >
+        @if(auth()->user()->hasRole('posyandu'))
+            <a id="export-excel" href="{{ route('kaders.export', request()->query()) }}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
+                <i class="mdi mdi-file-excel text-sm"></i> <span>Export Excel</span>
+            </a>
+        @else
+            <button type="button" onclick="openExportModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs cursor-pointer">
+                <i class="mdi mdi-file-excel text-sm"></i> <span>Export Excel</span>
+            </button>
+        @endif
         <a href="{{ route('kaders.create', ['posyandu_id' => request('posyandu_id')]) }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition flex items-center gap-2 shadow-xs">
             <i class="mdi mdi-plus text-sm"></i> <span>Tambah Kader</span>
         </a>
@@ -195,4 +204,73 @@
             }, 500);
         });
     </script>
+
+    @if(!auth()->user()->hasRole('posyandu'))
+    <!-- Export Excel Modal -->
+    <div id="export-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <!-- Backdrop overlay -->
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="closeExportModal()"></div>
+        
+        <!-- Modal container -->
+        <div class="flex min-h-screen items-center justify-center p-4 text-center">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-gray-100">
+                <!-- Header -->
+                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+                    <div class="flex items-center flex-row">
+                        <div class="p-2 bg-emerald-500/10 rounded-lg mr-3 flex items-center justify-center">
+                            <i class="mdi mdi-file-excel text-emerald-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">Export Excel Data Kader</h3>
+                    </div>
+                    <button type="button" onclick="closeExportModal()" class="text-gray-400 hover:text-gray-600 transition">
+                        <i class="mdi mdi-close text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Form -->
+                <form action="{{ route('kaders.export') }}" method="GET">
+                    <div class="p-6 space-y-4">
+                        @if(request('search'))
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                        @endif
+
+                        <div>
+                            <label for="export_posyandu_id" class="block text-sm font-bold text-gray-700 mb-2">Pilih Posyandu</label>
+                            <select name="posyandu_id" id="export_posyandu_id"
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">
+                                <option value="">Semua Data Kader (Seluruh Posyandu)</option>
+                                @foreach($posyandus as $p)
+                                    <option value="{{ $p->id }}" {{ request('posyandu_id') == $p->id ? 'selected' : '' }}>{{ $p->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3 rounded-b-2xl">
+                        <button type="button" onclick="closeExportModal()"
+                            class="px-4 py-2 bg-white text-gray-700 font-semibold rounded-xl border border-gray-200 hover:bg-gray-50 transition">
+                            Batal
+                        </button>
+                        <button type="submit" onclick="closeExportModal()"
+                            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-lg shadow-emerald-600/20 transition active:scale-[0.98] flex items-center justify-center gap-2">
+                            <i class="mdi mdi-download"></i>
+                            Export Excel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openExportModal() {
+            document.getElementById('export-modal').classList.remove('hidden');
+        }
+
+        function closeExportModal() {
+            document.getElementById('export-modal').classList.add('hidden');
+        }
+    </script>
+    @endif
 </x-layout>

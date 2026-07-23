@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Kader;
 use App\Models\Posyandu;
 use App\Models\Penduduk;
+use App\Exports\KaderExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 
 class KaderController extends Controller
@@ -225,5 +227,10 @@ class KaderController extends Controller
         $kader->delete();
 
         return redirect()->route('kaders.index')->with('success', 'Data Kader berhasil dihapus');
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(new KaderExport($request->all()), 'data-kader.xlsx');
     }
 }
