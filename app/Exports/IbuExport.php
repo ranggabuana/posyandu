@@ -28,7 +28,20 @@ class IbuExport implements FromQuery, WithHeadings, WithEvents, WithCustomStartC
 
     public function query()
     {
-        $query = Penduduk::where('kelamin', 'perempuan')->where('status_kawin', 'kawin');
+        $query = Penduduk::where('kelamin', 'perempuan')
+            ->where(function($q) {
+                $q->where('status_kawin', '!=', 'belum kawin')
+                  ->orWhereIn('nama', function($sub) {
+                      $sub->select('nama_ibu')
+                          ->from('penduduks')
+                          ->whereNotNull('nama_ibu');
+                  })
+                  ->orWhereIn('nama', function($sub) {
+                      $sub->select('nama_ibu')
+                          ->from('bayi_balitas')
+                          ->whereNotNull('nama_ibu');
+                  });
+            });
 
         if (!empty($this->filters['search'])) {
             $s = $this->filters['search'];
