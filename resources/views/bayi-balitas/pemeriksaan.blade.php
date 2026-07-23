@@ -194,23 +194,12 @@
                         <span class="font-semibold">Posyandu:</span>
                         <span class="text-gray-900">{{ $bayiBalita->posyandu->nama ?? '-' }}</span>
                     </div>
-
-                    <!-- Administrasi Akta Kelahiran -->
-                    <form action="{{ route('bayi-balitas.update-pemeriksaan', $bayiBalita) }}" method="POST" class="pt-2">
-                        @csrf
-                        @method('PUT')
-                        <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Status Akta Kelahiran</label>
-                        <div class="flex gap-2">
-                            <select name="status_akta" 
-                                class="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:0.8rem_0.8rem] bg-[right_0.5rem_center] bg-no-repeat">
-                                <option value="punya" {{ $bayiBalita->status_akta == 'punya' ? 'selected' : '' }}>Punya Akta</option>
-                                <option value="tidak punya" {{ $bayiBalita->status_akta == 'tidak punya' ? 'selected' : '' }}>Tidak Punya</option>
-                            </select>
-                            <button type="submit" class="px-3 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 text-sm font-semibold transition">
-                                Update
-                            </button>
-                        </div>
-                    </form>
+                    <div class="flex justify-between py-1">
+                        <span class="font-semibold">Akta Kelahiran:</span>
+                        <span class="px-2.5 py-0.5 text-xs font-bold rounded-full {{ $bayiBalita->status_akta == 'punya' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                            {{ $bayiBalita->status_akta == 'punya' ? 'Punya Akta' : 'Tidak Punya' }}
+                        </span>
+                    </div>
                 </div>
             </div>
 
