@@ -12,7 +12,14 @@ class BeritaController extends Controller
 {
     public function index(Request $request)
     {
+        $user = auth()->user();
         $query = Berita::with(['user.posyandu', 'user.roles']);
+
+        if ($user->hasRole('posyandu') && $user->posyandu_id) {
+            $query->whereHas('user', function ($q) use ($user) {
+                $q->where('posyandu_id', $user->posyandu_id);
+            });
+        }
         
         if ($request->search) {
             $query->where(function($q) use ($request) {
@@ -65,11 +72,25 @@ class BeritaController extends Controller
 
     public function edit(Berita $berita)
     {
+        $user = auth()->user();
+        if ($user->hasRole('posyandu') && $user->posyandu_id) {
+            if (!$berita->user || $berita->user->posyandu_id !== $user->posyandu_id) {
+                abort(403, 'Anda tidak diizinkan mengedit berita ini.');
+            }
+        }
+
         return view('beritas.edit', compact('berita'));
     }
 
     public function update(Request $request, Berita $berita)
     {
+        $user = auth()->user();
+        if ($user->hasRole('posyandu') && $user->posyandu_id) {
+            if (!$berita->user || $berita->user->posyandu_id !== $user->posyandu_id) {
+                abort(403, 'Anda tidak diizinkan mengubah berita ini.');
+            }
+        }
+
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:beritas,slug,' . $berita->id,
@@ -99,6 +120,13 @@ class BeritaController extends Controller
 
     public function destroy(Berita $berita)
     {
+        $user = auth()->user();
+        if ($user->hasRole('posyandu') && $user->posyandu_id) {
+            if (!$berita->user || $berita->user->posyandu_id !== $user->posyandu_id) {
+                abort(403, 'Anda tidak diizinkan menghapus berita ini.');
+            }
+        }
+
         $berita->delete();
         return redirect()->route('beritas.index')->with('success', 'Data berhasil dihapus');
     }

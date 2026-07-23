@@ -21,7 +21,14 @@ class BeritaExport implements FromQuery, WithHeadings, WithEvents, WithCustomSta
 
     public function query()
     {
+        $user = auth()->user();
         $query = Berita::query();
+
+        if ($user && $user->hasRole('posyandu') && $user->posyandu_id) {
+            $query->whereHas('user', function ($q) use ($user) {
+                $q->where('posyandu_id', $user->posyandu_id);
+            });
+        }
 
         if (!empty($this->filters['search'])) {
             $s = $this->filters['search'];
