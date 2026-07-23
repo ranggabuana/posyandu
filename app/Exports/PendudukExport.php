@@ -29,7 +29,17 @@ class PendudukExport implements FromQuery, WithHeadings, WithEvents, WithCustomS
 
     public function query()
     {
+        $user = auth()->user();
         $query = Penduduk::query();
+
+        if ($user && $user->hasRole('posyandu') && $user->posyandu) {
+            $rwDiampu = $user->posyandu->rw_diampu ?? [];
+            if (!empty($rwDiampu)) {
+                $query->whereIn('rw', $rwDiampu);
+            } else {
+                $query->whereRaw('1 = 0');
+            }
+        }
 
         if (!empty($this->filters['search'])) {
             $s = $this->filters['search'];

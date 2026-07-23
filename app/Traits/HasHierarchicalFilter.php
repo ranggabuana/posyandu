@@ -20,6 +20,8 @@ trait HasHierarchicalFilter
             $rwDiampu = $user->posyandu->rw_diampu ?? [];
             if (!empty($rwDiampu)) {
                 $query->whereIn($prefix . 'rw', $rwDiampu);
+            } else {
+                $query->whereRaw('1 = 0');
             }
         }
 
