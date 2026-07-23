@@ -12,11 +12,15 @@ class GaleriController extends Controller
 {
     public function index(Request $request)
     {
-        // Table name is 'galeries', view folder is 'galeries', route name is 'galeries'
+        $user = auth()->user();
         $query = Galeri::with('posyandu')
             ->select('galeries.*')
             ->leftJoin('posyandus', 'galeries.posyandu_id', '=', 'posyandus.id');
         
+        if ($user && $user->hasRole('posyandu') && $user->posyandu_id) {
+            $query->where('galeries.posyandu_id', $user->posyandu_id);
+        }
+
         if ($request->search) {
             $query->where('judul', 'like', '%' . $request->search . '%');
         }
@@ -44,12 +48,17 @@ class GaleriController extends Controller
 
     public function store(Request $request)
     {
+        $user = auth()->user();
         $validated = $request->validate([
             'posyandu_id' => 'nullable|exists:posyandus,id',
             'judul' => 'required|string|max:255',
             'foto' => 'required|image|max:2048', 
             'keterangan' => 'nullable|string',
         ]);
+
+        if ($user && $user->hasRole('posyandu') && $user->posyandu_id) {
+            $validated['posyandu_id'] = $user->posyandu_id;
+        }
 
         if ($request->hasFile('foto')) {
             $validated['foto'] = $request->file('foto')->store('galeri', 'public');
@@ -61,18 +70,36 @@ class GaleriController extends Controller
 
     public function edit(Galeri $galeri)
     {
+        $user = auth()->user();
+        if ($user && $user->hasRole('posyandu') && $user->posyandu_id) {
+            if ($galeri->posyandu_id != $user->posyandu_id) {
+                abort(403, 'Anda tidak memiliki akses untuk mengedit galeri ini.');
+            }
+        }
+
         $posyandus = Posyandu::orderBy('nama')->get();
         return view('galeries.edit', compact('galeri', 'posyandus'));
     }
 
     public function update(Request $request, Galeri $galeri)
     {
+        $user = auth()->user();
+        if ($user && $user->hasRole('posyandu') && $user->posyandu_id) {
+            if ($galeri->posyandu_id != $user->posyandu_id) {
+                abort(403, 'Anda tidak memiliki akses untuk mengubah galeri ini.');
+            }
+        }
+
         $validated = $request->validate([
             'posyandu_id' => 'nullable|exists:posyandus,id',
             'judul' => 'required|string|max:255',
             'foto' => 'nullable|image|max:2048',
             'keterangan' => 'nullable|string',
         ]);
+
+        if ($user && $user->hasRole('posyandu') && $user->posyandu_id) {
+            $validated['posyandu_id'] = $user->posyandu_id;
+        }
 
         if ($request->hasFile('foto')) {
             if ($galeri->foto && \Illuminate\Support\Facades\Storage::disk('public')->exists($galeri->foto)) {
@@ -89,6 +116,13 @@ class GaleriController extends Controller
 
     public function destroy(Galeri $galeri)
     {
+        $user = auth()->user();
+        if ($user && $user->hasRole('posyandu') && $user->posyandu_id) {
+            if ($galeri->posyandu_id != $user->posyandu_id) {
+                abort(403, 'Anda tidak memiliki akses untuk menghapus galeri ini.');
+            }
+        }
+
         if ($galeri->foto && \Illuminate\Support\Facades\Storage::disk('public')->exists($galeri->foto)) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($galeri->foto);
         }

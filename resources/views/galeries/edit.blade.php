@@ -27,6 +27,16 @@
                         </div>
                     </div>
                     <div class="p-8 space-y-6">
+                        @if(auth()->user()->hasRole('posyandu') && auth()->user()->posyandu_id)
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Posyandu</label>
+                            <input type="hidden" name="posyandu_id" value="{{ auth()->user()->posyandu_id }}">
+                            <div class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-700 font-semibold text-sm flex items-center gap-2">
+                                <i class="mdi mdi-office-building text-blue-600 text-lg"></i>
+                                {{ auth()->user()->posyandu->nama ?? 'Posyandu Saya' }}
+                            </div>
+                        </div>
+                        @else
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Posyandu</label>
                             <select name="posyandu_id" id="select2-posyandu"
@@ -40,6 +50,7 @@
                             </select>
                             @error('posyandu_id') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
                         </div>
+                        @endif
 
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Judul <span class="text-red-500">*</span></label>

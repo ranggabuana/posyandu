@@ -21,6 +21,7 @@ class GaleriExport implements FromQuery, WithHeadings, WithEvents, WithCustomSta
 
     public function query()
     {
+        $user = auth()->user();
         $query = Galeri::query()
             ->leftJoin('posyandus', 'galeries.posyandu_id', '=', 'posyandus.id')
             ->select(
@@ -31,6 +32,10 @@ class GaleriExport implements FromQuery, WithHeadings, WithEvents, WithCustomSta
                 'galeries.keterangan',
                 'galeries.created_at'
             );
+
+        if ($user && $user->hasRole('posyandu') && $user->posyandu_id) {
+            $query->where('galeries.posyandu_id', $user->posyandu_id);
+        }
 
         if (!empty($this->filters['search'])) {
             $s = $this->filters['search'];
