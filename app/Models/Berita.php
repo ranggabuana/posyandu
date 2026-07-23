@@ -12,4 +12,21 @@ class Berita extends Model
     {
         return $this->belongsTo(User::class, 'penulis');
     }
+
+    public function getPenulisNamaAttribute()
+    {
+        if (!$this->user) {
+            return 'Admin';
+        }
+
+        if ($this->user->hasRole('posyandu') && $this->user->posyandu) {
+            return $this->user->posyandu->nama;
+        }
+
+        if ($this->user->posyandu) {
+            return $this->user->posyandu->nama;
+        }
+
+        return 'Admin';
+    }
 }

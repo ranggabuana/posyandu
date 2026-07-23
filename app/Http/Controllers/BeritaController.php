@@ -12,7 +12,7 @@ class BeritaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Berita::query();
+        $query = Berita::with(['user.posyandu', 'user.roles']);
         
         if ($request->search) {
             $query->where(function($q) use ($request) {
@@ -46,6 +46,10 @@ class BeritaController extends Controller
             'penulis' => 'nullable|exists:users,id',
             'status' => 'nullable|in:draft,publikasi',
         ]);
+
+        if (empty($validated['penulis'])) {
+            $validated['penulis'] = auth()->id();
+        }
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['judul']);

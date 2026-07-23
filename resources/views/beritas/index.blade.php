@@ -53,6 +53,7 @@
                             $columns = [
                                 'judul' => 'Judul',
                                 'kategori' => 'Kategori',
+                                'penulis' => 'Sumber / Penulis',
                                 'status' => 'Status',
                                 'created_at' => 'Tanggal',
                             ];
@@ -85,6 +86,24 @@
                             <span class="px-2.5 py-1 text-xs font-medium rounded-full {{ $item->kategori == 'berita' ? 'bg-blue-100 text-blue-700' : ($item->kategori == 'pengumuman' ? 'bg-yellow-100 text-yellow-700' : 'bg-purple-100 text-purple-700') }}">
                                 {{ ucfirst($item->kategori ?? '-') }}
                             </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @if($item->user && $item->user->hasRole('posyandu') && $item->user->posyandu)
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-700 border border-purple-200">
+                                    <i class="mdi mdi-office-building text-xs"></i>
+                                    {{ $item->user->posyandu->nama }}
+                                </span>
+                            @elseif($item->user && $item->user->posyandu)
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-700 border border-purple-200">
+                                    <i class="mdi mdi-office-building text-xs"></i>
+                                    {{ $item->user->posyandu->nama }}
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                                    <i class="mdi mdi-shield-account text-xs"></i>
+                                    Admin
+                                </span>
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2.5 py-1 text-xs font-medium rounded-full {{ $item->status == 'publikasi' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700' }}">

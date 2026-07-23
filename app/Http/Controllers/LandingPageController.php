@@ -43,7 +43,7 @@ class LandingPageController extends Controller
     public function news(Request $request)
     {
         $settings = Pengaturan::pluck('value', 'key');
-        $query = Berita::where('status', 'publikasi');
+        $query = Berita::with(['user.posyandu', 'user.roles'])->where('status', 'publikasi');
         
         if ($request->search) {
             $query->where(function($q) use ($request) {
@@ -60,12 +60,18 @@ class LandingPageController extends Controller
     {
         $settings = Pengaturan::pluck('value', 'key');
         // Accept either slug or id for better SEO
-        $berita = Berita::where('status', 'publikasi')
+        $berita = Berita::with(['user.posyandu', 'user.roles'])
+            ->where('status', 'publikasi')
             ->where(function($q) use ($id) {
                 $q->where('id', $id)->orWhere('slug', $id);
             })->firstOrFail();
             
-        $recent_news = Berita::where('status', 'publikasi')->where('id', '!=', $berita->id)->latest()->take(5)->get();
+        $recent_news = Berita::with(['user.posyandu', 'user.roles'])
+            ->where('status', 'publikasi')
+            ->where('id', '!=', $berita->id)
+            ->latest()
+            ->take(5)
+            ->get();
         
         return view('public.news.show', compact('settings', 'berita', 'recent_news'));
     }

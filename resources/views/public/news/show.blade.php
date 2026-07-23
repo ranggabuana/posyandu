@@ -15,10 +15,15 @@
         Kembali ke Berita
       </a>
       
-      <div class="flex items-center gap-4 text-xs font-bold uppercase tracking-widest mb-6" style="color: rgba(2,52,48,0.5);">
+      <div class="flex flex-wrap items-center gap-3 text-xs font-bold uppercase tracking-widest mb-6" style="color: rgba(2,52,48,0.5);">
         <span class="px-4 py-2 rounded-full" style="background: rgba(62,207,142,0.15); color: var(--teal);">
           {{ $berita->kategori ?? 'Kegiatan' }}
         </span>
+        <span class="px-4 py-2 rounded-full bg-teal-800/10 text-teal-800 flex items-center gap-1.5 font-bold">
+          <i class="mdi mdi-account-circle text-sm"></i>
+          <span>Sumber: {{ $berita->penulis_nama }}</span>
+        </span>
+        <span>•</span>
         <span>{{ $berita->created_at->format('d F Y') }}</span>
       </div>
       
@@ -80,6 +85,10 @@
                 </svg>
               </div>
             @endif
+          </div>
+          <div class="px-2 mb-1 flex items-center gap-2 text-xs font-bold text-teal-700">
+            <i class="mdi mdi-account-circle"></i>
+            <span>{{ $news->penulis_nama }}</span>
           </div>
           <h4 class="text-lg font-bold leading-tight px-2 pb-2" style="color: var(--deep);">{{ $news->judul }}</h4>
         </a>

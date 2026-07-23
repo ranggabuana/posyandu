@@ -55,8 +55,14 @@
               </svg>
             </div>
           @endif
-          <div class="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-xl text-xs font-bold uppercase tracking-wider" style="color: var(--teal); box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-            {{ $news->kategori ?? 'Kegiatan' }}
+          <div class="absolute top-4 left-4 flex flex-wrap gap-2">
+            <div class="px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-xl text-xs font-bold uppercase tracking-wider" style="color: var(--teal); box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+              {{ $news->kategori ?? 'Kegiatan' }}
+            </div>
+            <div class="px-3 py-1.5 bg-teal-800/85 text-white backdrop-blur-sm rounded-xl text-xs font-bold tracking-wider shadow-sm flex items-center gap-1.5">
+              <i class="mdi mdi-account-circle"></i>
+              <span>{{ $news->penulis_nama }}</span>
+            </div>
           </div>
         </div>
         <div class="p-8 flex flex-col flex-1">
