@@ -125,20 +125,35 @@ class PendudukExport implements FromQuery, WithHeadings, WithEvents, WithCustomS
     {
         return [
             BeforeSheet::class => function(BeforeSheet $event) {
+                $user = auth()->user();
+                $isPosyandu = $user && $user->hasRole('posyandu') && $user->posyandu;
+
                 // Title
                 $event->sheet->getDelegate()->mergeCells('A1:X1');
-                $event->sheet->setCellValue('A1', 'LAPORAN DATA PENDUDUK');
+                $title = 'LAPORAN DATA PENDUDUK';
+                if ($isPosyandu) {
+                    $title .= ' - ' . mb_strtoupper($user->posyandu->nama);
+                }
+                $event->sheet->setCellValue('A1', $title);
                 $event->sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
                 $event->sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 
                 // Filters info
                 $event->sheet->getDelegate()->mergeCells('A2:X2');
-                $filterDesc = "Filter: ";
-                $filterDesc .= "Dusun: " . ($this->filters['dusun'] ?? 'Semua') . " | ";
-                $filterDesc .= "RW: " . ($this->filters['rw'] ?? 'Semua') . " | ";
-                $filterDesc .= "RT: " . ($this->filters['rt'] ?? 'Semua') . " | ";
-                $filterDesc .= "Kelamin: " . ($this->filters['kelamin'] ?? 'Semua') . " | ";
-                $filterDesc .= "Search: " . ($this->filters['search'] ?? '-');
+                $filterDesc = "";
+                if ($isPosyandu) {
+                    $rwDiampu = $user->posyandu->rw_diampu ?? [];
+                    $rwFormatted = !empty($rwDiampu) 
+                        ? implode(', ', array_map(function($rw) { return 'RW ' . sprintf('%02d', $rw); }, $rwDiampu))
+                        : 'Tidak Ada';
+                    $filterDesc .= "Posyandu: " . $user->posyandu->nama . " | RW Diampu: " . $rwFormatted . " | ";
+                }
+                $filterDesc .= "Filter: ";
+                $filterDesc .= "Dusun: " . (!empty($this->filters['dusun']) ? $this->filters['dusun'] : 'Semua') . " | ";
+                $filterDesc .= "RW: " . (!empty($this->filters['rw']) ? $this->filters['rw'] : 'Semua') . " | ";
+                $filterDesc .= "RT: " . (!empty($this->filters['rt']) ? $this->filters['rt'] : 'Semua') . " | ";
+                $filterDesc .= "Kelamin: " . (!empty($this->filters['kelamin']) ? $this->filters['kelamin'] : 'Semua') . " | ";
+                $filterDesc .= "Search: " . (!empty($this->filters['search']) ? $this->filters['search'] : '-');
                 $event->sheet->setCellValue('A2', $filterDesc);
                 $event->sheet->getStyle('A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 
