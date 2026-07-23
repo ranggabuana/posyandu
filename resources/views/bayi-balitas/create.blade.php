@@ -325,17 +325,28 @@
                         </div>
                     </div>
                     <div class="p-6 space-y-5">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Posyandu <span class="text-red-500">*</span></label>
-                            <select name="posyandu_id" 
-                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1rem_1rem] bg-[right_0.75rem_center] bg-no-repeat">
-                                <option value="" disabled selected>Pilih Posyandu</option>
-                                @foreach($posyandus as $posyandu)
-                                    <option value="{{ $posyandu->id }}" {{ old('posyandu_id') == $posyandu->id ? 'selected' : '' }}>{{ $posyandu->nama }}</option>
-                                @endforeach
-                            </select>
-                            @error('posyandu_id') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
-                        </div>
+                        @if(auth()->user()->hasRole('posyandu') && auth()->user()->posyandu)
+                            <input type="hidden" name="posyandu_id" value="{{ auth()->user()->posyandu_id }}">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">Posyandu</label>
+                                <div class="px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-gray-800 font-semibold flex items-center gap-2">
+                                    <i class="mdi mdi-office-building text-purple-600"></i>
+                                    <span>{{ auth()->user()->posyandu->nama }}</span>
+                                </div>
+                            </div>
+                        @else
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">Posyandu <span class="text-red-500">*</span></label>
+                                <select name="posyandu_id" 
+                                    class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1rem_1rem] bg-[right_0.75rem_center] bg-no-repeat">
+                                    <option value="" disabled selected>Pilih Posyandu</option>
+                                    @foreach($posyandus as $posyandu)
+                                        <option value="{{ $posyandu->id }}" {{ old('posyandu_id') == $posyandu->id ? 'selected' : '' }}>{{ $posyandu->nama }}</option>
+                                    @endforeach
+                                </select>
+                                @error('posyandu_id') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
+                            </div>
+                        @endif
 
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Status Akta Kelahiran</label>

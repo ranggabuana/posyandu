@@ -137,6 +137,11 @@ class BayiBalitaController extends Controller
             $validated['penduduk_id'] = $penduduk->id;
         }
 
+        $user = auth()->user();
+        if ($user->hasRole('posyandu') && $user->posyandu_id) {
+            $validated['posyandu_id'] = $user->posyandu_id;
+        }
+
         $bayiData = collect($validated)->only([
             'penduduk_id', 'nama_ibu', 'tanggal_lahir', 'berat_lahir', 
             'panjang_lahir', 'goldar', 'bpjs', 'posyandu_id', 'keterangan', 'status_akta'
@@ -186,6 +191,11 @@ class BayiBalitaController extends Controller
             'keterangan' => 'nullable|string',
             'status_akta' => 'nullable|in:punya,tidak punya',
         ]);
+
+        $user = auth()->user();
+        if ($user->hasRole('posyandu') && $user->posyandu_id) {
+            $validated['posyandu_id'] = $user->posyandu_id;
+        }
 
         $bayiBalita->update($validated);
         
