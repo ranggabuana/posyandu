@@ -12,6 +12,32 @@
         </a>
     </x-page-header>
 
+    @if(isset($posyanduInfo) && $posyanduInfo)
+    <div class="mb-6 bg-blue-50/70 border border-blue-200 rounded-2xl p-4 flex items-center justify-between shadow-2xs">
+        <div class="flex items-center gap-3">
+            <div class="p-2.5 bg-blue-600 text-white rounded-xl shadow-xs">
+                <i class="mdi mdi-office-building text-xl"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-blue-900 text-base flex items-center gap-2">
+                    {{ $posyanduInfo->nama }}
+                    <span class="bg-blue-200/80 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-blue-300">Posyandu</span>
+                </h4>
+                <p class="text-xs text-blue-700 font-medium mt-0.5">
+                    <i class="mdi mdi-map-marker text-blue-500 mr-0.5"></i>
+                    Wilayah RW Diampu: 
+                    <span class="font-bold text-blue-900">
+                        {{ !empty($posyanduInfo->rw_diampu) ? implode(', ', array_map(fn($rw) => 'RW ' . sprintf('%02d', (int)preg_replace('/[^0-9]/', '', $rw)), $posyanduInfo->rw_diampu)) : 'Belum ditentukan' }}
+                    </span>
+                </p>
+            </div>
+        </div>
+        <span class="text-xs text-blue-700 font-semibold hidden sm:flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-blue-200/60 shadow-2xs">
+            <i class="mdi mdi-filter-check text-emerald-600 text-sm"></i> Data Terfilter Berdasarkan RW Diampu
+        </span>
+    </div>
+    @endif
+
     <!-- Section 1: Ringkasan Populasi Lintas Siklus Hidup -->
     <div class="mb-8">
         <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
