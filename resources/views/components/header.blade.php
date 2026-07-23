@@ -111,7 +111,7 @@
 
             <!-- Notification Dropdown -->
             <div id="notification-dropdown"
-                class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl py-2 z-20 border border-gray-100 overflow-hidden">
+                class="hidden absolute -right-12 sm:right-0 mt-2 w-72 sm:w-80 bg-white rounded-xl shadow-xl py-2 z-30 border border-gray-100 overflow-hidden">
                 <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider">Aduan Belum Ditindaklanjuti</h3>
                     @if($unprocessedCount > 0)

@@ -1,5 +1,5 @@
 <div id="sidebar"
-    class="sidebar w-64 bg-white shadow-lg h-screen fixed z-10 transform transition-all duration-300 ease-in-out lg:translate-x-0 -translate-x-full lg:translate-x-0">
+    class="sidebar w-64 bg-white shadow-lg h-screen fixed z-30 transform transition-all duration-300 ease-in-out lg:translate-x-0 -translate-x-full">
     <div class="p-5 border-b border-gray-200 flex items-center sidebar-header">
         <i class="mdi mdi-hospital-building text-blue-500 mr-2 text-xl"></i>
         <h1 class="text-xl font-bold text-gray-800 font-sans">SIP Posyandu</h1>

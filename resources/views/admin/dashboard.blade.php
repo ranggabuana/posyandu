@@ -518,20 +518,20 @@
     </div>
 
     <!-- Modal Detail List Individu / Pasien -->
-    <div id="person-detail-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-2xl relative max-h-[85vh] flex flex-col">
+    <div id="person-detail-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-2 sm:p-4">
+        <div class="bg-white rounded-3xl max-w-3xl w-full p-4 sm:p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col">
             <!-- Modal Header -->
             <div class="flex items-center justify-between pb-4 border-b border-gray-100">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
-                        <i class="mdi mdi-account-search text-xl"></i>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold flex-shrink-0">
+                        <i class="mdi mdi-account-search text-lg sm:text-xl"></i>
                     </div>
-                    <div>
-                        <h3 id="person-modal-title" class="text-base font-bold text-gray-900">Daftar Individu</h3>
-                        <p class="text-xs text-gray-500">Daftar warga berdasarkan kriteria skrining kesehatan</p>
+                    <div class="min-w-0">
+                        <h3 id="person-modal-title" class="text-sm sm:text-base font-bold text-gray-900 truncate">Daftar Individu</h3>
+                        <p class="text-[11px] sm:text-xs text-gray-500 truncate">Daftar warga berdasarkan kriteria skrining kesehatan</p>
                     </div>
                 </div>
-                <button onclick="closePersonListModal()" class="text-gray-400 hover:text-gray-600">
+                <button onclick="closePersonListModal()" class="text-gray-400 hover:text-gray-600 p-1">
                     <i class="mdi mdi-close text-xl"></i>
                 </button>
             </div>
@@ -546,7 +546,7 @@
             </div>
 
             <!-- Modal Table Body -->
-            <div class="overflow-y-auto flex-1 border border-gray-100 rounded-2xl">
+            <div class="overflow-x-auto overflow-y-auto flex-1 border border-gray-100 rounded-2xl">
                 <table class="w-full text-left text-xs border-collapse">
                     <thead class="sticky top-0 bg-gray-50 border-b border-gray-100">
                         <tr>

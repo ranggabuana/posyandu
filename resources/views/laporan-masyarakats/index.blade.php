@@ -20,7 +20,7 @@
         <div class="p-4 border-b border-gray-200 bg-gray-50/50">
             <form id="filter-form" action="{{ route('laporan-masyarakats.index') }}" method="GET" class="w-full">
                 <div class="flex flex-wrap items-center gap-4 mb-4">
-                    <div class="relative flex-1 min-w-[300px]">
+                    <div class="relative flex-1 w-full sm:w-auto min-w-0 sm:min-w-[300px]">
                         <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                             <i class="mdi mdi-magnify text-xl"></i>
                         </span>

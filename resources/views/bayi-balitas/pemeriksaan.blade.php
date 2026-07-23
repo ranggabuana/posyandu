@@ -33,15 +33,15 @@
         <div class="lg:col-span-8">
             <!-- Card 1: Input Kunjungan / Penimbangan Bulanan -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-8 py-5 border-b border-gray-50 bg-gray-50/30">
+                <div class="px-4 sm:px-8 py-4 sm:py-5 border-b border-gray-50 bg-gray-50/30">
                     <div class="flex items-center">
                         <div class="p-2.5 bg-blue-500/10 rounded-lg mr-4">
                             <i class="mdi mdi-scale-bathroom text-blue-600 text-xl"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-gray-800">Catat Kunjungan & Hasil Timbangan</h3>
+                        <h3 class="text-base sm:text-lg font-bold text-gray-800">Catat Kunjungan & Hasil Timbangan</h3>
                     </div>
                 </div>
-                <div class="p-8">
+                <div class="p-4 sm:p-8">
                     <form action="{{ route('bayi-balitas.update-pemeriksaan', $bayiBalita) }}" method="POST" class="space-y-6">
                         @csrf
                         @method('PUT')

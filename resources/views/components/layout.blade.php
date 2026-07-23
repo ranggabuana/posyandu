@@ -252,17 +252,20 @@
     @stack('styles')
 </head>
 
-<body class="bg-gray-100 min-h-screen flex">
+<body class="bg-gray-100 min-h-screen flex overflow-x-hidden">
+    <!-- Sidebar Overlay Backdrop for Mobile -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-gray-900/50 z-20 hidden lg:hidden transition-opacity duration-300 opacity-0"></div>
+
     <!-- Sidebar -->
     <x-sidebar />
 
     <!-- Main Content -->
-    <div id="main-content" class="flex-1 ml-0 lg:ml-64 transition-all duration-300">
+    <div id="main-content" class="flex-1 ml-0 lg:ml-64 min-w-0 transition-all duration-300">
         <!-- Header -->
         <x-header :breadcrumbs="$breadcrumbs" />
 
         <!-- Dashboard Content -->
-        <main class="p-6">
+        <main class="p-3 sm:p-6">
             {{ $slot }}
         </main>
 

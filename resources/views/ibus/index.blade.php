@@ -19,7 +19,7 @@
             <form id="filter-form" action="{{ route('ibus.index') }}" method="GET" class="space-y-4">
                 <!-- Row 1: Search & Per Page -->
                 <div class="flex flex-col md:flex-row justify-between gap-4 mb-4">
-                    <div class="relative flex-1 min-w-[300px]">
+                    <div class="relative flex-1 w-full sm:w-auto min-w-0 sm:min-w-[300px]">
                         <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                             <i class="mdi mdi-magnify text-xl"></i>
                         </span>

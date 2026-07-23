@@ -7,7 +7,7 @@
 <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <div>
         <!-- Page Title & Icon -->
-        <h1 class="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
             @if($icon)
                 <i class="mdi {{ $icon }} text-blue-600 text-2xl"></i>
             @endif

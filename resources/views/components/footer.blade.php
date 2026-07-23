@@ -309,34 +309,59 @@
             });
         });
 
-        // Mobile sidebar toggle
+        // Mobile sidebar toggle with backdrop overlay
         const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
         const sidebarCollapseBtn = document.getElementById('sidebar-collapse-btn');
         const sidebar = document.getElementById('sidebar');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
         const mainContent = document.getElementById('main-content');
 
-        // Toggle sidebar on mobile
-        sidebarToggleBtn?.addEventListener('click', () => {
-            sidebar?.classList.toggle('-translate-x-full');
+        function openMobileSidebar() {
+            sidebar?.classList.remove('-translate-x-full');
+            if (sidebarBackdrop) {
+                sidebarBackdrop.classList.remove('hidden');
+                setTimeout(() => sidebarBackdrop.classList.remove('opacity-0'), 10);
+            }
+            if (sidebarToggleBtn) {
+                const icon = sidebarToggleBtn.querySelector('i');
+                if (icon) icon.className = 'mdi mdi-close text-xl';
+            }
+        }
 
-            // Change the icon based on the state
-            const icon = sidebarToggleBtn.querySelector('i');
+        function closeMobileSidebar() {
+            sidebar?.classList.add('-translate-x-full');
+            if (sidebarBackdrop) {
+                sidebarBackdrop.classList.add('opacity-0');
+                setTimeout(() => sidebarBackdrop.classList.add('hidden'), 300);
+            }
+            if (sidebarToggleBtn) {
+                const icon = sidebarToggleBtn.querySelector('i');
+                if (icon) icon.className = 'mdi mdi-menu text-xl';
+            }
+        }
+
+        // Toggle sidebar on mobile
+        sidebarToggleBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
             if (sidebar?.classList.contains('-translate-x-full')) {
-                icon.className = 'mdi mdi-menu text-xl'; // menu icon when closed
+                openMobileSidebar();
             } else {
-                icon.className = 'mdi mdi-close text-xl'; // close icon when open
+                closeMobileSidebar();
             }
         });
 
-        // Also close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth < 1024 && sidebar && !sidebar.contains(e.target) &&
-                sidebarToggleBtn && !sidebarToggleBtn.contains(e.target) &&
-                !sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.add('-translate-x-full');
-                const icon = sidebarToggleBtn.querySelector('i');
-                icon.className = 'mdi mdi-menu text-xl';
-            }
+        // Close sidebar when backdrop is clicked
+        sidebarBackdrop?.addEventListener('click', () => {
+            closeMobileSidebar();
+        });
+
+        // Close sidebar on mobile when navigating via links inside sidebar
+        sidebar?.querySelectorAll('a:not([href="#"])').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 1024) {
+                    closeMobileSidebar();
+                }
+            });
         });
 
         // Collapse/expand sidebar on desktop
