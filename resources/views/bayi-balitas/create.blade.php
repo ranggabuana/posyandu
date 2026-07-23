@@ -45,8 +45,8 @@
                                         $ageMonths = $penduduk->tanggallahir ? \Carbon\Carbon::parse($penduduk->tanggallahir)->diffInMonths(\Carbon\Carbon::now()) : '-';
                                         $ageYears = $penduduk->tanggallahir ? \Carbon\Carbon::parse($penduduk->tanggallahir)->age : '-';
                                     @endphp
-                                    <option value="{{ $penduduk->id }}" data-tanggallahir="{{ $penduduk->tanggallahir }}" {{ old('penduduk_id') == $penduduk->id ? 'selected' : '' }}>
-                                        {{ $penduduk->nama }} (NIK: {{ $penduduk->nik }} - {{ $ageMonths }} Bln / {{ $ageYears }} Thn)
+                                    <option value="{{ $penduduk->id }}" data-tanggallahir="{{ $penduduk->tanggallahir }}" data-nokk="{{ $penduduk->no_kk }}" {{ old('penduduk_id') == $penduduk->id ? 'selected' : '' }}>
+                                        {{ $penduduk->nama }} (NIK: {{ $penduduk->nik }}{{ $penduduk->no_kk ? ' | KK: ' . $penduduk->no_kk : '' }} - {{ $ageMonths }} Bln / {{ $ageYears }} Thn)
                                     </option>
                                 @endforeach
                             </select>
@@ -100,11 +100,16 @@
                                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">
                                 <option></option>
                                 @foreach($ibus as $ibu)
-                                    <option value="{{ $ibu->nama }}" {{ old('nama_ibu') == $ibu->nama ? 'selected' : '' }}>
-                                        {{ $ibu->nama }} ({{ $ibu->nik }})
+                                    <option value="{{ $ibu->nama }}" data-nokk="{{ $ibu->no_kk }}" data-nik="{{ $ibu->nik }}" {{ old('nama_ibu') == $ibu->nama ? 'selected' : '' }}>
+                                        {{ $ibu->nama }} (NIK: {{ $ibu->nik }}{{ $ibu->no_kk ? ' | KK: ' . $ibu->no_kk : '' }})
                                     </option>
                                 @endforeach
                             </select>
+                            <p id="ibu-filter-info" class="text-xs text-blue-600 font-medium mt-1.5 hidden flex items-center gap-1">
+                                <i class="mdi mdi-filter-check text-sm"></i>
+                                <span id="ibu-filter-text">Disaring berdasarkan No. KK yang sama dengan anak.</span>
+                                <button type="button" id="btn-show-all-ibu" class="underline text-gray-500 hover:text-gray-700 font-semibold ml-2">Tampilkan semua ibu</button>
+                            </p>
                             @error('nama_ibu') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
                         </div>
                     </div>
@@ -125,6 +130,77 @@
                             language: { noResults: () => "Data tidak ditemukan" }
                         });
 
+                        // Store all initial mother options
+                        const allMothers = [];
+                        $('#select2-ibu option').each(function() {
+                            const val = $(this).val();
+                            if (val) {
+                                allMothers.push({
+                                    value: val,
+                                    text: $(this).text(),
+                                    nokk: String($(this).data('nokk') || '').trim(),
+                                    nik: String($(this).data('nik') || '').trim()
+                                });
+                            }
+                        });
+
+                        let manualShowAllMothers = false;
+
+                        function filterIbuByNoKK(targetNoKk, preserveCurrentVal = false) {
+                            const currentVal = preserveCurrentVal ? $('#select2-ibu').val() : '';
+                            $('#select2-ibu').empty().append('<option></option>');
+
+                            let filteredMothers = allMothers;
+                            let isFiltered = false;
+
+                            if (!manualShowAllMothers && targetNoKk && targetNoKk.trim() !== '') {
+                                const matched = allMothers.filter(m => m.nokk && m.nokk === targetNoKk.trim());
+                                if (matched.length > 0) {
+                                    filteredMothers = matched;
+                                    isFiltered = true;
+                                }
+                            }
+
+                            filteredMothers.forEach(m => {
+                                const option = new Option(m.text, m.value, false, m.value === currentVal);
+                                $(option).attr('data-nokk', m.nokk);
+                                $(option).attr('data-nik', m.nik);
+                                $('#select2-ibu').append(option);
+                            });
+
+                            if (isFiltered) {
+                                $('#ibu-filter-text').text(`Disaring berdasarkan No. KK (${targetNoKk.trim()}) yang sama dengan anak.`);
+                                $('#ibu-filter-info').removeClass('hidden');
+                                if (filteredMothers.length === 1 && !preserveCurrentVal) {
+                                    $('#select2-ibu').val(filteredMothers[0].value);
+                                } else if (preserveCurrentVal && currentVal) {
+                                    $('#select2-ibu').val(currentVal);
+                                } else {
+                                    $('#select2-ibu').val('');
+                                }
+                            } else {
+                                if (manualShowAllMothers) {
+                                    $('#ibu-filter-info').removeClass('hidden');
+                                    $('#ibu-filter-text').text('Menampilkan semua data ibu.');
+                                } else {
+                                    $('#ibu-filter-info').addClass('hidden');
+                                }
+                                if (preserveCurrentVal && currentVal) {
+                                    $('#select2-ibu').val(currentVal);
+                                }
+                            }
+
+                            $('#select2-ibu').trigger('change.select2');
+                        }
+
+                        $(document).on('click', '#btn-show-all-ibu', function(e) {
+                            e.preventDefault();
+                            manualShowAllMothers = true;
+                            const selectedOpt = $('#select2-anak option:selected');
+                            const noKk = selectedOpt.data('nokk');
+                            filterIbuByNoKK(String(noKk || ''), true);
+                        });
+
                         function toggleManualInput() {
                             if ($('#input_manual').is(':checked')) {
                                 $('#div-pilih-anak').addClass('hidden');
@@ -138,6 +214,9 @@
 
                                 $('#div-tanggal-lahir-non-manual').addClass('hidden');
                                 $('#input-tanggal-lahir-non-manual').prop('disabled', true);
+
+                                manualShowAllMothers = false;
+                                filterIbuByNoKK('');
                             } else {
                                 $('#div-pilih-anak').removeClass('hidden');
                                 $('#div-manual-anak').addClass('hidden');
@@ -160,12 +239,30 @@
                         $('#select2-anak').on('change', function() {
                             const selectedOpt = $(this).find('option:selected');
                             const dob = selectedOpt.data('tanggallahir');
+                            const noKk = selectedOpt.data('nokk');
+
                             if (dob) {
                                 $('#input-tanggal-lahir-non-manual').val(dob);
+                            }
+
+                            manualShowAllMothers = false;
+                            if (noKk) {
+                                filterIbuByNoKK(String(noKk));
+                            } else {
+                                filterIbuByNoKK('');
                             }
                         });
 
                         toggleManualInput();
+
+                        // Check initial selection on load
+                        const initialChildOpt = $('#select2-anak option:selected');
+                        if (initialChildOpt.length && initialChildOpt.val()) {
+                            const initNoKk = initialChildOpt.data('nokk');
+                            if (initNoKk) {
+                                filterIbuByNoKK(String(initNoKk), true);
+                            }
+                        }
                     });
                 </script>
 

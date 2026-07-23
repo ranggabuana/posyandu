@@ -59,7 +59,7 @@ class BayiBalitaController extends Controller
         $pQuery = Penduduk::whereNotNull('tanggallahir')
             ->whereRaw("tanggallahir <= CURDATE()")
             ->whereRaw("TIMESTAMPDIFF(MONTH, tanggallahir, CURDATE()) <= 60");
-        $iQuery = Penduduk::where('kelamin', 'perempuan')->where('status_kawin', 'kawin');
+        $iQuery = Penduduk::where('kelamin', 'perempuan');
         
         if ($user->hasRole('posyandu') && $user->posyandu) {
             $rwDiampu = $user->posyandu->rw_diampu ?? [];
@@ -69,8 +69,8 @@ class BayiBalitaController extends Controller
             }
         }
 
-        $penduduks = $pQuery->orderBy('nama')->get(['id', 'nama', 'nik', 'tanggallahir']);
-        $ibus = $iQuery->orderBy('nama')->get(['id', 'nama', 'nik']);
+        $penduduks = $pQuery->orderBy('nama')->get(['id', 'nama', 'nik', 'no_kk', 'tanggallahir']);
+        $ibus = $iQuery->orderByRaw("CASE WHEN status_kawin = 'kawin' THEN 0 ELSE 1 END")->orderBy('nama')->get(['id', 'nama', 'nik', 'no_kk']);
         $posyandus = Posyandu::orderBy('nama')->get();
         return view('bayi-balitas.create', compact('penduduks', 'ibus', 'posyandus'));
     }
