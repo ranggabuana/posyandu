@@ -36,16 +36,27 @@
                 @error('istri_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
-            <div class="md:col-span-2">
-                <label class="block text-sm font-bold text-gray-700 mb-2">Posyandu</label>
-                <select name="posyandu_id" id="select2-posyandu" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none">
-                    <option value="">-- Pilih Posyandu --</option>
-                    @foreach($posyandus as $p)
-                        <option value="{{ $p->id }}" {{ old('posyandu_id', $pus->posyandu_id) == $p->id ? 'selected' : '' }}>{{ $p->nama }}</option>
-                    @endforeach
-                </select>
-                @error('posyandu_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
+            @if(auth()->user()->hasRole('posyandu') && auth()->user()->posyandu_id)
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Posyandu</label>
+                    <input type="hidden" name="posyandu_id" value="{{ auth()->user()->posyandu_id }}">
+                    <div class="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-gray-700 font-semibold text-sm flex items-center gap-2">
+                        <i class="mdi mdi-office-building text-blue-600"></i>
+                        {{ auth()->user()->posyandu->nama ?? 'Posyandu Saya' }}
+                    </div>
+                </div>
+            @else
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Posyandu</label>
+                    <select name="posyandu_id" id="select2-posyandu" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none">
+                        <option value="">-- Pilih Posyandu --</option>
+                        @foreach($posyandus as $p)
+                            <option value="{{ $p->id }}" {{ old('posyandu_id', $pus->posyandu_id) == $p->id ? 'selected' : '' }}>{{ $p->nama }}</option>
+                        @endforeach
+                    </select>
+                    @error('posyandu_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+            @endif
 
             <div class="md:col-span-2">
                 <label class="block text-sm font-bold text-gray-700 mb-2">Keterangan</label>
@@ -74,11 +85,13 @@
                     allowClear: true,
                     width: '100%'
                 });
-                $('#select2-posyandu').select2({
-                    placeholder: '-- Pilih Posyandu --',
-                    allowClear: true,
-                    width: '100%'
-                });
+                if ($('#select2-posyandu').length) {
+                    $('#select2-posyandu').select2({
+                        placeholder: '-- Pilih Posyandu --',
+                        allowClear: true,
+                        width: '100%'
+                    });
+                }
 
                 $('#select2-suami').on('change', function() {
                     var suamiId = $(this).val();

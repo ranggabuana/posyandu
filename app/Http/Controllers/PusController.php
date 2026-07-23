@@ -63,12 +63,18 @@ class PusController extends Controller
 
     public function store(Request $request)
     {
+        $user = auth()->user();
+
         $validated = $request->validate([
             'suami_id' => 'nullable|exists:penduduks,id',
             'istri_id' => 'required|exists:penduduks,id',
             'posyandu_id' => 'nullable|exists:posyandus,id',
             'keterangan' => 'nullable|string'
         ]);
+
+        if ($user->hasRole('posyandu') && $user->posyandu_id) {
+            $validated['posyandu_id'] = $user->posyandu_id;
+        }
 
         Pus::create($validated);
 
@@ -95,12 +101,18 @@ class PusController extends Controller
 
     public function update(Request $request, Pus $pus)
     {
+        $user = auth()->user();
+
         $validated = $request->validate([
             'suami_id' => 'nullable|exists:penduduks,id',
             'istri_id' => 'required|exists:penduduks,id',
             'posyandu_id' => 'nullable|exists:posyandus,id',
             'keterangan' => 'nullable|string'
         ]);
+
+        if ($user->hasRole('posyandu') && $user->posyandu_id) {
+            $validated['posyandu_id'] = $user->posyandu_id;
+        }
 
         $pus->update($validated);
 
