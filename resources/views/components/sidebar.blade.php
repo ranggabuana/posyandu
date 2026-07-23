@@ -199,6 +199,7 @@
                     class="mdi mdi-chevron-down ml-2 transition-transform duration-300 text-lg {{ $pengaturanActive ? 'text-blue-500' : 'text-gray-500' }}"></i>
             </button>
             <div class="submenu mt-1">
+                @if(!Auth::user()->hasRole('posyandu'))
                 <a href="{{ route('admin.users.index') }}"
                     class="block pl-14 py-2 text-sm transition-colors flex items-center submenu-item text-left {{ request()->routeIs('admin.users.*') ? 'text-blue-600 font-semibold bg-blue-50/50 border-r-4 border-blue-500' : 'text-gray-600' }}">
                     <i
@@ -211,18 +212,21 @@
                         class="mdi mdi-circle text-[8px] mr-2 {{ request()->routeIs('posyandus.*') ? 'text-blue-500' : 'text-gray-400' }}"></i>
                     <span>Data Posyandu</span>
                 </a>
+                @endif
                 <a href="{{ route('kaders.index') }}"
                     class="block pl-14 py-2 text-sm transition-colors flex items-center submenu-item text-left {{ request()->routeIs('kaders.*') ? 'text-blue-600 font-semibold bg-blue-50/50 border-r-4 border-blue-500' : 'text-gray-600' }}">
                     <i
                         class="mdi mdi-circle text-[8px] mr-2 {{ request()->routeIs('kaders.*') ? 'text-blue-500' : 'text-gray-400' }}"></i>
                     <span>Data Kader</span>
                 </a>
+                @if(!Auth::user()->hasRole('posyandu'))
                 <a href="{{ route('pengaturans.index') }}"
                     class="block pl-14 py-2 text-sm transition-colors flex items-center submenu-item text-left {{ request()->routeIs('pengaturans.*') ? 'text-blue-600 font-semibold bg-blue-50/50 border-r-4 border-blue-500' : 'text-gray-600' }}">
                     <i
                         class="mdi mdi-circle text-[8px] mr-2 {{ request()->routeIs('pengaturans.*') ? 'text-blue-500' : 'text-gray-400' }}"></i>
                     <span>Pengaturan Sistem</span>
                 </a>
+                @endif
             </div>
         </div>
 

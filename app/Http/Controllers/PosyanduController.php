@@ -12,6 +12,16 @@ use App\Exports\PosyanduExport;
 
 class PosyanduController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (auth()->check() && auth()->user()->hasRole('posyandu')) {
+                abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+            }
+            return $next($request);
+        });
+    }
+
     public function index(Request $request)
     {
         $query = Posyandu::query()->with('users')->withCount('kaders');
