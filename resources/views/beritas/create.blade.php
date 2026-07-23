@@ -41,8 +41,8 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Konten</label>
-                            <textarea name="konten" rows="10" placeholder="Tulis konten berita di sini..." 
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Konten Berita</label>
+                            <textarea name="konten" id="editor" rows="10" placeholder="Tulis konten berita di sini..." 
                                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">{{ old('konten') }}</textarea>
                             @error('konten') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
                         </div>
@@ -127,9 +127,49 @@
         </div>
     </form>
 
+    <style>
+        .ck-editor__editable_inline {
+            min-height: 320px;
+            border-bottom-left-radius: 0.75rem !important;
+            border-bottom-right-radius: 0.75rem !important;
+            background-color: #f9fafb !important;
+            padding: 1rem 1.25rem !important;
+        }
+        .ck-toolbar {
+            border-top-left-radius: 0.75rem !important;
+            border-top-right-radius: 0.75rem !important;
+            background-color: #f3f4f6 !important;
+            border-color: #e5e7eb !important;
+        }
+        .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+            border-color: #e5e7eb !important;
+        }
+        .ck.ck-editor__main>.ck-editor__editable.ck-focused {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+        }
+    </style>
+
     @push('scripts')
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const editorElement = document.querySelector('#editor');
+            if (editorElement) {
+                ClassicEditor
+                    .create(editorElement, {
+                        toolbar: [
+                            'heading', '|',
+                            'bold', 'italic', 'underline', 'strikethrough', '|',
+                            'bulletedList', 'numberedList', 'blockQuote', '|',
+                            'link', 'insertTable', 'undo', 'redo'
+                        ]
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
+
             const input = document.getElementById('gambar-input');
             const previewContainer = document.getElementById('image-preview-container');
             const previewImg = document.getElementById('image-preview');
