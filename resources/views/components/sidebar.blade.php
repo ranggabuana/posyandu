@@ -141,6 +141,7 @@
                         class="mdi mdi-circle text-[8px] mr-2 {{ request()->routeIs('galeries.*') ? 'text-blue-500' : 'text-gray-400' }}"></i>
                     <span>Galeri</span>
                 </a>
+                @if(!Auth::user()->hasRole('posyandu'))
                 <a href="{{ route('jadwals.index') }}"
                     class="block pl-14 py-2 text-sm transition-colors flex items-center submenu-item text-left {{ request()->routeIs('jadwals.*') ? 'text-blue-600 font-semibold bg-blue-50/50 border-r-4 border-blue-500' : 'text-gray-600' }}">
                     <i
@@ -153,6 +154,7 @@
                         class="mdi mdi-circle text-[8px] mr-2 {{ request()->routeIs('tims.*') ? 'text-blue-500' : 'text-gray-400' }}"></i>
                     <span>Tim Kami</span>
                 </a>
+                @endif
             </div>
         </div>
 
