@@ -29,10 +29,25 @@
                         @if(auth()->user()->hasRole('posyandu') && auth()->user()->posyandu)
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Posyandu Pengampu</label>
+                            <input type="hidden" name="posyandu_id" value="{{ auth()->user()->posyandu_id }}">
                             <div class="w-full px-4 py-2.5 bg-pink-50/50 border border-pink-200 rounded-xl text-pink-800 font-semibold text-sm flex items-center gap-2">
                                 <i class="mdi mdi-office-building text-pink-600 text-lg"></i>
                                 <span>{{ auth()->user()->posyandu->nama ?? 'Posyandu Saya' }}</span>
                             </div>
+                        </div>
+                        @else
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Pilih Posyandu Pengampu <span class="text-red-500">*</span></label>
+                            <select name="posyandu_id" required
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200">
+                                <option value="">-- Pilih Posyandu --</option>
+                                @foreach($posyandus as $p)
+                                    <option value="{{ $p->id }}" {{ old('posyandu_id') == $p->id ? 'selected' : '' }}>
+                                        {{ $p->nama }} (RW {{ is_array($p->rw_diampu) ? implode(', ', $p->rw_diampu) : ($p->rw_diampu ?? '-') }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('posyandu_id') <p class="text-red-500 text-xs mt-2 flex items-center"><i class="mdi mdi-alert-circle mr-1"></i> {{ $message }}</p> @enderror
                         </div>
                         @endif
 

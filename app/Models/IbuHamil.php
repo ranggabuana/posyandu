@@ -17,4 +17,9 @@ class IbuHamil extends Model
     {
         return $this->belongsTo(Penduduk::class, 'suami_id');
     }
+
+    public function posyandu()
+    {
+        return $this->belongsTo(Posyandu::class);
+    }
 }

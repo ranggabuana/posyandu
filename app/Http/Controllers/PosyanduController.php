@@ -166,11 +166,13 @@ class PosyanduController extends Controller
             $userData = [
                 'name' => $validated['nama'],
                 'username' => $validated['username'],
+                'role' => 'posyandu',
             ];
             if ($request->filled('password')) {
                 $userData['password'] = Hash::make($validated['password']);
             }
             $user->update($userData);
+            $user->assignRole('posyandu');
         } else {
             $user = User::create([
                 'name' => $validated['nama'],

@@ -57,14 +57,19 @@ class IbuHamilController extends Controller
 
         $penduduks = $query->orderBy('nama')->get(['id', 'nama', 'nik', 'no_kk']);
         $suamis = Penduduk::where('kelamin', 'laki-laki')->orderBy('nama')->get(['id', 'nama', 'nik', 'no_kk']);
-        return view('ibu-hamils.create', compact('penduduks', 'suamis'));
+        $posyandus = \App\Models\Posyandu::orderBy('nama')->get();
+
+        return view('ibu-hamils.create', compact('penduduks', 'suamis', 'posyandus'));
     }
 
     public function store(Request $request)
     {
+        $user = auth()->user();
+
         $validated = $request->validate([
             'penduduk_id' => 'required|exists:penduduks,id',
             'suami_id' => 'nullable|exists:penduduks,id',
+            'posyandu_id' => 'nullable|exists:posyandus,id',
             'usia_kehamilan_minggu' => 'nullable|integer',
             'hpht' => 'nullable|date',
             'taksiran_persalinan' => 'nullable|date',
@@ -73,6 +78,10 @@ class IbuHamilController extends Controller
             'faktor_resiko' => 'nullable|string',
             'keterangan' => 'nullable|string',
         ]);
+
+        if ($user->hasRole('posyandu') && $user->posyandu_id) {
+            $validated['posyandu_id'] = $user->posyandu_id;
+        }
 
         IbuHamil::create($validated);
         return redirect()->route('ibu-hamils.index')->with('success', 'Data berhasil ditambahkan');
@@ -92,14 +101,19 @@ class IbuHamilController extends Controller
 
         $penduduks = $query->orderBy('nama')->get(['id', 'nama', 'nik', 'no_kk']);
         $suamis = Penduduk::where('kelamin', 'laki-laki')->orderBy('nama')->get(['id', 'nama', 'nik', 'no_kk']);
-        return view('ibu-hamils.edit', compact('ibuHamil', 'penduduks', 'suamis'));
+        $posyandus = \App\Models\Posyandu::orderBy('nama')->get();
+
+        return view('ibu-hamils.edit', compact('ibuHamil', 'penduduks', 'suamis', 'posyandus'));
     }
 
     public function update(Request $request, IbuHamil $ibuHamil)
     {
+        $user = auth()->user();
+
         $validated = $request->validate([
             'penduduk_id' => 'required|exists:penduduks,id',
             'suami_id' => 'nullable|exists:penduduks,id',
+            'posyandu_id' => 'nullable|exists:posyandus,id',
             'usia_kehamilan_minggu' => 'nullable|integer',
             'hpht' => 'nullable|date',
             'taksiran_persalinan' => 'nullable|date',
@@ -108,6 +122,10 @@ class IbuHamilController extends Controller
             'faktor_resiko' => 'nullable|string',
             'keterangan' => 'nullable|string',
         ]);
+
+        if ($user->hasRole('posyandu') && $user->posyandu_id) {
+            $validated['posyandu_id'] = $user->posyandu_id;
+        }
 
         $ibuHamil->update($validated);
         return redirect()->route('ibu-hamils.index')->with('success', 'Data berhasil diubah');
