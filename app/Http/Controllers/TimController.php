@@ -10,18 +10,16 @@ use App\Exports\TimExport;
 
 class TimController extends Controller
 {
-    public function __construct()
+    private function authorizeAdmin()
     {
-        $this->middleware(function ($request, $next) {
-            if (auth()->check() && auth()->user()->hasRole('posyandu')) {
-                abort(403, 'Anda tidak memiliki akses ke halaman ini.');
-            }
-            return $next($request);
-        });
+        if (auth()->check() && auth()->user()->hasRole('posyandu')) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
     }
 
     public function index(Request $request)
     {
+        $this->authorizeAdmin();
         $query = Tim::query();
         
         if ($request->search) {

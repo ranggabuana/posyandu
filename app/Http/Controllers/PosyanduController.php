@@ -12,18 +12,16 @@ use App\Exports\PosyanduExport;
 
 class PosyanduController extends Controller
 {
-    public function __construct()
+    private function authorizeAdmin()
     {
-        $this->middleware(function ($request, $next) {
-            if (auth()->check() && auth()->user()->hasRole('posyandu')) {
-                abort(403, 'Anda tidak memiliki akses ke halaman ini.');
-            }
-            return $next($request);
-        });
+        if (auth()->check() && auth()->user()->hasRole('posyandu')) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
     }
 
     public function index(Request $request)
     {
+        $this->authorizeAdmin();
         $query = Posyandu::query()->with('users')->withCount('kaders');
         
         if ($request->search) {
@@ -92,6 +90,7 @@ class PosyanduController extends Controller
         $user = User::create([
             'name' => $validated['nama'],
             'username' => $validated['username'],
+            'role' => 'posyandu',
             'password' => Hash::make($validated['password']),
             'posyandu_id' => $posyandu->id,
         ]);

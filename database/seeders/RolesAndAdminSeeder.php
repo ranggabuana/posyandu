@@ -28,6 +28,7 @@ class RolesAndAdminSeeder extends Seeder
                 'name' => 'Administrator',
                 'username' => 'admin',
                 'nama_lengkap' => 'Administrator Sistem',
+                'role' => 'admin',
                 'password' => Hash::make('password'),
             ]
         );

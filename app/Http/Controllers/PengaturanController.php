@@ -9,18 +9,16 @@ use App\Exports\PengaturanExport;
 
 class PengaturanController extends Controller
 {
-    public function __construct()
+    private function authorizeAdmin()
     {
-        $this->middleware(function ($request, $next) {
-            if (auth()->check() && auth()->user()->hasRole('posyandu')) {
-                abort(403, 'Anda tidak memiliki akses ke halaman ini.');
-            }
-            return $next($request);
-        });
+        if (auth()->check() && auth()->user()->hasRole('posyandu')) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
     }
 
     public function index(Request $request)
     {
+        $this->authorizeAdmin();
         $defaults = [
             ['key' => 'umur_lansia_min', 'value' => '60', 'label' => 'Batas Umur Minimal Lansia', 'keterangan' => 'Dalam satuan tahun'],
             ['key' => 'remaja_umur_min', 'value' => '10', 'label' => 'Batas Umur Minimal Remaja', 'keterangan' => 'Dalam satuan tahun'],
