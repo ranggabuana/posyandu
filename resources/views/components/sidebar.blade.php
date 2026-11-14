@@ -232,6 +232,37 @@
             </div>
         </div>
 
+        @if(!Auth::user()->hasRole('posyandu'))
+        <!-- Manajemen API -->
+        @php $apiActive = request()->routeIs('admin.api.*'); @endphp
+        <div class="relative text-left menu-group {{ $apiActive ? 'open' : '' }}">
+            <button onclick="this.parentElement.classList.toggle('open')"
+                class="w-full flex items-center justify-between px-6 py-3 transition-colors group menu-item text-left cursor-pointer {{ $apiActive ? 'bg-blue-50/30 text-blue-600 font-semibold' : 'text-gray-700' }}">
+                <div class="flex items-center justify-start">
+                    <i
+                        class="mdi mdi-api mr-3 text-lg transition-colors {{ $apiActive ? 'text-blue-500' : 'text-gray-500 group-hover:text-blue-500' }}"></i>
+                    <span class="font-medium">Manajemen API</span>
+                </div>
+                <i
+                    class="mdi mdi-chevron-down ml-2 transition-transform duration-300 text-lg {{ $apiActive ? 'text-blue-500' : 'text-gray-500' }}"></i>
+            </button>
+            <div class="submenu mt-1">
+                <a href="{{ route('admin.api.index') }}"
+                    class="block pl-14 py-2 text-sm transition-colors flex items-center submenu-item text-left {{ request()->routeIs('admin.api.index') ? 'text-blue-600 font-semibold bg-blue-50/50 border-r-4 border-blue-500' : 'text-gray-600' }}">
+                    <i
+                        class="mdi mdi-circle text-[8px] mr-2 {{ request()->routeIs('admin.api.index') ? 'text-blue-500' : 'text-gray-400' }}"></i>
+                    <span>Pengaturan & Keamanan</span>
+                </a>
+                <a href="{{ route('admin.api.docs') }}"
+                    class="block pl-14 py-2 text-sm transition-colors flex items-center submenu-item text-left {{ request()->routeIs('admin.api.docs') ? 'text-blue-600 font-semibold bg-blue-50/50 border-r-4 border-blue-500' : 'text-gray-600' }}">
+                    <i
+                        class="mdi mdi-circle text-[8px] mr-2 {{ request()->routeIs('admin.api.docs') ? 'text-blue-500' : 'text-gray-400' }}"></i>
+                    <span>Dokumentasi API</span>
+                </a>
+            </div>
+        </div>
+        @endif
+
         <hr class="my-3 border-gray-200">
 
         <!-- Sync API Asmara Button -->

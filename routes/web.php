@@ -111,4 +111,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('pengaturans/export', [\App\Http\Controllers\PengaturanController::class, 'export'])->name('pengaturans.export');
     Route::resource('pengaturans', \App\Http\Controllers\PengaturanController::class)->only(['index', 'edit', 'update']);
+
+    // Manajemen REST API (Admin Only)
+    Route::prefix('manajemen-api')->name('admin.api.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ApiManagementController::class, 'index'])->name('index');
+        Route::post('/settings', [\App\Http\Controllers\Admin\ApiManagementController::class, 'updateSettings'])->name('settings.update');
+        Route::post('/keys', [\App\Http\Controllers\Admin\ApiManagementController::class, 'storeKey'])->name('keys.store');
+        Route::patch('/keys/{apiKey}/toggle', [\App\Http\Controllers\Admin\ApiManagementController::class, 'toggleKey'])->name('keys.toggle');
+        Route::delete('/keys/{apiKey}', [\App\Http\Controllers\Admin\ApiManagementController::class, 'destroyKey'])->name('keys.destroy');
+        Route::delete('/logs/clear', [\App\Http\Controllers\Admin\ApiManagementController::class, 'clearLogs'])->name('logs.clear');
+        Route::get('/dokumentasi', [\App\Http\Controllers\Admin\ApiManagementController::class, 'docs'])->name('docs');
+    });
 });
